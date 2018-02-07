@@ -1,0 +1,18 @@
+- showdown as simulation environment
+- smogon rules
+- ban zoroark
+- infinite battle
+    - eg switch-in loop
+    - average duration: 60 turns
+    - smogon endless battle clause
+    - possible solution: tie after 500 turns
+- asynchronous rl/multiple agents (ppo, a3c, ...)
+- self-play rl?
+    - AI agent probably faster than humans on average
+    - compatible with gym?
+    - implementations exist?
+- play against humans? is there an opponent simulator?
+- random teams
+    - seperate team building agent?
+- elo rating as performance measure?
+    - starts with 1000
