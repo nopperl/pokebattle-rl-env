@@ -1,0 +1,5 @@
+name,type,accuracy,scale,dimensionality
+health,player,known,"[0,1]",6
+moves,player,known,binary,#totalmoves*6
+abilities,player,known,binary,#totalabilities*6
+items,player,known,binary,#totalitems*6
