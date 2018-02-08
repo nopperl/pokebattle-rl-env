@@ -12,7 +12,7 @@ class Move:
         self.name = name
         self.pp = pp
         # add self.type = [type query]
-        self.target = target
+        self.target = target  # maybe query
         self.disabled = disabled
 
 
@@ -26,9 +26,10 @@ class Stats:
 
 
 class Pokemon:
-    def __init__(self, name, gender, stats, moves, ability, item, health=1.0):
+    def __init__(self, name, gender, stats, moves, ability, item, health=1.0, condition=''):
         self.name = name
         self.health = health
+        self.condition = condition
         self.gender = gender
         self.stats = stats
         self.moves = moves
@@ -37,14 +38,19 @@ class Pokemon:
 
 
 class Trainer:
-    def __init__(self, pokemon, name=None):
-        self.pokemon = pokemon
+    def __init__(self, pokemon, name=None, mega_used=False):
         self.name = name
+        self.pokemon = pokemon
+        self.mega_used = mega_used
 
 
 class GameState:
     def __init__(self):
         self.state = 'ongoing'
+        self.player = None
+        self.opponent = None
+        self.weather = None
+        self.turn = 1
 
     def to_array(self):
         np.zeros(1)

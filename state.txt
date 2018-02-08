@@ -1,28 +1,34 @@
 - player
     - health ∀ pokes
+    - status conditions ∀ pokes
     - types ∀ pokes
     - gender ∀ pokes
     - stats ∀ pokes
     - moves ∀ pokes
-    - move types ∀ moves ∀ pokes?
+    - move types ∀ moves ∀ pokes
+    - move pp ∀ moves ∀ pokes
+    - move targets ∀ moves ∀ pokes
+    - (move disabled ∀ moves ∀ pokes)
     - abilities ∀ pokes
     - items ∀ pokes
-    - status conditions ∀ pokes
     - mega used
     - z used
 - opponent
     - health ∀ pokes (known)
+    - status conditions ∀ pokes (known)
     - types ∀ pokes (known)
     - gender ∀ pokes (estimate)
     - stats ∀ pokes (estimate)
     - moves ∀ pokes (estimate)
-    - move types ∀ moves ∀ pokes? (known, when move known)
+    - move types ∀ moves ∀ pokes (known, when move known)
     - abilities ∀ pokes (estimate)
     - items ∀ pokes (estimate)
-    - status conditions ∀ pokes (known)
     - mega used (known)
     - z used (known)
 - weather
 - turn
 - level ∀ pokes?
     - has no significant effect on game
+- active pokemon?
+    - order information by activity -> implicit information
+- when pokemon faints: pokemon state set to 0
