@@ -30,15 +30,20 @@ class ShowdownSimulator(BattleSimulator):
         self.room_id = msg.split('\n')[0][1:]
         msg = ''
         self.opponent = self.username
+        initial_state = ''
         while self.opponent == self.username:
             while '|player|' not in msg:
                 msg = self.ws.recv()
-                print(msg)
+                if '|request|' in msg:
+                    initial_state = msg[msg.find('|request|') + len('|request|'):]
             self.opponent = msg.split('|')[3]
 
         print(f'Playing against {self.opponent}')
+        print(f'Initial state: {initial_state}')
 
         self.ws.send(f'{self.room_id}|/timer on')
+
+        self.read_state_json(initial_state)
 
         super().__init__()
 
@@ -52,10 +57,18 @@ class ShowdownSimulator(BattleSimulator):
         while not msg.startswith('updateuser') and self.username in msg:
             msg = self.ws.recv()
 
-    def attack(self, move):
+    def _attack(self, move):
         self.ws.send(f'|/choose move {move}')
 
-    def switch(self, pokemon):
+    def _switch(self, pokemon):
+        pass
+
+    def _update_state(self):
+        msg = ''
+        while '|win|' not in msg or '|tie' not in msg or '|request|' not in msg:
+            msg = self.ws.recv()
+
+    def read_state_json(self, state):
         pass
 
     def render(self, mode='human'):

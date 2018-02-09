@@ -2,3 +2,192 @@
 {"wait":true,"side":{"name":"dfrh","id":"p1","pokemon":[{"ident":"p1: Florges","details":"Florges, L79, F","condition":"84/253","active":true,"stats":{"atk":107,"def":153,"spa":223,"spd":289,"spe":164},"moves":["toxic","wish","defog","moonblast"],"baseAbility":"symbiosis","item":"leftovers","pokeball":"pokeball","ability":"symbiosis"},{"ident":"p1: Kyurem","details":"Kyurem-White, L73","condition":"303/303","active":false,"stats":{"atk":180,"def":174,"spa":291,"spd":188,"spe":181},"moves":["roost","icebeam","dracometeor","fusionflare"],"baseAbility":"turboblaze","item":"leftovers","pokeball":"pokeball","ability":"turboblaze"},{"ident":"p1: Blastoise","details":"Blastoise, L79, M","condition":"254/254","active":false,"stats":{"atk":177,"def":204,"spa":180,"spd":211,"spe":169},"moves":["darkpulse","hydropump","dragontail","icebeam"],"baseAbility":"torrent","item":"blastoisinite","pokeball":"pokeball","ability":"torrent"},{"ident":"p1: Nidoking","details":"Nidoking, L77, M","condition":"251/251","active":false,"stats":{"atk":202,"def":163,"spa":175,"spd":160,"spe":175},"moves":["fireblast","superpower","sludgewave","earthpower"],"baseAbility":"sheerforce","item":"lifeorb","pokeball":"pokeball","ability":"sheerforce"},{"ident":"p1: Plusle","details":"Plusle, L83, F","condition":"235/235","active":false,"stats":{"atk":88,"def":114,"spa":189,"spd":172,"spe":205},"moves":["hiddenpowerice60","substitute","encore","thunderbolt"],"baseAbility":"lightningrod","item":"leftovers","pokeball":"pokeball","ability":"lightningrod"},{"ident":"p1: Jirachi","details":"Jirachi, L76","condition":"277/277","active":false,"stats":{"atk":196,"def":196,"spa":196,"spd":196,"spe":196},"moves":["ironhead","uturn","stealthrock","icepunch"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball","ability":"serenegrace"}]},"rqid":8}
 {"active":[{"moves":[{"move":"Volt Switch","id":"voltswitch","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Taunt","id":"taunt","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Hidden Power Grass","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Foul Play","id":"foulplay","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"dfrh","id":"p2","pokemon":[{"ident":"p2: Electrode","details":"Electrode, L83","condition":"221/235 brn","active":true,"stats":{"atk":131,"def":164,"spa":180,"spd":180,"spe":297},"moves":["voltswitch","taunt","hiddenpowergrass60","foulplay"],"baseAbility":"aftermath","item":"airballoon","pokeball":"pokeball","ability":"aftermath"},{"ident":"p2: Togedemaru","details":"Togedemaru, L83, M","condition":"244/244","active":false,"stats":{"atk":210,"def":152,"spa":114,"spd":169,"spe":207},"moves":["wish","ironhead","uturn","zingzap"],"baseAbility":"sturdy","item":"airballoon","pokeball":"pokeball","ability":"sturdy"},{"ident":"p2: Glaceon","details":"Glaceon, L83, F","condition":"243/243","active":false,"stats":{"atk":104,"def":230,"spa":263,"spd":205,"spe":156},"moves":["toxic","shadowball","healbell","icebeam"],"baseAbility":"snowcloak","item":"leftovers","pokeball":"pokeball","ability":"snowcloak"},{"ident":"p2: Gyarados","details":"Gyarados, L75, F","condition":"266/266","active":false,"stats":{"atk":231,"def":162,"spa":134,"spd":194,"spe":165},"moves":["earthquake","substitute","crunch","waterfall"],"baseAbility":"moxie","item":"gyaradosite","pokeball":"pokeball","ability":"moxie"},{"ident":"p2: Zygarde","details":"Zygarde-10%, L79","condition":"215/215","active":false,"stats":{"atk":204,"def":158,"spa":142,"spd":180,"spe":227},"moves":["outrage","dragondance","extremespeed","thousandarrows"],"baseAbility":"aurabreak","item":"lumberry","pokeball":"pokeball","ability":"aurabreak"},{"ident":"p2: Amoonguss","details":"Amoonguss, L77, M","condition":"302/302","active":false,"stats":{"atk":135,"def":152,"spa":175,"spd":168,"spe":91},"moves":["gigadrain","hiddenpowerfire60","stunspore","clearsmog"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"}]},"rqid":9}
 
+<< >battle-gen7randombattle-701400630
+|init|battle
+|title|fsedfs vs. rahul5006
+|j|☆fsedfs
+<< >battle-gen7randombattle-701400630
+|request|
+<< >battle-gen7randombattle-701400630
+
+|j|☆rahul5006
+<< >battle-gen7randombattle-701400630
+
+|player|p1|fsedfs|265
+<< >battle-gen7randombattle-701400630
+|request|{"active":[{"moves":[{"move":"Scald","id":"scald","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"Toxic Spikes","id":"toxicspikes","pp":32,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Recover","id":"recover","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Haze","id":"haze","pp":48,"maxpp":48,"target":"all","disabled":false}]}],"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":true,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"275/275","active":false,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"257/257","active":false,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"274/274","active":false,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"}]},"rqid":2}
+<< >battle-gen7randombattle-701400630
+
+|player|p2|rahul5006|102
+|teamsize|p1|6
+|teamsize|p2|6
+|gametype|singles
+|gen|7
+|tier|[Gen 7] Random Battle
+|rated|
+|seed|
+|rule|Sleep Clause Mod: Limit one foe put to sleep
+|rule|HP Percentage Mod: HP is shown in percentages
+|
+|start
+|switch|p1a: Toxapex|Toxapex, L75, F|199/199
+|switch|p2a: Aegislash|Aegislash, L73, F|100/100
+|turn|1
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 220 sec total
+<< >battle-gen7randombattle-701400630
+
+|inactive|Battle timer is ON: inactive players will automatically lose when time's up. (requested by rahul5006)
+>> battle-gen7randombattle-701400630|/choose move 1|2
+<< >battle-gen7randombattle-701400630
+|request|{"active":[{"moves":[{"move":"Scald","id":"scald","pp":23,"maxpp":24,"target":"normal","disabled":false},{"move":"Toxic Spikes","id":"toxicspikes","pp":32,"maxpp":32,"target":"foeSide","disabled":false},{"move":"Recover","id":"recover","pp":16,"maxpp":16,"target":"self","disabled":false},{"move":"Haze","id":"haze","pp":48,"maxpp":48,"target":"all","disabled":false}]}],"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":true,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"275/275","active":false,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"257/257","active":false,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"274/274","active":false,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"}]},"rqid":4}
+<< >battle-gen7randombattle-701400630
+
+|
+|move|p2a: Aegislash|Swords Dance|p2a: Aegislash
+|-boost|p2a: Aegislash|atk|2
+|move|p1a: Toxapex|Scald|p2a: Aegislash
+|-damage|p2a: Aegislash|83/100
+|
+|upkeep
+|turn|2
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 225 sec total
+>> battle-gen7randombattle-701400630|/choose switch 2|4
+<< >battle-gen7randombattle-701400630
+|request|{"active":[{"moves":[{"move":"Sacred Fire","id":"sacredfire","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Flame Charge","id":"flamecharge","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Brave Bird","id":"bravebird","pp":24,"maxpp":24,"target":"any","disabled":false},{"move":"Roost","id":"roost","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"275/275","active":true,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":false,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"257/257","active":false,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"274/274","active":false,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"}]},"rqid":6}
+<< >battle-gen7randombattle-701400630
+
+|
+|switch|p1a: Ho-Oh|Ho-Oh, L73|275/275
+|move|p2a: Aegislash|Swords Dance|p2a: Aegislash
+|-boost|p2a: Aegislash|atk|2
+|
+|upkeep
+|turn|3
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 225 sec total
+>> battle-gen7randombattle-701400630|/choose move 1|6
+<< >battle-gen7randombattle-701400630
+|request|{"wait":true,"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"106/275","active":true,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":false,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"257/257","active":false,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"274/274","active":false,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"}]},"rqid":8}
+<< >battle-gen7randombattle-701400630
+
+|
+|move|p1a: Ho-Oh|Sacred Fire|p2a: Aegislash
+|-supereffective|p2a: Aegislash
+|-damage|p2a: Aegislash|5/100
+|-status|p2a: Aegislash|brn
+|-formechange|p2a: Aegislash|Aegislash-Blade|[from] ability: Stance Change
+|move|p2a: Aegislash|Shadow Claw|p1a: Ho-Oh
+|-damage|p1a: Ho-Oh|89/275
+|-damage|p2a: Aegislash|0 fnt|[from] item: Life Orb
+|faint|p2a: Aegislash
+|
+|-heal|p1a: Ho-Oh|106/275|[from] item: Leftovers
+|upkeep
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 225 sec total
+<< >battle-gen7randombattle-701400630
+
+|inactive|rahul5006 has 135 seconds left.
+<< >battle-gen7randombattle-701400630
+|request|{"active":[{"moves":[{"move":"Sacred Fire","id":"sacredfire","pp":7,"maxpp":8,"target":"normal","disabled":false},{"move":"Flame Charge","id":"flamecharge","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Brave Bird","id":"bravebird","pp":24,"maxpp":24,"target":"any","disabled":false},{"move":"Roost","id":"roost","pp":16,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"106/275","active":true,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":false,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"257/257","active":false,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"274/274","active":false,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"}]},"rqid":10}
+<< >battle-gen7randombattle-701400630
+
+|
+|switch|p2a: Gyarados|Gyarados, L75, F|100/100
+|-ability|p2a: Gyarados|Intimidate|boost
+|-unboost|p1a: Ho-Oh|atk|1
+|turn|4
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 235 sec total
+<< >battle-gen7randombattle-701400630
+
+|inactive|fsedfs has 135 seconds left.
+>> battle-gen7randombattle-701400630|/choose switch 3|10
+<< >battle-gen7randombattle-701400630
+|request|{"active":[{"moves":[{"move":"Bug Buzz","id":"bugbuzz","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Volt Switch","id":"voltswitch","pp":32,"maxpp":32,"target":"normal","disabled":false},{"move":"Energy Ball","id":"energyball","pp":16,"maxpp":16,"target":"normal","disabled":false},{"move":"Hidden Power Ice","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"151/257","active":true,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":false,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"197/275","active":false,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"274/274","active":false,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"}]},"rqid":12}
+<< >battle-gen7randombattle-701400630
+
+|
+|switch|p1a: Vikavolt|Vikavolt, L81, M|257/257
+|-mega|p2a: Gyarados|Gyarados|Gyaradosite
+|detailschange|p2a: Gyarados|Gyarados-Mega, L75, F
+|-ability|p2a: Gyarados|Mold Breaker
+|move|p2a: Gyarados|Waterfall|p1a: Vikavolt
+|-damage|p1a: Vikavolt|151/257
+|
+|upkeep
+|turn|5
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 230 sec total
+<< >battle-gen7randombattle-701400630
+
+|inactive|fsedfs has 135 seconds left.
+<< >battle-gen7randombattle-701400630
+
+|inactive|rahul5006 has 135 seconds left.
+>> battle-gen7randombattle-701400630|/choose move 2|12
+<< >battle-gen7randombattle-701400630
+|request|{"forceSwitch":[true],"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"151/257","active":true,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":false,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"197/275","active":false,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"274/274","active":false,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"}]},"noCancel":true,"rqid":14}
+<< >battle-gen7randombattle-701400630
+
+|
+|switch|p2a: Naganadel|Naganadel, L73|100/100
+|move|p1a: Vikavolt|Volt Switch|p2a: Naganadel
+|-resisted|p2a: Naganadel
+|-damage|p2a: Naganadel|61/100
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 225 sec total
+>> battle-gen7randombattle-701400630|/choose switch 6|14
+<< >battle-gen7randombattle-701400630
+|request|{"active":[{"moves":[{"move":"Dragon Claw","id":"dragonclaw","pp":24,"maxpp":24,"target":"normal","disabled":false},{"move":"V-create","id":"vcreate","pp":8,"maxpp":8,"target":"normal","disabled":false},{"move":"Outrage","id":"outrage","pp":16,"maxpp":16,"target":"randomNormal","disabled":false},{"move":"Draco Meteor","id":"dracometeor","pp":8,"maxpp":8,"target":"normal","disabled":false}]}],"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"274/274","active":true,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"},{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":false,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"197/275","active":false,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"151/257","active":false,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"}]},"rqid":16}
+<< >battle-gen7randombattle-701400630
+
+|
+|switch|p1a: Rayquaza|Rayquaza, L73|274/274
+|-ability|p1a: Rayquaza|Air Lock
+|
+|upkeep
+|turn|6
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 225 sec total
+>> battle-gen7randombattle-701400630|/choose move 1|16
+<< >battle-gen7randombattle-701400630
+|request|{"wait":true,"side":{"name":"fsedfs","id":"p1","pokemon":[{"ident":"p1: Rayquaza","details":"Rayquaza, L73","condition":"56/274","active":true,"stats":{"atk":261,"def":174,"spa":261,"spd":174,"spe":181},"moves":["dragonclaw","vcreate","outrage","dracometeor"],"baseAbility":"airlock","item":"assaultvest","pokeball":"pokeball","ability":"airlock"},{"ident":"p1: Toxapex","details":"Toxapex, L75, F","condition":"199/199","active":false,"stats":{"atk":99,"def":272,"spa":123,"spd":257,"spe":96},"moves":["scald","toxicspikes","recover","haze"],"baseAbility":"regenerator","item":"blacksludge","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Ho-Oh","details":"Ho-Oh, L73","condition":"197/275","active":false,"stats":{"atk":232,"def":174,"spa":203,"spd":267,"spe":174},"moves":["sacredfire","flamecharge","bravebird","roost"],"baseAbility":"regenerator","item":"leftovers","pokeball":"pokeball","ability":"regenerator"},{"ident":"p1: Leafeon","details":"Leafeon, L83, M","condition":"244/244","active":false,"stats":{"atk":230,"def":263,"spa":147,"spd":156,"spe":205},"moves":["substitute","batonpass","synthesis","leafblade"],"baseAbility":"chlorophyll","item":"leftovers","pokeball":"pokeball","ability":"chlorophyll"},{"ident":"p1: Gumshoos","details":"Gumshoos, L83, F","condition":"282/282","active":false,"stats":{"atk":230,"def":147,"spa":139,"spd":147,"spe":122},"moves":["crunch","return","earthquake","uturn"],"baseAbility":"adaptability","item":"choiceband","pokeball":"pokeball","ability":"adaptability"},{"ident":"p1: Vikavolt","details":"Vikavolt, L81, M","condition":"151/257","active":false,"stats":{"atk":118,"def":192,"spa":282,"spd":168,"spe":116},"moves":["bugbuzz","voltswitch","energyball","hiddenpowerice60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"}]},"rqid":18}
+<< >battle-gen7randombattle-701400630
+
+|
+|move|p2a: Naganadel|Draco Meteor|p1a: Rayquaza
+|-supereffective|p1a: Rayquaza
+|-damage|p1a: Rayquaza|56/274
+|-unboost|p2a: Naganadel|spa|2
+|move|p1a: Rayquaza|Dragon Claw|p2a: Naganadel
+|-supereffective|p2a: Naganadel
+|-damage|p2a: Naganadel|0 fnt
+|faint|p2a: Naganadel
+|
+|upkeep
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 230 sec total
+<< >battle-gen7randombattle-701400630
+
+|-message|rahul5006 forfeited.
+<< >battle-gen7randombattle-701400630
+
+|
+|win|fsedfs
+<< >battle-gen7randombattle-701400630
+|inactive|Time left: 150 sec this turn | 240 sec total
+<< >battle-gen7randombattle-701400630
+|askreg|fsedfs
+<< >battle-gen7randombattle-701400630
+||Ladder updating...
+<< |updatesearch|{"searching":[],"games":null}
+<< >battle-gen7randombattle-701400630
+
+|l|☆rahul5006
+<< >battle-gen7randombattle-701400630
+
+|raw|fsedfs's rating: 1095 &rarr; <strong>1124</strong><br />(+29 for winning)
+|raw|rahul5006's rating: 1141 &rarr; <strong>1112</strong><br />(-29 for losing)

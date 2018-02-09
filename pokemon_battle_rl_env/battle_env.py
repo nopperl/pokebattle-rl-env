@@ -8,7 +8,7 @@ class BattleEnv(Env):
     def __init__(self, simulator=ShowdownSimulator()):
         self.__version__ = "0.1.0"
         self.simulator = simulator
-        self.action_space = MultiBinary(10)  # Attack using one of 4 moves, switch to one of 5 pokemon or pass
+        self.action_space = MultiBinary(self.simulator.num_actions)
         # ToDo set self.observation_space
         self.reward_range = (-1, 1)
         # ToDo: Set metadata['render.modes']
