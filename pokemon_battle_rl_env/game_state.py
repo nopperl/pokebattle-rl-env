@@ -26,8 +26,8 @@ class Stats:
 
 
 class Pokemon:
-    def __init__(self, name, gender, stats, moves, ability, item, health=1.0, condition=''):
-        self.name = name
+    def __init__(self, species, gender, stats, moves, ability, item, health=1.0, condition='', unknown=False):
+        self.species = species
         self.health = health
         self.condition = condition
         self.gender = gender
@@ -35,11 +35,14 @@ class Pokemon:
         self.moves = moves
         self.ability = ability
         self.item = item
+        self.unknown = unknown
 
 
 class Trainer:
-    def __init__(self, pokemon, name=None, mega_used=False):
+    def __init__(self, pokemon=None, name=None, mega_used=False):
         self.name = name
+        if pokemon is None:
+            pokemon = [Pokemon(None, None, None, None, None, None, None, None, True)] * 6
         self.pokemon = pokemon
         self.mega_used = mega_used
 
