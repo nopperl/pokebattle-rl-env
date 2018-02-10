@@ -8,6 +8,7 @@ from requests import post
 
 from pokemon_battle_rl_env.battle_simulator import BattleSimulator
 from pokemon_battle_rl_env.game_state import GameState, Move
+from pokemon_battle_rl_env.poke_data_queries import move_id_to_name, move_name_to_id
 
 WEB_SOCKET_URL = "wss://sim.smogon.com/showdown/websocket"
 SHOWDOWN_ACTION_URL = "https://play.pokemonshowdown.com/action.php"
@@ -52,8 +53,28 @@ def generate_token(length):
     return ''.join(choice(ascii_letters + digits) for i in range(length))
 
 
-def parse_switch(msg, state, opponent_short):
-    info = msg.split('|')
+def parse_pokemon_details(details):
+    species = details.split(',')[0]
+    if ', M' in details:
+        gender = 'm'
+    elif ', F' in details:
+        gender = 'f'
+    else:
+        gender = 'n'
+    return species, gender
+
+
+def parse_move(info, state, opponent_short):
+    if opponent_short in info[1]:
+        move_name = info[2]
+        pokemon = state.opponent.pokemon
+        used_move = next((m for m in pokemon[0].moves if m.name == move_name), None)
+        if not used_move:
+            used_move = Move(move_name, None, None, None)
+            pokemon[0].moves.append(used_move)
+
+
+def parse_switch(info, state, opponent_short):
     name = info[1].split(':')[1][1:]
     species = info[2].split(',')[0]
     if opponent_short in info[1]:
@@ -80,17 +101,38 @@ def parse_switch(msg, state, opponent_short):
     pokemon.insert(0, pokemon.pop(pokemon.index(switched_in)))
 
 
-def read_state_json(json):
-    return GameState()
+def read_state_json(json, state):
+    json = loads(json)
+    active_pokemon = state.player[0]
+    active_pokemon.moves = []
+    for move in json['active']['moves']:
+        move = Move(id=move['id'], pp=move['pp'], disabled=move['disabled'])
+        active_pokemon.moves.append(move)
+    pokemon_list = json['side']['pokemon']
+    for i in range(len(pokemon_list)):
+        st_pokemon = state.player.pokemon[i]
+        pokemon = pokemon_list[i]
+        st_pokemon.name = pokemon['ident'].split(':')[1][1:]
+        st_pokemon.species, st_pokemon.gender = parse_pokemon_details(pokemon['details'])
+        health, max_health = pokemon['condition'].split('/')
+        st_pokemon.health = float(health) / float(max_health)
+        st_pokemon.stats = pokemon['stats']
+        if not pokemon['active'] and not all(
+                move_id in [move.name for move in st_pokemon.moves] for move_id in pokemon['moves']):
+            st_pokemon.moves = [Move(id=move_id) for move_id in pokemon['moves']]
+        st_pokemon.item = pokemon['item']
+        st_pokemon.ability = pokemon['ability']
+        st_pokemon.unknown = False
 
 
 class ShowdownSimulator(BattleSimulator):
     def __init__(self, auth=''):
         print('Using Showdown backend')
-        self._connect()
+        self._connect(auth)
         print(f'Using username {self.username} with password {self.password}')
         self.ws.send('|/utm null')  # Team
         self.ws.send('|/search gen7randombattle')  # Tier
+        self.state = GameState()
         self._update_state()
         print(f'Playing against {self.opponent}')
         self.ws.send(f'{self.room_id}|/timer on')
@@ -144,32 +186,27 @@ class ShowdownSimulator(BattleSimulator):
             if info[1] == 'player':
                 if info[3] == self.username:
                     self.player_short = info[2]
+                    self.state.player.name = info[3]
                 else:
                     self.opponent = info[3]
+                    self.state.opponent.name = self.opponent
                     self.opponent_short = info[2]
             elif info[1] == 'win':
                 winner = msg[len('|win|'):]
                 self.state.state = 'win' if winner == self.state.player.name else 'loss'
             elif info[1] == 'tie':
                 self.state.state = 'tie'
-            elif info[1] == 'tie':
-                self.state.turn = int(msg[len('|turn|'):])
+            elif info[1] == 'turn':
+                self.state.turn = int(info[2])
             elif info[1] == 'request':
-                state_json = msg[len('|request|'):]
-                self.state = read_state_json(state_json)
+                if not info[2].startswith('{"wait":true'):
+                    read_state_json(info[2], self.state)
             elif info[1] == 'move':
-                info = msg.split('|')
-                if self.opponent_short in info[1]:
-                    move_name = info[2]
-                    pokemon = self.state.opponent.pokemon
-                    used_move = next((m for m in pokemon[0].moves if m.name == move_name), None)
-                    if not used_move:
-                        used_move = Move(move_name, None, None, None)
-                        pokemon[0].moves.append(used_move)
+                parse_move(info, self.state, self.opponent_short)
             elif info[1] == 'upkeep':
                 pass  # ToDo: update weather, status turns
             elif info[1] == 'switch' or info[1] == 'drag':
-                parse_switch(msg, self.state, self.opponent_short)
+                parse_switch(info, self.state, self.opponent_short)
 
     def render(self, mode='human'):
         if mode is 'human':

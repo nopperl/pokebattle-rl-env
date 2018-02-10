@@ -1,4 +1,5 @@
 import numpy as np
+from pokemon_battle_rl_env.poke_data_queries import get_move_by_name, moves
 
 
 class Item:
@@ -8,17 +9,28 @@ class Item:
 
 
 class Move:
-    def __init__(self, name, pp, target='normal', disabled=False):
-        self.name = name
+    def __init__(self, id=None, name=None, pp=None, disabled=False):  # id or name must be provided (xor, id is faster)
+        if name is None:
+            if id is None:
+                raise ValueError('Either id or name must be provided')
+            move = moves[id]
+            self.id = id
+            self.name = move['name']
+        else:
+            move = get_move_by_name(name)
+            self.id = move['id']
+            self.name = name
+        if pp is None:
+            pp = move['pp']
         self.pp = pp
-        # add self.type = [type query]
-        self.target = target  # maybe query
         self.disabled = disabled
+        self.type = move['type']
+        self.target = move['target']
 
 
 class Stats:
     def __init__(self, atk, def_, spa, spd, spe):
-        self.attack = atk
+        self.atk = atk
         self.def_ = def_
         self.spa = spa
         self.spd = spd
@@ -55,8 +67,8 @@ class Trainer:
 class GameState:
     def __init__(self):
         self.state = 'ongoing'
-        self.player = None
-        self.opponent = None
+        self.player = Trainer()
+        self.opponent = Trainer()
         self.weather = None
         self.field = None
         self.player_condition = None
