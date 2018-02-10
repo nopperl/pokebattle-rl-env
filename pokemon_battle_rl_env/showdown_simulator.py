@@ -8,6 +8,7 @@ from requests import post
 
 from pokemon_battle_rl_env.battle_simulator import BattleSimulator
 from pokemon_battle_rl_env.game_state import GameState, Move
+from pokemon_battle_rl_env.poke_data_queries import move_id_to_name, move_name_to_id
 
 WEB_SOCKET_URL = "wss://sim.smogon.com/showdown/websocket"
 SHOWDOWN_ACTION_URL = "https://play.pokemonshowdown.com/action.php"
