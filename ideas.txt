@@ -2,6 +2,7 @@
 - how to implement mega evolution and z moves?
     - have specific preconditions and can only be triggered once
 - use new user for each training run
+- multiple pokemon of same species in teams?
 - smogon rules
 - ban zoroark
 - infinite battle
