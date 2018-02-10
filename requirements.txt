@@ -1,2 +1,3 @@
 websocket-client
 numpy
+PyExecJS

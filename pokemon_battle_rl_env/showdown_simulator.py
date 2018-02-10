@@ -8,7 +8,6 @@ from requests import post
 
 from pokemon_battle_rl_env.battle_simulator import BattleSimulator
 from pokemon_battle_rl_env.game_state import GameState, Move
-from pokemon_battle_rl_env.poke_data_queries import move_id_to_name, move_name_to_id
 
 WEB_SOCKET_URL = "wss://sim.smogon.com/showdown/websocket"
 SHOWDOWN_ACTION_URL = "https://play.pokemonshowdown.com/action.php"
@@ -24,7 +23,7 @@ def register(challstr, username, password):
         'username': username
     }
     response = post(SHOWDOWN_ACTION_URL, data=post_data)
-    if response[0] != ']':
+    if response.text[0] != ']':
         raise AttributeError('Invalid username and/or password')
     response = loads(response[1:])
     if not response['actionsuccess']:
@@ -95,6 +94,7 @@ def parse_switch(info, state, opponent_short):
         switched_in.species = species
         switched_in.gender = gender
         switched_in.health = health
+        switched_in.update()
     else:
         pokemon = state.player.pokemon
         switched_in = next((p for p in pokemon if p.species == species and p.name == name), None)

@@ -1,5 +1,5 @@
 import numpy as np
-from pokemon_battle_rl_env.poke_data_queries import get_move_by_name, moves
+from pokemon_battle_rl_env.poke_data_queries import abilities, genders, get_move_by_name, get_pokemon_by_species, items, moves, pokedex, targets, typechart, status_conditions, weathers
 
 
 class Item:
@@ -38,11 +38,15 @@ class Stats:
 
 
 class Pokemon:
-    def __init__(self, species, gender, stats, moves, ability, item, name=None, health=1.0, condition='', unknown=False):
+    def __init__(self, species=None, gender=None, ability=None, health=1.0, stats=None, moves=None, item=None, name=None, conditions=None, unknown=False):
         self.species = species
         self.health = health
-        self.condition = condition
+        if conditions is None:
+            conditions = []
+        self.conditions = conditions
         self.gender = gender
+        if stats is None:
+            stats = {}
         self.stats = stats
         if moves is None:
             moves = []
@@ -53,15 +57,71 @@ class Pokemon:
         if name is None:
             name = species
         self.name = name
+        self.types = []
+        self.update()
 
+    def update(self):
+        if self.species is not None:
+            if self.gender is None:
+                pokemon = get_pokemon_by_species(self.species)
+                if 'gender' in pokemon:
+                    self.gender = pokemon['gender']
+                elif 'genderRatio' in pokemon:  # Use weighted coin toss
+                    max_ratio = 0
+                    for gender_r, ratio in pokemon['genderRatio'].items():
+                        if ratio > max_ratio:
+                            self.gender = gender_r
+            if self.ability is None:
+                pokemon = get_pokemon_by_species(self.species)
+                self.ability = pokemon['abilities']['0']
+            if self.stats is None:
+                pokemon = get_pokemon_by_species(self.species)
+                self.stats = pokemon['baseStats']
+                del self.stats['hp']
+            if self.types is None:
+                pokemon = get_pokemon_by_species(self.species)
+                self.types = pokemon['types']
 
 class Trainer:
     def __init__(self, pokemon=None, name=None, mega_used=False):
         self.name = name
         if pokemon is None:
-            pokemon = [Pokemon(None, None, None, None, None, None, None, None, None, True)] * 6
+            pokemon = [Pokemon(unknown=True)] * 6
         self.pokemon = pokemon
         self.mega_used = mega_used
+
+
+def pokemon_list_to_array(pokemon_list):
+    state = []
+    for pokemon in pokemon_list:
+        state.append(pokemon.health if pokemon.health else 1.0)
+        for gender in genders:
+            state.append(1 if gender == pokemon.gender else 0)
+        for condition in status_conditions:
+            state.append(1 if condition in pokemon.conditions else 0)
+        for stat in ['atk', 'def', 'spa', 'spd', 'spe']:
+            state.append(pokemon.stats[stat])
+        for ability in abilities:
+            state.append(1 if ability == pokemon.ability else 0)
+        for type in typechart:
+            state.append(1 if type in pokemon.types else 0)
+        for item in items:
+            state.append(1 if item == pokemon.item else 0)
+        for i in range(4):
+            if i >= len(pokemon.moves):
+                move_length = len(moves) + len(typechart) + len(targets) + 2
+                state += [0] * move_length
+            else:
+                move = pokemon.moves[i]
+                for move_id in moves:
+                    state.append(1 if move_id == move.id else 0)
+                state.append(move.pp)
+                state.append(1 if move.disabled else 0)
+                for type in typechart:
+                    state.append(1 if type == move.type else 0)
+                for target in targets:
+                    state.append(1 if target == move.target else 0)
+    return state
 
 
 class GameState:
@@ -76,4 +136,9 @@ class GameState:
         self.turn = 1
 
     def to_array(self):
-        np.zeros(1)
+        state = []
+        # ToDo: weather, field
+        # ToDo: mega used
+        state.append(self.turn)
+        state += pokemon_list_to_array(self.player.pokemon)
+        state += pokemon_list_to_array(self.opponent.pokemon)
