@@ -4,3 +4,4 @@ http://game.engineering.nyu.edu/wp-content/uploads/2017/02/CIG_2017_paper_87-1.p
 https://web.stanford.edu/class/cs221/2017/restricted/p-final/kkhosla/final.pdf
 https://github.com/rishihahs/pokemonai
 https://github.com/jking31cs/pokemon-learning
+https://github.com/dramamine/leftovers-again

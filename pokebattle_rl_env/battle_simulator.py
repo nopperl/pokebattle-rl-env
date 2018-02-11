@@ -1,4 +1,4 @@
-from pokemon_battle_rl_env.game_state import GameState
+from pokebattle_rl_env.game_state import GameState
 
 
 class BattleSimulator:

@@ -1,19 +1,11 @@
-from json import load
+from json import loads
+from pkgutil import get_data
 
-with open('data/abilities.json') as file:
-    abilities = load(file)['BattleAbilities']
-
-with open('data/items.json') as file:
-    items = load(file)['BattleItems']
-
-with open('data/moves.json') as file:
-    moves = load(file)['BattleMovedex']
-
-with open('data/pokedex.json') as file:
-    pokedex = load(file)['BattlePokedex']
-
-with open('data/typechart.json') as file:
-    typechart = load(file)['BattleTypeChart']
+abilities = loads(get_data('pokebattle_rl_env', 'data/abilities.json'))['BattleAbilities']
+items = loads(get_data('pokebattle_rl_env', 'data/items.json'))['BattleItems']
+moves = loads(get_data('pokebattle_rl_env', 'data/moves.json'))['BattleMovedex']
+pokedex = loads(get_data('pokebattle_rl_env', 'data/pokedex.json'))['BattlePokedex']
+typechart = loads(get_data('pokebattle_rl_env', 'data/typechart.json'))['BattleTypeChart']
 
 genders = ['f', 'm', 'n']
 status_conditions = ['brn', 'par', 'slp', 'frz', 'psn', 'tox', 'confusion', 'trapped']
