@@ -18,7 +18,7 @@ class BattleEnv(Env):
         # ToDo: Set metadata['render.modes']
 
     def step(self, action):
-        action = np.argmax(action)  # ToDo: Handle forced switches (eg Roar) and moves (eg Outrage)
+        action = np.argmax(action)  # ToDo: Handle forced switches (eg Roar), forced moves (eg Outrage), disabled moves
         if action < 4:
             self.simulator.act('attack', action + 1)
         else:
@@ -32,8 +32,6 @@ class BattleEnv(Env):
 
     def render(self, mode='human'):
         return
-        if close:
-            raise NotImplementedError('Closing after render not yet implemented')
         if mode == 'rgb_array':
             raise NotImplementedError('rendering rgb_arrays not yet implemented')
         if mode is 'human':

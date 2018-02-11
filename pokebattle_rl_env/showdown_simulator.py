@@ -152,7 +152,7 @@ def read_state_json(json, state):
 
 
 class ShowdownSimulator(BattleSimulator):
-    def __init__(self, auth='auth.txt'):
+    def __init__(self, auth=''):
         print('Using Showdown backend')
         self._connect(auth)
         print(f'Using username {self.username} with password {self.password}')
@@ -199,13 +199,16 @@ class ShowdownSimulator(BattleSimulator):
     def _update_state(self):
         msg = self.ws.recv()
         while not self._parse_message(msg):
+            print(msg)
             msg = self.ws.recv()
 
     def _parse_message(self, msg):
-        end = False
-        if not hasattr(self, 'room_id') is None and '|init|battle' in msg:
+        if not hasattr(self, 'room_id') and '|init|battle' in msg:
             self.room_id = msg.split('\n')[0][1:]
-        msgs = msg.split('\n')  # ToDo: Check whether msg starts with >room_id
+        if not msg.startswith(f'>{self.room_id}'):
+            return False
+        end = False
+        msgs = msg.split('\n')
         for msg in msgs:
             info = msg.split('|')
             if len(info) < 2:
