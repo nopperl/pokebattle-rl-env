@@ -278,6 +278,9 @@ class ShowdownSimulator(BattleSimulator):
                     condition = info[3]
                     if condition in cured.conditions:
                         cured.conditions.remove(condition)
+            elif info[1] == '-message':
+                if 'lost due to inactivity.' in info[2] or 'forfeited.' in info[2]:
+                    self.state.forfeited = True
         return end
 
     def render(self, mode='human'):

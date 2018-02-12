@@ -143,6 +143,7 @@ class GameState:
         self.player_condition = None  # Stealth Rocks, Tailwind, etc
         self.opponent_condition = None
         self.turn = 1
+        self.forfeited = False
 
     def to_array(self):
         state = []

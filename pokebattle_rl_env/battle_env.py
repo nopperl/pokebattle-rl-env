@@ -6,6 +6,9 @@ from gym.spaces import Box
 from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
 
 
+TURN_THRESHOLD = 10
+
+
 def softmax(x):
     return np.exp(x) / np.sum(np.exp(x), axis=0)
 
@@ -39,7 +42,15 @@ class BattleEnv(Env):
         return action
 
     def compute_reward(self):
-        return 1 if self.simulator.state.state == 'won' else -1 if self.simulator.state.state == 'lost' else 0
+        if self.simulator.state.state == 'won':
+            if self.simulator.state.forfeited:
+                if self.simulator.state.turn > TURN_THRESHOLD:
+                    return 1
+                return 0
+            return 1
+        elif self.simulator.state.state == 'lost':
+            return -1
+        return 0
 
     def step(self, action):
         action = self.get_action(action)
@@ -59,7 +70,7 @@ class BattleEnv(Env):
             raise NotImplementedError('rendering in human mode not yet implemented')
 
         else:
-            super().render(mode=mode, close=close)
+            super().render(mode=mode)
 
     def close(self):
         self.simulator.close()
