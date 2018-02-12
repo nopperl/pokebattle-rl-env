@@ -63,6 +63,46 @@ def parse_pokemon_details(details):
     return species, gender
 
 
+def ident_to_name(ident):
+    return ident.split(':')[1][1:]
+
+
+def parse_health_status(string):
+    status = None
+    max_health = None
+    if ' ' in string:
+        health, status = string.split(' ')
+    else:
+        health = string
+    if '/' in health:
+        health, max_health = health.split('/')
+    return float(health), float(max_health) if max_health is not None else None, status
+
+
+def parse_damage_heal(info, state, opponent_short):
+    if opponent_short in info[2]:
+        name = ident_to_name(info[2])
+        damaged = next(p for p in state.opponent.pokemon if p.name == name)
+        health, max_health, status = parse_health_status(info[3])
+        if status is not None and status not in damaged.statuses:
+            damaged.statuses.append(status)
+        if max_health is not None:
+            damaged.max_health = max_health
+        damaged.health = health
+
+
+def parse_status(info, state, opponent_short, cure=False):
+    if opponent_short in info[2]:
+        name = ident_to_name(info[2])
+        affected = next(p for p in state.opponent.pokemon if p.name == name)
+        status = info[3]
+        if status not in affected.statuses:
+            if cure:
+                affected.statuses.remove(status)
+            else:
+                affected.statuses.append(status)
+
+
 def parse_move(info, state, opponent_short):
     if opponent_short in info[2]:
         move_name = info[3]
@@ -74,7 +114,7 @@ def parse_move(info, state, opponent_short):
 
 
 def parse_switch(info, state, opponent_short):
-    name = info[2].split(':')[1][1:]
+    name = ident_to_name(info[2])
     species = info[3].split(',')[0]
     if opponent_short in info[2]:
         pokemon = state.opponent.pokemon
@@ -95,31 +135,20 @@ def parse_switch(info, state, opponent_short):
         switched_in.gender = gender
         switched_in.health = health
         switched_in.max_health = max_health if max_health is not None else 100
-        if status not in switched_in.conditions:
-            switched_in.conditions.append(status)
+        if status not in switched_in.statuses:
+            switched_in.statuses.append(status)
         switched_in.update()
     else:
         pokemon = state.player.pokemon
         switched_in = next((p for p in pokemon if p.species == species or p.name == name), None)
-    pokemon.insert(0, pokemon.pop(pokemon.index(switched_in)))
+        switched_index = pokemon.index(switched_in)
+        pokemon[0], pokemon[switched_index] = pokemon[switched_index], pokemon[0]
 
 
 def sanitize_hidden_power(move_id):
     if move_id.startswith('hiddenpower') and move_id.endswith('60'):
         move_id = move_id[:-2]
     return move_id
-
-
-def parse_health_status(string):
-    condition = None
-    max_health = None
-    if ' ' in string:
-        health, condition = string.split(' ')
-    else:
-        health = string
-    if '/' in health:
-        health, max_health = health.split('/')
-    return float(health), float(max_health) if max_health is not None else None, condition
 
 
 def read_state_json(json, state):
@@ -143,13 +172,13 @@ def read_state_json(json, state):
     for i in range(len(pokemon_list)):
         st_pokemon = state.player.pokemon[i]
         pokemon = pokemon_list[i]
-        st_pokemon.name = pokemon['ident'].split(':')[1][1:]
+        st_pokemon.name = ident_to_name(pokemon['ident'])
         st_pokemon.species, st_pokemon.gender = parse_pokemon_details(pokemon['details'])
         health, max_health, status = parse_health_status(pokemon['condition'])
         if max_health is not None:
             st_pokemon.max_health = max_health
         st_pokemon.health = health
-        st_pokemon.conditions = [status]
+        st_pokemon.statuses = [status]
         st_pokemon.stats = pokemon['stats']
         if not pokemon['active'] and not all(
                 move_id in [move.name for move in st_pokemon.moves] for move_id in pokemon['moves']):
@@ -157,16 +186,15 @@ def read_state_json(json, state):
         st_pokemon.item = pokemon['item']
         st_pokemon.ability = pokemon['ability']
         st_pokemon.unknown = False
-        state.player.pokemon.insert(i, state.player.pokemon.pop(state.player.pokemon.index(st_pokemon)))
 
 
 class ShowdownSimulator(BattleSimulator):
-    def __init__(self, auth=''):
+    def __init__(self, auth='auth.txt'):
         print('Using Showdown backend')
-        self._connect(auth)
-        print(f'Using username {self.username} with password {self.password}')
         self.state = GameState()
+        self.auth = auth
         self.room_id = None
+        self.ws = None
         super().__init__()
 
     def _connect(self, auth):
@@ -194,13 +222,14 @@ class ShowdownSimulator(BattleSimulator):
         self.ws.send(login_cmd)
         msg = ''
         while not msg.startswith('|updateuser|') and self.username not in msg:
-            print(msg)
             msg = self.ws.recv()
+            print(msg)
 
     def _attack(self, move):
         self.ws.send(f'{self.room_id}|/move {move}')
 
     def _switch(self, pokemon):
+        print(f'{self.room_id}|/switch {pokemon}')
         self.ws.send(f'{self.room_id}|/switch {pokemon}')
 
     def _update_state(self):
@@ -208,14 +237,15 @@ class ShowdownSimulator(BattleSimulator):
         while not end:
             msg = self.ws.recv()
             end = self._parse_message(msg)
+        print('Updated')
 
     def _parse_message(self, msg):
+        print(msg)
         if self.room_id is None and '|init|battle' in msg:
             self.room_id = msg.split('\n')[0][1:]
         end = False
         if not msg.startswith(f'>{self.room_id}'):
             return False
-        print(msg)
         msgs = msg.split('\n')
         for msg in msgs:
             info = msg.split('|')
@@ -255,32 +285,15 @@ class ShowdownSimulator(BattleSimulator):
             elif info[1] == 'switch' or info[1] == 'drag':
                 parse_switch(info, self.state, self.opponent_short)
             elif info[1] == '-damage':
-                if self.opponent_short in info[2]:
-                    name = info[2].split(':')[1][1:]
-                    damaged = next(p for p in self.state.opponent.pokemon if p.name == name)
-                    health, max_health, condition = parse_health_status(info[3])
-                    if condition is not None and condition not in damaged.conditions:
-                        damaged.conditions.append(condition)
-                    if max_health is not None:
-                        damaged.max_health = max_health
-                    damaged.health = health
+                parse_damage_heal(info, self.state, self.opponent_short)
             elif info[1] == '-status':
-                if self.opponent_short in info[2]:
-                    name = info[2].split(':')[1][1:]
-                    inflicted = next(p for p in self.state.opponent.pokemon if p.name == name)
-                    condition = info[3]
-                    if condition not in inflicted.conditions:
-                        inflicted.conditions.append(condition)
+                parse_status(info, self.state, self.opponent_short)
             elif info[1] == '-curestatus':
-                if self.opponent_short in info[2]:
-                    name = info[2].split(':')[1][1:]
-                    cured = next(p for p in self.state.opponent.pokemon if p.name == name)
-                    condition = info[3]
-                    if condition in cured.conditions:
-                        cured.conditions.remove(condition)
+                parse_status(info, self.state, self.opponent_short, cure=True)
             elif info[1] == '-message':
                 if 'lost due to inactivity.' in info[2] or 'forfeited.' in info[2]:
                     self.state.forfeited = True
+            # ToDo: Handle |-start|POKEMON|confusion
         return end
 
     def render(self, mode='human'):
@@ -289,13 +302,17 @@ class ShowdownSimulator(BattleSimulator):
 
     def reset(self):
         if self.state.state == 'ongoing':
-            self.ws.send('|/forfeit')
+            self.ws.send(f'{self.room_id}|/forfeit')
         if self.room_id is not None:
+            print(f'|/leave {self.room_id}')
             self.ws.send(f'|/leave {self.room_id}')
             msg = ''
             while 'deinit' not in msg:
-                print(msg)
                 msg = self.ws.recv()
+                print(msg)
+        if self.ws is None:
+            self._connect(self.auth)
+            print(f'Using username {self.username} with password {self.password}')
         self.ws.send('|/utm null')  # Team
         self.ws.send('|/search gen7randombattle')  # Tier
         self._update_state()

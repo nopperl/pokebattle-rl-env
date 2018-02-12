@@ -5,3 +5,5 @@ https://web.stanford.edu/class/cs221/2017/restricted/p-final/kkhosla/final.pdf
 https://github.com/rishihahs/pokemonai
 https://github.com/jking31cs/pokemon-learning
 https://github.com/dramamine/leftovers-again
+https://varunramesh.net/content/documents/cs221-final-report.pdf
+    https://github.com/rameshvarun/showdownbot

@@ -43,13 +43,13 @@ class Stats:
 
 class Pokemon:
     def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None, moves=None,
-                 item=None, name=None, conditions=None, trapped=False, unknown=False):
+                 item=None, name=None, statuses=None, trapped=False, unknown=False):
         self.species = species
         self.health = health
         self.max_health = max_health
-        if conditions is None:
-            conditions = []
-        self.conditions = conditions
+        if statuses is None:
+            statuses = []
+        self.statuses = statuses
         self.gender = gender
         if stats is None:
             stats = {}
@@ -106,8 +106,8 @@ def pokemon_list_to_array(pokemon_list):
         state.append(health)
         for gender in genders:
             state.append(1 if gender == pokemon.gender else 0)
-        for condition in status_conditions:
-            state.append(1 if condition in pokemon.conditions else 0)
+        for status in status_conditions:
+            state.append(1 if status in pokemon.statuses else 0)
         for stat in ['atk', 'def', 'spa', 'spd', 'spe']:
             state.append(pokemon.stats[stat] if stat in pokemon.stats else DEFAULT_STAT_VALUE)
         for ability in abilities:
