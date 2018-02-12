@@ -156,14 +156,15 @@ def read_state_json(json, state):
     st_active_pokemon = state.player.pokemon[0]
     st_active_pokemon.moves = []
     active_pokemon = json['active'][0]
-    if 'trapped' in active_pokemon:
+    moves = active_pokemon['moves']
+    if 'trapped' in active_pokemon and len(moves) <= 1:
         st_active_pokemon.trapped = active_pokemon['trapped']
-        enabled_move_id = next(iter(active_pokemon['moves'].values()))['id']
+        enabled_move_id = next(iter(moves.values()))['id']
         for move in st_active_pokemon.moves:
             move.disabled = not move.id == enabled_move_id
     else:
         st_active_pokemon.trapped = False
-        for move in active_pokemon['moves']:
+        for move in moves:
             move_id = move['id']
             move_id = sanitize_hidden_power(move_id)
             move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
@@ -237,15 +238,14 @@ class ShowdownSimulator(BattleSimulator):
         while not end:
             msg = self.ws.recv()
             end = self._parse_message(msg)
-        print('Updated')
 
     def _parse_message(self, msg):
-        print(msg)
         if self.room_id is None and '|init|battle' in msg:
             self.room_id = msg.split('\n')[0][1:]
         end = False
         if not msg.startswith(f'>{self.room_id}'):
             return False
+        print(msg)
         msgs = msg.split('\n')
         for msg in msgs:
             info = msg.split('|')
@@ -304,8 +304,8 @@ class ShowdownSimulator(BattleSimulator):
         if self.state.state == 'ongoing':
             self.ws.send(f'{self.room_id}|/forfeit')
         if self.room_id is not None:
-            print(f'|/leave {self.room_id}')
             self.ws.send(f'|/leave {self.room_id}')
+            self.room_id = None
             msg = ''
             while 'deinit' not in msg:
                 msg = self.ws.recv()
