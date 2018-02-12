@@ -124,13 +124,21 @@ def parse_health_status(string):
 
 def read_state_json(json, state):
     json = loads(json)
-    active_pokemon = state.player.pokemon[0]
-    active_pokemon.moves = []
-    for move in json['active'][0]['moves']:
-        move_id = move['id']
-        move_id = sanitize_hidden_power(move_id)
-        move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
-        active_pokemon.moves.append(move)
+    st_active_pokemon = state.player.pokemon[0]
+    st_active_pokemon.moves = []
+    active_pokemon = json['active'][0]
+    if 'trapped' in active_pokemon:
+        st_active_pokemon.trapped = active_pokemon['trapped']
+        enabled_move_id = next(iter(active_pokemon['moves'].values()))['id']
+        for move in st_active_pokemon.moves:
+            move.disabled = not move.id == enabled_move_id
+    else:
+        st_active_pokemon.trapped = False
+        for move in active_pokemon['moves']:
+            move_id = move['id']
+            move_id = sanitize_hidden_power(move_id)
+            move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
+            st_active_pokemon.moves.append(move)
     pokemon_list = json['side']['pokemon']
     for i in range(len(pokemon_list)):
         st_pokemon = state.player.pokemon[i]
@@ -182,7 +190,6 @@ class ShowdownSimulator(BattleSimulator):
             self.username = generate_username()
             self.password = None
             assertion = auth_temp_user(challstr=challstr, username=self.username)
-        print(assertion)
         login_cmd = f'|/trn {self.username},0,{assertion}'
         self.ws.send(login_cmd)
         msg = ''
@@ -197,17 +204,18 @@ class ShowdownSimulator(BattleSimulator):
         self.ws.send(f'{self.room_id}|/switch {pokemon}')
 
     def _update_state(self):
-        msg = self.ws.recv()
-        while not self._parse_message(msg):
-            print(msg)
+        end = False
+        while not end:
             msg = self.ws.recv()
+            end = self._parse_message(msg)
 
     def _parse_message(self, msg):
-        if not hasattr(self, 'room_id') and '|init|battle' in msg:
+        if self.room_id is None and '|init|battle' in msg:
             self.room_id = msg.split('\n')[0][1:]
+        end = False
         if not msg.startswith(f'>{self.room_id}'):
             return False
-        end = False
+        print(msg)
         msgs = msg.split('\n')
         for msg in msgs:
             info = msg.split('|')
@@ -235,6 +243,7 @@ class ShowdownSimulator(BattleSimulator):
                 end = True
             elif info[1] == 'request':
                 if info[2].startswith('{"forceSwitch":[true]'):
+                    self.force_switch = True
                     end = True
                     continue
                 if info[2] != '' and not info[2].startswith('{"wait":true'):

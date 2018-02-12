@@ -2,6 +2,10 @@
 - how to implement mega evolution and z moves?
     - have specific preconditions and can only be triggered once
 - use new user for each training run?
+- count forfeit wins?
+    - if prematurely forfeited (eg connection loss) -> noise
+    - opponents often forfeit game when in unfavorable state -> signal loss if not counted
+    - turn threshold for count?
 - multiple pokemon of same species in teams?
 - smogon rules
 - infinite battle

@@ -1,11 +1,20 @@
 from pokebattle_rl_env.game_state import GameState
 
 
-class BattleSimulator:
-    num_actions = 9  # Attack using one of 4 moves, switch to one of 5 pokemon
+class Action:
+    def __init__(self, mode, number):
+        self.mode = mode
+        self.number = number
 
+
+default_actions = [Action(mode='attack', number=i) for i in range(1, 5)] + [Action(mode='switch', number=i) for i in
+                                                                            range(2, 7)]
+
+
+class BattleSimulator:
     def __init__(self):
         self.state = GameState()
+        self.force_switch = False
 
     def _attack(self, move):
         raise NotImplementedError
@@ -13,13 +22,31 @@ class BattleSimulator:
     def _switch(self, pokemon):
         raise NotImplementedError
 
-    def act(self, mode, number):
-        if mode == 'attack':
-            self._attack(number)
-        elif mode == 'switch':
-            self._switch(number)
+    def get_available_actions(self):
+        actions = []
+        if all([p.unknown for p in self.state.player.pokemon]):
+            return default_actions
+        active = self.state.player.pokemon[0]
+        if not self.force_switch:
+            for i in range(len(active.moves)):
+                if not active.moves[i].disabled:
+                    actions.append(Action('attack', i + 1))
+        if not active.trapped:
+            for i in range(len(self.state.player.pokemon[1:])):
+                pokemon = self.state.player.pokemon[i]
+                print(pokemon.health)
+                if pokemon.health > 0:
+                    actions.append(Action('switch', i + 2))
+        return actions
+
+    def act(self, action):
+        self.force_switch = False
+        if action.mode == 'attack':
+            self._attack(action.number)
+        elif action.mode == 'switch':
+            self._switch(action.number)
         else:
-            raise ValueError(f'Invalid action mode {mode}')
+            raise ValueError(f'Invalid action mode {action.mode}')
         self._update_state()
 
     def _update_state(self):

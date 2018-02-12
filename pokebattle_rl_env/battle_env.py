@@ -6,24 +6,45 @@ from gym.spaces import Box
 from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
 
 
+def softmax(x):
+    return np.exp(x) / np.sum(np.exp(x), axis=0)
+
+
 class BattleEnv(Env):
     def __init__(self, simulator=ShowdownSimulator()):
         self.__version__ = "0.1.0"
         self._spec = EnvSpec('PokeBattleEnv-v0')
         self.simulator = simulator
-        self.action_space = Box(low=0.0, high=1.0, shape=(self.simulator.num_actions,))
+        num_actions = len(self.simulator.get_available_actions())
+        self.action_space = Box(low=0.0, high=1.0, shape=(num_actions,))
         state_dimensions = len(self.simulator.state.to_array())
         self.observation_space = Box(low=0, high=1000, shape=(state_dimensions,))
         self.reward_range = (-1, 1)
         # ToDo: Set metadata['render.modes']
 
+    def get_action(self, action_probs):
+        valid_actions = self.simulator.get_available_actions()
+        estimates = []
+        for valid_action in valid_actions:
+            print(valid_action.number)
+            if valid_action.mode == 'attack':
+                action_ix = valid_action.number - 1
+            elif valid_action.mode == 'switch':
+                action_ix = valid_action.number + 2
+            else:
+                continue
+            estimates.append(action_probs[action_ix])
+        estimates = softmax(estimates)
+        action = np.random.choice(valid_actions, p=estimates)
+        return action
+
+    def compute_reward(self):
+        return 1 if self.simulator.state.state == 'won' else -1 if self.simulator.state.state == 'lost' else 0
+
     def step(self, action):
-        action = np.argmax(action)  # ToDo: Handle forced switches (eg Roar), forced moves (eg Outrage), disabled moves
-        if action < 4:
-            self.simulator.act('attack', action + 1)
-        else:
-            self.simulator.act('switch', action - 2)
-        reward = 1 if self.simulator.state.state == 'won' else -1 if self.simulator.state.state == 'lost' else 0
+        action = self.get_action(action)
+        self.simulator.act(action)
+        reward = self.compute_reward()  # ToDo: Maybe negative reward for assigning probability to invalid action
         return self.simulator.state.to_array(), reward, self.simulator.state.state != 'ongoing', None
 
     def reset(self):

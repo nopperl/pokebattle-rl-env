@@ -43,7 +43,7 @@ class Stats:
 
 class Pokemon:
     def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None, moves=None,
-                 item=None, name=None, conditions=None, unknown=False):
+                 item=None, name=None, conditions=None, trapped=False, unknown=False):
         self.species = species
         self.health = health
         self.max_health = max_health
@@ -59,6 +59,7 @@ class Pokemon:
         self.moves = moves
         self.ability = ability
         self.item = item
+        self.trapped = trapped
         self.unknown = unknown
         if name is None:
             name = species
