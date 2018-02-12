@@ -306,6 +306,7 @@ class ShowdownSimulator(BattleSimulator):
         if self.room_id is not None:
             self.ws.send(f'|/leave {self.room_id}')
             self.room_id = None
+            # ToDo: cleanup state
             msg = ''
             while 'deinit' not in msg:
                 msg = self.ws.recv()
