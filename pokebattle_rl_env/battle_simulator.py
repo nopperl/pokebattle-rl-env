@@ -35,7 +35,7 @@ class BattleSimulator:
             for i in range(len(self.state.player.pokemon[1:])):
                 pokemon = self.state.player.pokemon[i]
                 if pokemon.health > 0:
-                    actions.append(Action('switch', i + 1))
+                    actions.append(Action('switch', i + 2))
         return actions
 
     def act(self, action):

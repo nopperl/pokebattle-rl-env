@@ -157,6 +157,7 @@ def read_state_json(json, state):
         st_pokemon.item = pokemon['item']
         st_pokemon.ability = pokemon['ability']
         st_pokemon.unknown = False
+        state.player.pokemon.insert(i, state.player.pokemon.pop(state.player.pokemon.index(st_pokemon)))
 
 
 class ShowdownSimulator(BattleSimulator):
@@ -164,7 +165,6 @@ class ShowdownSimulator(BattleSimulator):
         print('Using Showdown backend')
         self._connect(auth)
         print(f'Using username {self.username} with password {self.password}')
-        self.ws.send('|/utm null')  # Team
         self.state = GameState()
         self.room_id = None
         super().__init__()
@@ -294,7 +294,9 @@ class ShowdownSimulator(BattleSimulator):
             self.ws.send(f'|/leave {self.room_id}')
             msg = ''
             while 'deinit' not in msg:
+                print(msg)
                 msg = self.ws.recv()
+        self.ws.send('|/utm null')  # Team
         self.ws.send('|/search gen7randombattle')  # Tier
         self._update_state()
         print(f'Playing against {self.opponent}')
