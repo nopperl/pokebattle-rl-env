@@ -29,7 +29,6 @@ class BattleEnv(Env):
         valid_actions = self.simulator.get_available_actions()
         estimates = []
         for valid_action in valid_actions:
-            print(valid_action.number)
             if valid_action.mode == 'attack':
                 action_ix = valid_action.number - 1
             elif valid_action.mode == 'switch':
