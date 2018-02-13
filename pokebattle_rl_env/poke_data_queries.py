@@ -8,10 +8,13 @@ pokedex = loads(get_data('pokebattle_rl_env', 'data/pokedex.json'))['BattlePoked
 typechart = loads(get_data('pokebattle_rl_env', 'data/typechart.json'))['BattleTypeChart']
 
 genders = ['f', 'm', 'n']
-status_conditions = ['brn', 'par', 'slp', 'frz', 'psn', 'tox', 'confusion', 'trapped']
+status_conditions = ['brn', 'par', 'slp', 'frz', 'psn', 'tox', 'confusion']
 targets = ['all', 'normal', 'self']
-weathers = ['raindance', 'primordialsea', 'sunnyday', 'desolateland', 'sandstorm', 'hail', 'deltastream']
-
+weathers = [move['weather'] for move in moves.values() if 'weather' in move]
+side_conditions = [move['sideCondition'] for move in moves.values() if 'sideCondition' in move]
+terrains = [move['terrain'] for move in moves.values() if 'terrain' in move]
+pseudoWeathers = [move['pseuoWeather'] for move in moves.values() if 'pseuoWeather' in move]
+field_effects = terrains + pseudoWeathers
 
 def move_id_to_name(id):
     return moves[id]['name']

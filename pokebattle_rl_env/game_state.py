@@ -1,7 +1,7 @@
 import numpy as np
 
-from pokebattle_rl_env.poke_data_queries import abilities, genders, get_move_by_name, get_pokemon_by_species, items, \
-    moves, targets, typechart, status_conditions
+from pokebattle_rl_env.poke_data_queries import abilities, field_effects, genders, get_move_by_name, get_pokemon_by_species, items, \
+    moves, targets, typechart, side_conditions, status_conditions, weathers
 
 DEFAULT_STAT_VALUE = 60
 
@@ -139,19 +139,26 @@ class GameState:
         self.player = Trainer()
         self.opponent = Trainer()
         self.weather = None
-        self.field = None
-        self.player_condition = None  # Stealth Rocks, Tailwind, etc
-        self.opponent_condition = None
+        self.field_effects = []
+        self.player_conditions = []  # Stealth Rocks, Tailwind, etc
+        self.opponent_conditions = []
         self.turn = 1
         self.forfeited = False
 
     def to_array(self):
         state = []
-        # ToDo: weather, field
         # ToDo: mega used
         state.append(self.turn)
         state += pokemon_list_to_array(self.player.pokemon)
+        for condition in side_conditions:
+            state.append(1 if condition in self.player_conditions else 0)
         state += pokemon_list_to_array(self.opponent.pokemon)
+        for condition in side_conditions:
+            state.append(1 if condition in self.opponent_conditions else 0)
+        for effect in field_effects:
+            state.append(1 if effect in self.field_effects else 0)
+        for weather in weathers:
+            state.append(1 if weather == self.weather else 0)
         state = np.array(state)
         state[state is None] = 0
         return state

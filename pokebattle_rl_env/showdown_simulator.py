@@ -8,6 +8,7 @@ from websocket import WebSocket
 
 from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import GameState, Move
+from pokebattle_rl_env.poke_data_queries import get_move_by_name
 
 WEB_SOCKET_URL = "wss://sim.smogon.com/showdown/websocket"
 SHOWDOWN_ACTION_URL = "https://play.pokemonshowdown.com/action.php"
@@ -91,6 +92,51 @@ def parse_damage_heal(info, state, opponent_short):
         damaged.health = health
 
 
+def parse_field(info, state, start=True):
+    move = get_move_by_name(info[2])
+    if 'terrain' in move:
+        effect = move['terrain']
+    elif 'pseuoWeather' in move:
+        effect = move['pseuoWeather']
+    else:
+        return
+    if start:
+        state.field_effects.append(effect)
+    else:
+        if effect in state.fields:
+            state.field_effects.remove(effect)
+
+
+def parse_sideeffect(info, state, opponent_short, start=True):
+    move = get_move_by_name(info[3])
+    if 'sideCondition' in move:
+        condition = move['sideCondition']
+        if opponent_short in info[2]:
+            if start:
+                state.opponent_conditions.append(condition)
+            else:
+                state.opponent_conditions.remove(condition)
+        else:
+            if start:
+                state.player_conditions.append(condition)
+            else:
+                state.player_conditions.remove(condition)
+
+
+def parse_start_end(info, state, opponent_short, start=True):
+    name = ident_to_name(info[2])
+    if opponent_short in info[2]:
+        pokemon = state.opponent.pokemon
+    else:
+        pokemon = state.player.pokemon
+    confused = next(p for p in pokemon if p.name == name)
+    if info[3] == 'confusion':
+        if start:
+            confused.statuses.append('confusion')
+        else:
+            confused.statuses.remove('confusion')
+
+
 def parse_status(info, state, opponent_short, cure=False):
     if opponent_short in info[2]:
         name = ident_to_name(info[2])
@@ -159,7 +205,7 @@ def read_state_json(json, state):
     moves = active_pokemon['moves']
     if 'trapped' in active_pokemon and len(moves) <= 1:
         st_active_pokemon.trapped = active_pokemon['trapped']
-        enabled_move_id = next(iter(moves.values()))['id']
+        enabled_move_id = moves[next(iter(moves))]['id']
         for move in st_active_pokemon.moves:
             move.disabled = not move.id == enabled_move_id
     else:
@@ -284,7 +330,7 @@ class ShowdownSimulator(BattleSimulator):
                 pass  # ToDo: update weather, status turns
             elif info[1] == 'switch' or info[1] == 'drag':
                 parse_switch(info, self.state, self.opponent_short)
-            elif info[1] == '-damage':
+            elif info[1] == '-damage' or info[1] == '-heal':
                 parse_damage_heal(info, self.state, self.opponent_short)
             elif info[1] == '-status':
                 parse_status(info, self.state, self.opponent_short)
@@ -293,7 +339,24 @@ class ShowdownSimulator(BattleSimulator):
             elif info[1] == '-message':
                 if 'lost due to inactivity.' in info[2] or 'forfeited.' in info[2]:
                     self.state.forfeited = True
-            # ToDo: Handle |-start|POKEMON|confusion
+            elif info[1] == '-start':
+                parse_start_end(info, self.state, self.opponent_short)
+            elif info[1] == '-end':
+                parse_start_end(info, self.state, self.opponent_short, start=False)
+            elif info[1] == '-sidestart':
+                parse_sideeffect(info, self.state, self.opponent_short)
+            elif info[1] == '-sideend':
+                parse_sideeffect(info, self.state, self.opponent_short, start=False)
+            elif info[1] == '-weather':
+                if info[2] == 'none':
+                    self.state.weather = None
+                else:
+                    self.state.weather = info[2]
+            # ToDo: -boost, -unboost
+            elif info[1] == '-fieldstart':
+                parse_field(info, self.state)
+            elif info[1] == '-fieldend':
+                parse_field(info, self.state, start=False)
         return end
 
     def render(self, mode='human'):
@@ -306,7 +369,7 @@ class ShowdownSimulator(BattleSimulator):
         if self.room_id is not None:
             self.ws.send(f'|/leave {self.room_id}')
             self.room_id = None
-            # ToDo: cleanup state
+            self.state = GameState()
             msg = ''
             while 'deinit' not in msg:
                 msg = self.ws.recv()
