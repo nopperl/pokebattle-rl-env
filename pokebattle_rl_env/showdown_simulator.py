@@ -352,11 +352,16 @@ class ShowdownSimulator(BattleSimulator):
                     self.state.weather = None
                 else:
                     self.state.weather = info[2]
-            # ToDo: -boost, -unboost
+            # ToDo: Handle -boost, -unboost
             elif info[1] == '-fieldstart':
                 parse_field(info, self.state)
             elif info[1] == '-fieldend':
                 parse_field(info, self.state, start=False)
+            # ToDo: Handle -ability, -endability, |-activate|POKEMON|ability: ABIlITY and [from] ability: ABILITY in -curestatus, -weather, -formechange, -damage, -heal, etc
+            # ToDo: Handle -transform (Ditto, Zoroark, ...)
+            # ToDo: Handle -mega (MEGASTONE item)
+            # ToDo: Handle -item and -enditem
+            # ToDo: Handle detailschange
         return end
 
     def render(self, mode='human'):
