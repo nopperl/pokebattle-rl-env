@@ -16,7 +16,9 @@ class BattleSimulator:
         self.state = GameState()
         self.force_switch = False
 
-    def _attack(self, move):
+    action_modifiers = ['mega', 'z']
+
+    def _attack(self, move, mega=False, z=False):
         raise NotImplementedError
 
     def _switch(self, pokemon):
@@ -38,10 +40,10 @@ class BattleSimulator:
                     actions.append(Action('switch', i + 1))
         return actions
 
-    def act(self, action):
+    def act(self, action, modifiers):
         self.force_switch = False
         if action.mode == 'attack':
-            self._attack(action.number)
+            self._attack(action.number, 'mega' in modifiers, 'z' in modifiers)
         elif action.mode == 'switch':
             self._switch(action.number)
         else:

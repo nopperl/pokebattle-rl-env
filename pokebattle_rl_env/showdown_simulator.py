@@ -327,9 +327,12 @@ class ShowdownSimulator(BattleSimulator):
             msg = self.ws.recv()
             print(msg)
 
-    def _attack(self, move):
-        print(f'{self.room_id}|/switch {move}')
-        self.ws.send(f'{self.room_id}|/move {move}')
+    def _attack(self, move, mega=False, z=False):
+        cmd = f'{self.room_id}|/switch {move}'
+        cmd += ' mega' if mega else ''
+        cmd += ' zmove' if z else ''
+        print(cmd)
+        self.ws.send(cmd)
 
     def _switch(self, pokemon):
         print(f'{self.room_id}|/switch {pokemon}')

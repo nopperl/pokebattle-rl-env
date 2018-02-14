@@ -18,7 +18,7 @@ class BattleEnv(Env):
         self.__version__ = "0.1.0"
         self._spec = EnvSpec('PokeBattleEnv-v0')
         self.simulator = simulator
-        num_actions = len(self.simulator.get_available_actions())
+        num_actions = len(self.simulator.get_available_actions()) + len(self.simulator.action_modifiers)
         self.action_space = Box(low=0.0, high=1.0, shape=(num_actions,))
         state_dimensions = len(self.simulator.state.to_array())
         self.observation_space = Box(low=0, high=1000, shape=(state_dimensions,))
@@ -40,6 +40,13 @@ class BattleEnv(Env):
         action = np.random.choice(valid_actions, p=estimates)
         return action
 
+    def get_action_modifier(self, action_probs):
+        modifiers = []
+        for i in range(len(self.simulator.action_modifiers)):
+            if action_probs[len(action_probs) - 1 - i] > 0.5:  # ToDo: Better sampling?
+                modifiers.append(self.simulator.action_modifiers[len(self.simulator.action_modifiers - i)])
+        return modifiers
+
     def compute_reward(self):
         if self.simulator.state.state == 'win':
             if self.simulator.state.forfeited:
@@ -52,8 +59,9 @@ class BattleEnv(Env):
         return 0
 
     def step(self, action):
-        action = self.get_action(action)
-        self.simulator.act(action)
+        game_action = self.get_action(action)
+        modifiers = self.get_action_modifier(action)
+        self.simulator.act(game_action, modifiers)
         observation = self.simulator.state.to_array()
         reward = self.compute_reward()  # ToDo: Maybe negative reward for assigning probability to invalid action
         done = self.simulator.state.state in ['win', 'loss', 'tie']
