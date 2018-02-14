@@ -18,7 +18,7 @@ class BattleEnv(Env):
         self.__version__ = "0.1.0"
         self._spec = EnvSpec('PokeBattleEnv-v0')
         self.simulator = simulator
-        num_actions = len(self.simulator.get_available_actions()) + len(self.simulator.action_modifiers)
+        num_actions = len(self.simulator.get_available_actions()) + len(self.simulator.get_available_modifiers())
         self.action_space = Box(low=0.0, high=1.0, shape=(num_actions,))
         state_dimensions = len(self.simulator.state.to_array())
         self.observation_space = Box(low=0, high=1000, shape=(state_dimensions,))
@@ -41,10 +41,13 @@ class BattleEnv(Env):
         return action
 
     def get_action_modifier(self, action_probs):
+        valid_modifiers = self.simulator.get_available_modifiers()
         modifiers = []
-        for i in range(len(self.simulator.action_modifiers)):
-            if action_probs[len(action_probs) - 1 - i] > 0.5:  # ToDo: Better sampling?
-                modifiers.append(self.simulator.action_modifiers[len(self.simulator.action_modifiers - i)])
+        for valid_modifier in valid_modifiers:
+            if valid_modifier == 'mega' and action_probs[len(action_probs) - 2] > 0.5:  # ToDo: Better sampling
+                modifiers.append('mega')
+            elif valid_modifier == 'z' and action_probs[len(action_probs) - 1] > 0.5:
+                modifiers.append('z')
         return modifiers
 
     def compute_reward(self):

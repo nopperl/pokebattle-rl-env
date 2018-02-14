@@ -328,7 +328,7 @@ class ShowdownSimulator(BattleSimulator):
             print(msg)
 
     def _attack(self, move, mega=False, z=False):
-        cmd = f'{self.room_id}|/switch {move}'
+        cmd = f'{self.room_id}|/move {move}'
         cmd += ' mega' if mega else ''
         cmd += ' zmove' if z else ''
         print(cmd)
@@ -419,7 +419,6 @@ class ShowdownSimulator(BattleSimulator):
                 parse_field(info, self.state)
             elif info[1] == '-fieldend':
                 parse_field(info, self.state, start=False)
-            # ToDo: Handle |-activate|POKEMON|ability: ABIlITY and [from] ability: ABILITY in -curestatus, -weather, -formechange, -damage, -heal, etc
             elif info[1] == '-ability':
                 pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
                 ability = ability_name_to_id(info[3])
