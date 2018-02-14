@@ -55,7 +55,7 @@ class Pokemon:
             stats = {}
         self.stats = stats
         if stat_boosts is None:
-            stat_boosts = {}
+            stat_boosts = {'atk': 0, 'def': 0, 'spa': 0, 'spd': 0, 'spe': 0}
         self.stat_boosts = stat_boosts
         if moves is None:
             moves = []
@@ -110,6 +110,13 @@ class Trainer:
         self.mega_used = mega_used
 
 
+def calc_stat(stat, boost):
+    if boost >= 0:
+        return stat * (3 + boost) / 3
+    else:
+        return stat * 3 / (3 + boost)
+
+
 def pokemon_list_to_array(pokemon_list):
     state = []
     for pokemon in pokemon_list:
@@ -120,7 +127,9 @@ def pokemon_list_to_array(pokemon_list):
         for status in status_conditions:
             state.append(1 if status in pokemon.statuses else 0)
         for stat in ['atk', 'def', 'spa', 'spd', 'spe']:
-            state.append(pokemon.stats[stat] if stat in pokemon.stats else DEFAULT_STAT_VALUE)
+            stat_value = pokemon.stats[stat] if stat in pokemon.stats else DEFAULT_STAT_VALUE
+            boost = pokemon.stat_boosts[stat]
+            state.append(calc_stat(stat_value, boost))
         for ability in abilities:
             state.append(1 if ability == pokemon.ability else 0)
         for type in typechart:

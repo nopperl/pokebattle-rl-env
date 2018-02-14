@@ -187,3 +187,6 @@
 
 |raw|fsedfs's rating: 1095 &rarr; <strong>1124</strong><br />(+29 for winning)
 |raw|rahul5006's rating: 1141 &rarr; <strong>1112</strong><br />(-29 for losing)
+
+
+|-fieldstart|move: Electric Terrain|[from] ability: Electric Surge|[of] p2a: Tapu Koko

@@ -1,4 +1,4 @@
 .*
-auth.txt
+auth*
 /**/__pycache__
 !.gitignore

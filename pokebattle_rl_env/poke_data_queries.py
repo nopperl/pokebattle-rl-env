@@ -16,6 +16,11 @@ terrains = [move['terrain'] for move in moves.values() if 'terrain' in move]
 pseudoWeathers = [move['pseuoWeather'] for move in moves.values() if 'pseuoWeather' in move]
 field_effects = terrains + pseudoWeathers
 
+
+def ability_name_to_id(name):
+    return next(a['id'] for a in abilities.values() if a['name'] == name)
+
+
 def move_id_to_name(id):
     return moves[id]['name']
 

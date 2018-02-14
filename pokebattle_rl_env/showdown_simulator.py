@@ -8,7 +8,7 @@ from websocket import WebSocket
 
 from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import GameState, Move
-from pokebattle_rl_env.poke_data_queries import get_move_by_name
+from pokebattle_rl_env.poke_data_queries import get_move_by_name, ability_name_to_id
 
 WEB_SOCKET_URL = "wss://sim.smogon.com/showdown/websocket"
 SHOWDOWN_ACTION_URL = "https://play.pokemonshowdown.com/action.php"
@@ -51,17 +51,6 @@ def generate_username():
 
 def generate_token(length):
     return ''.join(choice(ascii_letters + digits) for i in range(length))
-
-
-def parse_pokemon_details(details):
-    species = details.split(',')[0]
-    if ', M' in details:
-        gender = 'm'
-    elif ', F' in details:
-        gender = 'f'
-    else:
-        gender = 'n'
-    return species, gender
 
 
 def ident_to_name(ident):
@@ -117,11 +106,12 @@ def parse_damage_heal(info, state, opponent_short):
 
 
 def parse_field(info, state, start=True):
-    move = get_move_by_name(info[2])
+    move_name = info[2].split(':')[1][1:]
+    move = get_move_by_name(move_name)
     if 'terrain' in move:
         effect = move['terrain']
-    elif 'pseuoWeather' in move:
-        effect = move['pseuoWeather']
+    elif 'pseudoWeather' in move:
+        effect = move['pseudoWeather']
     else:
         return
     if start:
@@ -173,7 +163,7 @@ def parse_specieschange(info, state, opponent_short, details=True):
         gender = pokemon.gender
     pokemon.change_species(species)
     pokemon.gender = gender
-    if len(info) >= 4:
+    if len(info) >= 5:
         health, max_health, status = parse_health_status(info[4])
         pokemon.health = health
         pokemon.max_health = max_health if max_health is not None else 100
@@ -279,7 +269,6 @@ def read_state_json(json, state):
             st_pokemon.moves = [Move(id=sanitize_hidden_power(move_id)) for move_id in pokemon['moves']]
         st_pokemon.item = pokemon['item']
         st_pokemon.ability = pokemon['ability']
-        # ToDo: handle ['mega']
         st_pokemon.unknown = False
 
 
@@ -378,6 +367,12 @@ class ShowdownSimulator(BattleSimulator):
                 pass  # ToDo: update weather, status turns
             elif info[1] == 'switch' or info[1] == 'drag':
                 parse_switch(info, self.state, self.opponent_short)
+            elif info[1] == '-boost':
+                pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
+                pokemon.stat_boosts[info[3]] += int(info[4])
+            elif info[1] == '-unboost':
+                pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
+                pokemon.stat_boosts[info[3]] -= int(info[4])
             elif info[1] == '-damage' or info[1] == '-heal':
                 parse_damage_heal(info, self.state, self.opponent_short)
             elif info[1] == '-status':
@@ -400,12 +395,18 @@ class ShowdownSimulator(BattleSimulator):
                     self.state.weather = None
                 else:
                     self.state.weather = info[2]
-            # ToDo: Handle -boost, -unboost
             elif info[1] == '-fieldstart':
                 parse_field(info, self.state)
             elif info[1] == '-fieldend':
                 parse_field(info, self.state, start=False)
-            # ToDo: Handle -ability, -endability, |-activate|POKEMON|ability: ABIlITY and [from] ability: ABILITY in -curestatus, -weather, -formechange, -damage, -heal, etc
+            # ToDo: Handle |-activate|POKEMON|ability: ABIlITY and [from] ability: ABILITY in -curestatus, -weather, -formechange, -damage, -heal, etc
+            elif info[1] == '-ability':
+                pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
+                ability = ability_name_to_id(info[3])
+                pokemon.ability = ability
+            elif info[1] == 'endability':
+                pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
+                pokemon.ability = None
             elif info[1] == 'detailschange':
                 parse_specieschange(info, self.state, self.opponent_short)
             elif info[1] == '-formechange':
@@ -428,6 +429,16 @@ class ShowdownSimulator(BattleSimulator):
                 parse_item(info, self.state, self.opponent_short)
             elif info[1] == '-enditem':
                 parse_item(info, self.state, self.opponent_short, start=False)
+            if '[from] ability:' in msg and '[of]' in msg:
+                for part in info:
+                    if '[from] ability:' in part:
+                        ability = part[part.find('[from] ability: ') + len('[from] ability: '):]
+                        ability = ability_name_to_id(ability)
+                    elif '[of]' in info:
+                        of_pokemon = info[info.find('[of] ') + len('[of] '):]
+                        of_pokemon = ident_to_pokemon(of_pokemon, self.state, self.opponent_short)
+                of_pokemon.ability = ability
+
             # ToDo: |-zpower|POKEMON |move|POKEMON|MOVE|TARGET|[zeffect]
         return end
 
