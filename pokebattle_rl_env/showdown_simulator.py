@@ -434,8 +434,8 @@ class ShowdownSimulator(BattleSimulator):
                     if '[from] ability:' in part:
                         ability = part[part.find('[from] ability: ') + len('[from] ability: '):]
                         ability = ability_name_to_id(ability)
-                    elif '[of]' in info:
-                        of_pokemon = info[info.find('[of] ') + len('[of] '):]
+                    elif '[of]' in part:
+                        of_pokemon = part[part.find('[of] ') + len('[of] '):]
                         of_pokemon = ident_to_pokemon(of_pokemon, self.state, self.opponent_short)
                 of_pokemon.ability = ability
 
