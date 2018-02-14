@@ -41,21 +41,23 @@ class BattleEnv(Env):
         return action
 
     def compute_reward(self):
-        if self.simulator.state.state == 'won':
+        if self.simulator.state.state == 'win':
             if self.simulator.state.forfeited:
                 if self.simulator.state.turn > TURN_THRESHOLD:
                     return 1
                 return 0
             return 1
-        elif self.simulator.state.state == 'lost':
+        elif self.simulator.state.state == 'loss':
             return -1
         return 0
 
     def step(self, action):
         action = self.get_action(action)
         self.simulator.act(action)
+        observation = self.simulator.state.to_array()
         reward = self.compute_reward()  # ToDo: Maybe negative reward for assigning probability to invalid action
-        return self.simulator.state.to_array(), reward, self.simulator.state.state != 'ongoing', None
+        done = self.simulator.state.state in ['win', 'loss', 'tie']
+        return observation, reward, done, None
 
     def reset(self):
         self.simulator.reset()

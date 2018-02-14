@@ -1,6 +1,7 @@
 - showdown as simulation environment
 - how to implement mega evolution and z moves?
     - have specific preconditions and can only be triggered once
+    - separate action dimension, which is ignored when invalid?
 - use new user for each training run?
 - count forfeit wins?
     - if prematurely forfeited (eg connection loss) -> noise
@@ -20,6 +21,6 @@
     - implementations exist?
 - play against humans? is there an opponent simulator?
 - random teams
-    - seperate team building agent?
+    - separate team building agent?
 - elo rating as performance measure?
     - starts with 1000

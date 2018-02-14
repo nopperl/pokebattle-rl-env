@@ -119,7 +119,7 @@ def calc_stat(stat, boost):
     if boost >= 0:
         return stat * (3 + boost) / 3
     else:
-        return stat * 3 / (3 + boost)
+        return stat * 3 / (3 - boost)
 
 
 def pokemon_list_to_array(pokemon_list):

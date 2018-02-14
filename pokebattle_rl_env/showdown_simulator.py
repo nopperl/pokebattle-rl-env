@@ -106,7 +106,9 @@ def parse_damage_heal(info, state, opponent_short):
 
 
 def parse_field(info, state, start=True):
-    move_name = info[2].split(':')[1][1:]
+    move_name = info[2]
+    if 'move' in move_name:
+        move_name = info[2].split(':')[1][1:]
     move = get_move_by_name(move_name)
     if 'terrain' in move:
         effect = move['terrain']
@@ -117,7 +119,7 @@ def parse_field(info, state, start=True):
     if start:
         state.field_effects.append(effect)
     else:
-        if effect in state.fields:
+        if effect in state.field_effects:
             state.field_effects.remove(effect)
 
 
@@ -256,9 +258,11 @@ def read_state_json(json, state):
     moves = active_pokemon['moves']
     if 'trapped' in active_pokemon and len(moves) <= 1:
         st_active_pokemon.trapped = active_pokemon['trapped']
-        enabled_move_id = moves[next(iter(moves))]['id']
+        enabled_move_id = moves[0]['id']
         for move in st_active_pokemon.moves:
             move.disabled = not move.id == enabled_move_id
+    elif 'maybeTrapped' in active_pokemon:
+        st_active_pokemon.trapped = active_pokemon['maybeTrapped']
     else:
         st_active_pokemon.trapped = False
         for move in moves:
