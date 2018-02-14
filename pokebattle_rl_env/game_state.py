@@ -42,8 +42,9 @@ class Stats:
 
 
 class Pokemon:
-    def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None, stat_boosts=None,
-                 moves=None, item=None, name=None, statuses=None, mega=False, trapped=False, unknown=False):
+    def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None,
+                 stat_boosts=None, battle_stats=None, moves=None, item=None, name=None, statuses=None, mega=False,
+                 trapped=False, unknown=False):
         self.species = species
         self.health = health
         self.max_health = max_health
@@ -57,6 +58,9 @@ class Pokemon:
         if stat_boosts is None:
             stat_boosts = {'atk': 0, 'def': 0, 'spa': 0, 'spd': 0, 'spe': 0}
         self.stat_boosts = stat_boosts
+        if battle_stats is None:
+            battle_stats = {'accuracy': 0, 'evasion': 0}
+        self.battle_stats = battle_stats
         if moves is None:
             moves = []
         self.moves = moves
@@ -87,8 +91,9 @@ class Pokemon:
                 self.ability = pokemon['abilities']['0']
             if self.stats is None:
                 pokemon = get_pokemon_by_species(self.species)
-                self.stats = pokemon['baseStats']
-                del self.stats['hp']
+                self.stats = pokemon['baseStats']  # ToDo: Calculate better stat estimates
+                if 'hp' in self.stats:
+                    del self.stats['hp']
             if self.types is None:
                 pokemon = get_pokemon_by_species(self.species)
                 self.types = pokemon['types']
@@ -130,6 +135,8 @@ def pokemon_list_to_array(pokemon_list):
             stat_value = pokemon.stats[stat] if stat in pokemon.stats else DEFAULT_STAT_VALUE
             boost = pokemon.stat_boosts[stat]
             state.append(calc_stat(stat_value, boost))
+        for stat in ['accuracy', 'evasion']:
+            state.append(pokemon.battle_stats[stat])
         for ability in abilities:
             state.append(1 if ability == pokemon.ability else 0)
         for type in typechart:

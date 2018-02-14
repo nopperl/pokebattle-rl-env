@@ -121,6 +121,17 @@ def parse_field(info, state, start=True):
             state.field_effects.remove(effect)
 
 
+
+def parse_boost(info, state, opponent_short, unboost=False):
+    pokemon = ident_to_pokemon(info[2], state, opponent_short)
+    stat = info[3]
+    modifier = -1 if unboost else 1
+    if stat in pokemon.stat_boosts:
+        pokemon.stat_boosts[stat] += modifier * int(info[4])
+    elif stat in pokemon.battle_stats:
+        pokemon.battle_stats[stat] += modifier * int(info[4])
+
+
 def parse_item(info, state, opponent_short, start=True):
     if opponent_short in info[2]:
         pokemon = state.opponent.pokemon if opponent_short in info[2] else state.player.pokemon
@@ -133,7 +144,10 @@ def parse_item(info, state, opponent_short, start=True):
 
 
 def parse_sideeffect(info, state, opponent_short, start=True):
-    move = get_move_by_name(info[3])
+    move_name = info[3]
+    if 'move: ' in move_name:
+        move_name = move_name.split(':')[1][1:]
+    move = get_move_by_name(move_name)
     if 'sideCondition' in move:
         condition = move['sideCondition']
         if opponent_short in info[2]:
@@ -163,7 +177,7 @@ def parse_specieschange(info, state, opponent_short, details=True):
         gender = pokemon.gender
     pokemon.change_species(species)
     pokemon.gender = gender
-    if len(info) >= 5:
+    if len(info) >= 5 and not info[4].startswith('[from]'):
         health, max_health, status = parse_health_status(info[4])
         pokemon.health = health
         pokemon.max_health = max_health if max_health is not None else 100
@@ -310,6 +324,7 @@ class ShowdownSimulator(BattleSimulator):
             print(msg)
 
     def _attack(self, move):
+        print(f'{self.room_id}|/switch {move}')
         self.ws.send(f'{self.room_id}|/move {move}')
 
     def _switch(self, pokemon):
@@ -368,11 +383,9 @@ class ShowdownSimulator(BattleSimulator):
             elif info[1] == 'switch' or info[1] == 'drag':
                 parse_switch(info, self.state, self.opponent_short)
             elif info[1] == '-boost':
-                pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
-                pokemon.stat_boosts[info[3]] += int(info[4])
+                parse_boost(info, self.state, self.opponent_short)
             elif info[1] == '-unboost':
-                pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
-                pokemon.stat_boosts[info[3]] -= int(info[4])
+                parse_boost(info, self.state, self.opponent_short, unboost=True)
             elif info[1] == '-damage' or info[1] == '-heal':
                 parse_damage_heal(info, self.state, self.opponent_short)
             elif info[1] == '-status':
@@ -413,7 +426,8 @@ class ShowdownSimulator(BattleSimulator):
                 parse_specieschange(info, self.state, self.opponent_short, details=True)
             elif info[1] == '-transform':  # ToDo: Does -transform change POKEMON?
                 pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
-                pokemon.change_species(info[3])
+                to_pokemon = ident_to_pokemon(info[3], self.state, self.opponent_short)
+                pokemon.change_species(to_pokemon.species)
             elif info[1] == '-mega':
                 if self.opponent_short in info[2]:
                     pokemon = self.state.opponent.pokemon
@@ -429,15 +443,19 @@ class ShowdownSimulator(BattleSimulator):
                 parse_item(info, self.state, self.opponent_short)
             elif info[1] == '-enditem':
                 parse_item(info, self.state, self.opponent_short, start=False)
+            # ToDo: |[from] item:
             if '[from] ability:' in msg and '[of]' in msg:
+                of_pokemon = None
                 for part in info:
                     if '[from] ability:' in part:
                         ability = part[part.find('[from] ability: ') + len('[from] ability: '):]
                         ability = ability_name_to_id(ability)
                     elif '[of]' in part:
-                        of_pokemon = part[part.find('[of] ') + len('[of] '):]
-                        of_pokemon = ident_to_pokemon(of_pokemon, self.state, self.opponent_short)
-                of_pokemon.ability = ability
+                        if self.opponent_short in part:
+                            of_pokemon = part[part.find('[of] ') + len('[of] '):]
+                            of_pokemon = ident_to_pokemon(of_pokemon, self.state)
+                if of_pokemon is not None:
+                    of_pokemon.ability = ability
 
             # ToDo: |-zpower|POKEMON |move|POKEMON|MOVE|TARGET|[zeffect]
         return end
