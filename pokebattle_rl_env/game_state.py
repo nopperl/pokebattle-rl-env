@@ -42,8 +42,8 @@ class Stats:
 
 
 class Pokemon:
-    def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None, moves=None,
-                 item=None, name=None, statuses=None, trapped=False, unknown=False):
+    def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None, stat_boosts=None,
+                 moves=None, item=None, name=None, statuses=None, mega=False, trapped=False, unknown=False):
         self.species = species
         self.health = health
         self.max_health = max_health
@@ -54,11 +54,15 @@ class Pokemon:
         if stats is None:
             stats = {}
         self.stats = stats
+        if stat_boosts is None:
+            stat_boosts = {}
+        self.stat_boosts = stat_boosts
         if moves is None:
             moves = []
         self.moves = moves
         self.ability = ability
         self.item = item
+        self.mega = mega
         self.trapped = trapped
         self.unknown = unknown
         if name is None:
@@ -89,6 +93,13 @@ class Pokemon:
                 pokemon = get_pokemon_by_species(self.species)
                 self.types = pokemon['types']
 
+    def change_species(self, species):
+        self.species = species
+        self.ability = None
+        self.stats = None
+        self.types = None
+        self.update()
+
 
 class Trainer:
     def __init__(self, pokemon=None, name=None, mega_used=False):
@@ -116,6 +127,7 @@ def pokemon_list_to_array(pokemon_list):
             state.append(1 if type in pokemon.types else 0)
         for item in items:
             state.append(1 if item == pokemon.item else 0)
+        state.append(1 if pokemon.mega else 0)
         for i in range(4):
             if i >= len(pokemon.moves):
                 move_length = len(moves) + len(typechart) + len(targets) + 2

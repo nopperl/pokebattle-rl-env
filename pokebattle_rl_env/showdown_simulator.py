@@ -68,6 +68,16 @@ def ident_to_name(ident):
     return ident.split(':')[1][1:]
 
 
+def ident_to_pokemon(ident, state, opponent_short=None):
+    if opponent_short is None or opponent_short in ident:
+        pokemon = state.opponent.pokemon
+    else:
+        pokemon = state.player.pokemon
+    name = ident_to_name(ident)
+    pokemon = next(p for p in pokemon if p.name == name)
+    return pokemon
+
+
 def parse_health_status(string):
     status = None
     max_health = None
@@ -78,6 +88,20 @@ def parse_health_status(string):
     if '/' in health:
         health, max_health = health.split('/')
     return float(health), float(max_health) if max_health is not None else None, status
+
+
+def parse_pokemon_details(details):
+    if ',' in details:
+        species = details.split(',')[0]
+    else:
+        species = details
+    if ', M' in details:
+        gender = 'm'
+    elif ', F' in details:
+        gender = 'f'
+    else:
+        gender = 'n'
+    return species, gender
 
 
 def parse_damage_heal(info, state, opponent_short):
@@ -107,6 +131,17 @@ def parse_field(info, state, start=True):
             state.field_effects.remove(effect)
 
 
+def parse_item(info, state, opponent_short, start=True):
+    if opponent_short in info[2]:
+        pokemon = state.opponent.pokemon if opponent_short in info[2] else state.player.pokemon
+        name = ident_to_name(info[2])
+        pokemon = next(p for p in pokemon if p.name == name)
+        if start:
+            pokemon.item = info[3]
+        else:
+            pokemon.item = None
+
+
 def parse_sideeffect(info, state, opponent_short, start=True):
     move = get_move_by_name(info[3])
     if 'sideCondition' in move:
@@ -123,24 +158,42 @@ def parse_sideeffect(info, state, opponent_short, start=True):
                 state.player_conditions.remove(condition)
 
 
-def parse_start_end(info, state, opponent_short, start=True):
-    name = ident_to_name(info[2])
-    if opponent_short in info[2]:
-        pokemon = state.opponent.pokemon
+def parse_mega(info, state, opponent_short):
+    pokemon = ident_to_pokemon(info[2], state, opponent_short)
+    pokemon.item = info[3]
+    pokemon.mega = True
+
+
+def parse_specieschange(info, state, opponent_short, details=True):
+    pokemon = ident_to_pokemon(info[2], state, opponent_short)
+    if details:
+        species, gender = parse_pokemon_details(info[3])
     else:
-        pokemon = state.player.pokemon
-    confused = next(p for p in pokemon if p.name == name)
-    if info[3] == 'confusion':
-        if start:
-            confused.statuses.append('confusion')
-        else:
-            confused.statuses.remove('confusion')
+        species = info[3]
+        gender = pokemon.gender
+    pokemon.change_species(species)
+    pokemon.gender = gender
+    if len(info) >= 4:
+        health, max_health, status = parse_health_status(info[4])
+        pokemon.health = health
+        pokemon.max_health = max_health if max_health is not None else 100
+        if status not in pokemon.statuses:
+            pokemon.statuses.append(status)
+
+
+def parse_start_end(info, state, opponent_short, start=True):
+    if opponent_short in info[2]:
+        pokemon = ident_to_pokemon(info[2], state)
+        if info[3] == 'confusion':
+            if start:
+                pokemon.statuses.append('confusion')
+            else:
+                pokemon.statuses.remove('confusion')
 
 
 def parse_status(info, state, opponent_short, cure=False):
     if opponent_short in info[2]:
-        name = ident_to_name(info[2])
-        affected = next(p for p in state.opponent.pokemon if p.name == name)
+        affected = ident_to_pokemon(info[2], state)
         status = info[3]
         if status not in affected.statuses:
             if cure:
@@ -161,15 +214,9 @@ def parse_move(info, state, opponent_short):
 
 def parse_switch(info, state, opponent_short):
     name = ident_to_name(info[2])
-    species = info[3].split(',')[0]
+    species, gender = parse_pokemon_details(info[3])
     if opponent_short in info[2]:
         pokemon = state.opponent.pokemon
-        if ', M' in info[3]:
-            gender = 'm'
-        elif ', F' in info[3]:
-            gender = 'f'
-        else:
-            gender = 'n'
         health, max_health, status = parse_health_status(info[4])
         switched_in = next((p for p in pokemon if p.species == species or p.name == name), None)
         if switched_in is None:
@@ -232,6 +279,7 @@ def read_state_json(json, state):
             st_pokemon.moves = [Move(id=sanitize_hidden_power(move_id)) for move_id in pokemon['moves']]
         st_pokemon.item = pokemon['item']
         st_pokemon.ability = pokemon['ability']
+        # ToDo: handle ['mega']
         st_pokemon.unknown = False
 
 
@@ -358,10 +406,29 @@ class ShowdownSimulator(BattleSimulator):
             elif info[1] == '-fieldend':
                 parse_field(info, self.state, start=False)
             # ToDo: Handle -ability, -endability, |-activate|POKEMON|ability: ABIlITY and [from] ability: ABILITY in -curestatus, -weather, -formechange, -damage, -heal, etc
-            # ToDo: Handle -transform (Ditto, Zoroark, ...)
-            # ToDo: Handle -mega (MEGASTONE item)
-            # ToDo: Handle -item and -enditem
-            # ToDo: Handle detailschange
+            elif info[1] == 'detailschange':
+                parse_specieschange(info, self.state, self.opponent_short)
+            elif info[1] == '-formechange':
+                parse_specieschange(info, self.state, self.opponent_short, details=True)
+            elif info[1] == '-transform':  # ToDo: Does -transform change POKEMON?
+                pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
+                pokemon.change_species(info[3])
+            elif info[1] == '-mega':
+                if self.opponent_short in info[2]:
+                    pokemon = self.state.opponent.pokemon
+                    self.state.opponent.mega_used = True
+                else:
+                    pokemon = self.state.player.pokemon
+                    self.state.player.mega_used = True
+                name = ident_to_name(info[2])
+                pokemon = next(p for p in pokemon if p.name == name)
+                pokemon.item = info[3]
+                pokemon.mega = True
+            elif info[1] == '-item':
+                parse_item(info, self.state, self.opponent_short)
+            elif info[1] == '-enditem':
+                parse_item(info, self.state, self.opponent_short, start=False)
+            # ToDo: |-zpower|POKEMON |move|POKEMON|MOVE|TARGET|[zeffect]
         return end
 
     def render(self, mode='human'):
