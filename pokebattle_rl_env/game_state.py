@@ -107,12 +107,13 @@ class Pokemon:
 
 
 class Trainer:
-    def __init__(self, pokemon=None, name=None, mega_used=False):
+    def __init__(self, pokemon=None, name=None, mega_used=False, z_used=False):
         self.name = name
         if pokemon is None:
             pokemon = [Pokemon(unknown=True) for i in range(6)]
         self.pokemon = pokemon
         self.mega_used = mega_used
+        self.z_used = z_used
 
 
 def calc_stat(stat, boost):
@@ -175,11 +176,14 @@ class GameState:
 
     def to_array(self):
         state = []
-        # ToDo: mega used
         state.append(self.turn)
+        state.append(1 if self.player.mega_used else 0)
+        state.append(1 if self.player.z_used else 0)
         state += pokemon_list_to_array(self.player.pokemon)
         for condition in side_conditions:
             state.append(1 if condition in self.player_conditions else 0)
+        state.append(1 if self.opponent.mega_used else 0)
+        state.append(1 if self.opponent.z_used else 0)
         state += pokemon_list_to_array(self.opponent.pokemon)
         for condition in side_conditions:
             state.append(1 if condition in self.opponent_conditions else 0)

@@ -29,6 +29,10 @@ def move_name_to_id(name):
     return next(m['id'] for m in moves.values() if m['name'] == name)
 
 
+def item_name_to_id(name):
+    return next(i['id'] for i in items.values() if i['name'] == name)
+
+
 def get_move_by_name(name):
     return next(m for m in moves.values() if m['name'] == name)
 

@@ -8,7 +8,7 @@ from websocket import WebSocket
 
 from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import GameState, Move
-from pokebattle_rl_env.poke_data_queries import get_move_by_name, ability_name_to_id
+from pokebattle_rl_env.poke_data_queries import get_move_by_name, ability_name_to_id, item_name_to_id
 
 WEB_SOCKET_URL = "wss://sim.smogon.com/showdown/websocket"
 SHOWDOWN_ACTION_URL = "https://play.pokemonshowdown.com/action.php"
@@ -430,7 +430,7 @@ class ShowdownSimulator(BattleSimulator):
                 parse_specieschange(info, self.state, self.opponent_short)
             elif info[1] == '-formechange':
                 parse_specieschange(info, self.state, self.opponent_short, details=True)
-            elif info[1] == '-transform':  # ToDo: Does -transform change POKEMON?
+            elif info[1] == '-transform':
                 pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
                 to_pokemon = ident_to_pokemon(info[3], self.state, self.opponent_short)
                 pokemon.change_species(to_pokemon.species)
@@ -443,27 +443,39 @@ class ShowdownSimulator(BattleSimulator):
                     self.state.player.mega_used = True
                 name = ident_to_name(info[2])
                 pokemon = next(p for p in pokemon if p.name == name)
-                pokemon.item = info[3]
+                pokemon.item = info[3] if self.opponent_short in info[2] else pokemon.item
                 pokemon.mega = True
             elif info[1] == '-item':
                 parse_item(info, self.state, self.opponent_short)
             elif info[1] == '-enditem':
                 parse_item(info, self.state, self.opponent_short, start=False)
-            # ToDo: |[from] item:
+            elif info[1] == '-zpower':
+                if self.opponent_short in msg:
+                    self.state.opponent.z_used = True
+                else:
+                    self.state.player.z_used = True
+            # ToDo: |-zpower|POKEMON |move|POKEMON|MOVE|TARGET|[zeffect]
             if '[from] ability:' in msg and '[of]' in msg:
                 of_pokemon = None
+                ability = None
+                item = None
                 for part in info:
                     if '[from] ability:' in part:
                         ability = part[part.find('[from] ability: ') + len('[from] ability: '):]
                         ability = ability_name_to_id(ability)
+                    elif '[from] item' in part:
+                        item = part[part.find('[from] item: ') + len('[from] item: '):]
+                        item = item_name_to_id(item)
                     elif '[of]' in part:
                         if self.opponent_short in part:
                             of_pokemon = part[part.find('[of] ') + len('[of] '):]
                             of_pokemon = ident_to_pokemon(of_pokemon, self.state)
                 if of_pokemon is not None:
-                    of_pokemon.ability = ability
+                    if ability is not None:
+                        of_pokemon.ability = ability
+                    if item is not None:
+                        of_pokemon.item = item
 
-            # ToDo: |-zpower|POKEMON |move|POKEMON|MOVE|TARGET|[zeffect]
         return end
 
     def render(self, mode='human'):

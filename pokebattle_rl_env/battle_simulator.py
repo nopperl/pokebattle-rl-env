@@ -44,6 +44,8 @@ class BattleSimulator:
             return default_action_modifiers
         modifiers = []
         active = self.state.player.pokemon[0]
+        if active.item not in items:
+            return []
         item = items[active.item]
         if 'megaEvolves' in item and item['megaEvolves'] == active.species:
             modifiers.append('mega')
