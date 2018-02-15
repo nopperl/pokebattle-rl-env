@@ -123,6 +123,18 @@ def parse_field(info, state, start=True):
             state.field_effects.remove(effect)
 
 
+def parse_mega(info, state, opponent_short):
+    if opponent_short in info[2]:
+        pokemon = state.opponent.pokemon
+        state.opponent.mega_used = True
+    else:
+        pokemon = state.player.pokemon
+        state.player.mega_used = True
+    name = ident_to_name(info[2])
+    pokemon = next(p for p in pokemon if p.name == name)
+    pokemon.item = info[3] if opponent_short in info[2] else pokemon.item
+    pokemon.mega = True
+
 
 def parse_boost(info, state, opponent_short, unboost=False):
     pokemon = ident_to_pokemon(info[2], state, opponent_short)
@@ -162,12 +174,6 @@ def parse_sideeffect(info, state, opponent_short, start=True):
                 state.player_conditions.append(condition)
             else:
                 state.player_conditions.remove(condition)
-
-
-def parse_mega(info, state, opponent_short):
-    pokemon = ident_to_pokemon(info[2], state, opponent_short)
-    pokemon.item = info[3]
-    pokemon.mega = True
 
 
 def parse_specieschange(info, state, opponent_short, details=True):
@@ -244,6 +250,28 @@ def parse_switch(info, state, opponent_short):
         pokemon[0], pokemon[switched_index] = pokemon[switched_index], pokemon[0]
 
 
+def parse_auxiliary_info(info, state, opponent_short):
+    of_pokemon = None
+    ability = None
+    item = None
+    for part in info:
+        if '[from] ability:' in part:
+            ability = part[part.find('[from] ability: ') + len('[from] ability: '):]
+            ability = ability_name_to_id(ability)
+        elif '[from] item' in part:
+            item = part[part.find('[from] item: ') + len('[from] item: '):]
+            item = item_name_to_id(item)
+        elif '[of]' in part:
+            if opponent_short in part:
+                of_pokemon = part[part.find('[of] ') + len('[of] '):]
+                of_pokemon = ident_to_pokemon(of_pokemon, state)
+    if of_pokemon is not None:
+        if ability is not None:
+            of_pokemon.ability = ability
+        if item is not None:
+            of_pokemon.item = item
+
+
 def sanitize_hidden_power(move_id):
     if move_id.startswith('hiddenpower') and move_id.endswith('60'):
         move_id = move_id[:-2]
@@ -291,7 +319,7 @@ def read_state_json(json, state):
 
 
 class ShowdownSimulator(BattleSimulator):
-    def __init__(self, auth='auth.txt'):
+    def __init__(self, auth=''):
         print('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
@@ -435,16 +463,7 @@ class ShowdownSimulator(BattleSimulator):
                 to_pokemon = ident_to_pokemon(info[3], self.state, self.opponent_short)
                 pokemon.change_species(to_pokemon.species)
             elif info[1] == '-mega':
-                if self.opponent_short in info[2]:
-                    pokemon = self.state.opponent.pokemon
-                    self.state.opponent.mega_used = True
-                else:
-                    pokemon = self.state.player.pokemon
-                    self.state.player.mega_used = True
-                name = ident_to_name(info[2])
-                pokemon = next(p for p in pokemon if p.name == name)
-                pokemon.item = info[3] if self.opponent_short in info[2] else pokemon.item
-                pokemon.mega = True
+                parse_mega(info, self.state, self.opponent_short)
             elif info[1] == '-item':
                 parse_item(info, self.state, self.opponent_short)
             elif info[1] == '-enditem':
@@ -455,27 +474,8 @@ class ShowdownSimulator(BattleSimulator):
                 else:
                     self.state.player.z_used = True
             # ToDo: |-zpower|POKEMON |move|POKEMON|MOVE|TARGET|[zeffect]
-            if '[from] ability:' in msg and '[of]' in msg:
-                of_pokemon = None
-                ability = None
-                item = None
-                for part in info:
-                    if '[from] ability:' in part:
-                        ability = part[part.find('[from] ability: ') + len('[from] ability: '):]
-                        ability = ability_name_to_id(ability)
-                    elif '[from] item' in part:
-                        item = part[part.find('[from] item: ') + len('[from] item: '):]
-                        item = item_name_to_id(item)
-                    elif '[of]' in part:
-                        if self.opponent_short in part:
-                            of_pokemon = part[part.find('[of] ') + len('[of] '):]
-                            of_pokemon = ident_to_pokemon(of_pokemon, self.state)
-                if of_pokemon is not None:
-                    if ability is not None:
-                        of_pokemon.ability = ability
-                    if item is not None:
-                        of_pokemon.item = item
-
+            if '[of]' in msg:
+                parse_auxiliary_info(info, self.state, self.opponent_short)
         return end
 
     def render(self, mode='human'):

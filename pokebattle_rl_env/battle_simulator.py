@@ -12,6 +12,7 @@ default_actions = [Action(mode='attack', number=i) for i in range(1, 5)] + [Acti
                                                                             range(2, 7)]
 default_action_modifiers = ['mega', 'z']
 
+
 class BattleSimulator:
     def __init__(self):
         self.state = GameState()
