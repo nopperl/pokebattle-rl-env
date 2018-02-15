@@ -185,7 +185,7 @@ def parse_specieschange(info, state, opponent_short, details=True):
         gender = pokemon.gender
     pokemon.change_species(species)
     pokemon.gender = gender
-    if len(info) >= 5 and not info[4].startswith('[from]'):
+    if len(info) >= 5 and not info[4].startswith('['):
         health, max_health, status = parse_health_status(info[4])
         pokemon.health = health
         pokemon.max_health = max_health if max_health is not None else 100
@@ -281,7 +281,6 @@ def sanitize_hidden_power(move_id):
 def read_state_json(json, state):
     json = loads(json)
     st_active_pokemon = state.player.pokemon[0]
-    st_active_pokemon.moves = []
     active_pokemon = json['active'][0]
     moves = active_pokemon['moves']
     if 'trapped' in active_pokemon and len(moves) <= 1:
@@ -293,6 +292,7 @@ def read_state_json(json, state):
         st_active_pokemon.trapped = active_pokemon['maybeTrapped']
     else:
         st_active_pokemon.trapped = False
+        st_active_pokemon.moves = []
         for move in moves:
             move_id = move['id']
             move_id = sanitize_hidden_power(move_id)
@@ -316,10 +316,11 @@ def read_state_json(json, state):
         st_pokemon.item = pokemon['item']
         st_pokemon.ability = pokemon['ability']
         st_pokemon.unknown = False
+        st_pokemon.update()
 
 
 class ShowdownSimulator(BattleSimulator):
-    def __init__(self, auth=''):
+    def __init__(self, auth='auth.txt'):
         print('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
