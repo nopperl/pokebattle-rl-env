@@ -30,9 +30,11 @@ class BattleSimulator:
             return default_actions
         active = self.state.player.pokemon[0]
         if not self.force_switch:
+            enabled_moves_ix = 1
             for i in range(len(active.moves)):
                 if not active.moves[i].disabled:
-                    actions.append(Action('attack', i + 1))
+                    actions.append(Action('attack', enabled_moves_ix))
+                    enabled_moves_ix += 1
         if not active.trapped:
             for i in range(1, len(self.state.player.pokemon)):
                 pokemon = self.state.player.pokemon[i]

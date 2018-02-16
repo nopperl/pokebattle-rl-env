@@ -1,7 +1,5 @@
 from json import loads
 from os.path import isfile
-from secrets import choice
-from string import ascii_letters, digits
 
 from requests import post
 from websocket import WebSocket
@@ -9,6 +7,8 @@ from websocket import WebSocket
 from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import GameState, Move
 from pokebattle_rl_env.poke_data_queries import get_move_by_name, ability_name_to_id, item_name_to_id
+
+from pokebattle_rl_env.util import generate_username, generate_token
 
 WEB_SOCKET_URL = "wss://sim.smogon.com/showdown/websocket"
 SHOWDOWN_ACTION_URL = "https://play.pokemonshowdown.com/action.php"
@@ -43,14 +43,6 @@ def auth_temp_user(challstr, username):
     post_data = {'act': 'getassertion', 'challstr': challstr, 'userid': username}
     response = post(SHOWDOWN_ACTION_URL, data=post_data)
     return response.text
-
-
-def generate_username():
-    return generate_token(8)
-
-
-def generate_token(length):
-    return ''.join(choice(ascii_letters + digits) for i in range(length))
 
 
 def ident_to_name(ident):
