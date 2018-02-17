@@ -1,5 +1,6 @@
 from unittest import TestCase, main
 from websocket import WebSocket
+from pokebattle_rl_env.game_state import BattleEffect
 from pokebattle_rl_env.showdown_simulator import *
 from pokebattle_rl_env.util import generate_username, generate_token
 
@@ -19,6 +20,7 @@ class TestAuthentication(TestCase):
         assertion = auth_temp_user(self.challstr, username)
         login_cmd = f'|/trn {username},0,{assertion}'
         self.ws.send(login_cmd)
+        self._username_in_msg(username)
 
     def test_login(self):
         with open('ts_auth.txt', 'r') as file:
@@ -26,6 +28,7 @@ class TestAuthentication(TestCase):
         assertion = login(self.challstr, username, password)
         login_cmd = f'|/trn {username},0,{assertion}'
         self.ws.send(login_cmd)
+        self._username_in_msg(username)
 
     def _username_in_msg(self, username):
         msg = ''
@@ -60,6 +63,49 @@ class TestMsgParsing(TestCase):
         self.assertEqual(pokemon.name, name_to_find)
         pokemon = ident_to_pokemon(opponent_short + ': ' + name_to_find, state)
         self.assertEqual(pokemon.name, name_to_find)
+
+    def test_parse_health_status(self):
+        self.assertEqual(parse_health_status('166/229'), (166.0, 229.0, None))
+        self.assertEqual(parse_health_status('70/288 brn'), (70.0, 288.0, 'brn'))
+
+    def test_parse_pokemon_details(self):
+        self.assertEqual(parse_pokemon_details('Metagross'), ('Metagross', 'n'))
+        self.assertEqual(parse_pokemon_details('Metagross, shiny, L82'), ('Metagross', 'n'))
+        self.assertEqual(parse_pokemon_details('Metagross, M'), ('Metagross', 'm'))
+        self.assertEqual(parse_pokemon_details('Metagross, F'), ('Metagross', 'f'))
+        self.assertEqual(parse_pokemon_details('Metagross, shiny, M, L82'), ('Metagross', 'm'))
+        self.assertEqual(parse_pokemon_details('Metagross, shiny, F, L82'), ('Metagross', 'f'))
+
+    def test_parse_damage_heal(self):
+        state = GameState()
+        pokemon = state.opponent.pokemon[2]
+        pokemon.name = 'Metagross'
+        pokemon.max_health = 100
+        pokemon.health = 100
+        parse_damage_heal('|-damage|p1a: Metagross|39/100 tox'.split('|'), state, 'p1a')
+        self.assertEqual(pokemon.health, 39)
+        self.assertEqual(pokemon.max_health, 100)
+        self.assertEqual(pokemon.statuses[0].name, 'tox')
+
+    def test_parse_field(self):
+        state = GameState()
+        info = '|-fieldstart|move: Electric Terrain|[from] ability: Electric Surge|[of] p2a: Tapu Koko'.split('|')
+        parse_field(info, state)
+        self.assertEqual(state.field_effects[0].name, 'electricterrain')
+        info = '|-fieldstart|move: Misty Terrain|[from] ability: Misty Surge|[of] p2a: Tapu Fini'.split('|')
+        parse_field(info, state)
+        self.assertEqual(state.field_effects[0].name, 'mistyterrain')
+        self.assertEqual(len(state.field_effects), 1)
+        info = '|-fieldstart|move: Trick Room|[of] p1b: Oranguru'.split('|')
+        parse_field(info, state)
+        self.assertEqual(state.field_effects[0].name, 'mistyterrain')
+        self.assertEqual(state.field_effects[1].name, 'trickroom')
+        self.assertEqual(len(state.field_effects), 2)
+        parse_field('|-fieldend|Misty Terrain'.split('|'), state, start=False)
+        self.assertEqual(state.field_effects[0].name, 'trickroom')
+        self.assertEqual(len(state.field_effects), 1)
+        parse_field('|-fieldend|move: Trick Room'.split('|'), state, start=False)
+        self.assertEqual(state.field_effects, [])
 
 
 if __name__ == '__main__':

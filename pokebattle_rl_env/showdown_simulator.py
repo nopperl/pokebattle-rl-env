@@ -8,11 +8,10 @@ from websocket import WebSocket
 from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import BattleEffect, GameState, Move
 from pokebattle_rl_env.poke_data_queries import get_move_by_name, ability_name_to_id, item_name_to_id
-
 from pokebattle_rl_env.util import generate_username, generate_token
 
-WEB_SOCKET_URL = "wss://sim.smogon.com/showdown/websocket"
-SHOWDOWN_ACTION_URL = "https://play.pokemonshowdown.com/action.php"
+WEB_SOCKET_URL = 'wss://sim.smogon.com/showdown/websocket'
+SHOWDOWN_ACTION_URL = 'https://play.pokemonshowdown.com/action.php'
 
 
 def register(challstr, username, password):
@@ -88,8 +87,7 @@ def parse_pokemon_details(details):
 
 def parse_damage_heal(info, state, opponent_short):
     if opponent_short in info[2]:
-        name = ident_to_name(info[2])
-        damaged = next(p for p in state.opponent.pokemon if p.name == name)
+        damaged = ident_to_pokemon(info[2], state, opponent_short)
         health, max_health, status = parse_health_status(info[3])
         if status is not None and not any(s.name == status for s in damaged.statuses):
             damaged.statuses.append(BattleEffect(status))
@@ -105,6 +103,7 @@ def parse_field(info, state, start=True):
     move = get_move_by_name(move_name)
     if 'terrain' in move:
         effect = move['terrain']
+        state.field_effects = [f for f in state.field_effects if 'terrain' not in f.name]
     elif 'pseudoWeather' in move:
         effect = move['pseudoWeather']
     else:
@@ -318,7 +317,7 @@ def read_state_json(json, state):
 
 
 class ShowdownSimulator(BattleSimulator):
-    def __init__(self, auth='auth.txt'):
+    def __init__(self, auth=''):
         print('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
@@ -448,7 +447,8 @@ class ShowdownSimulator(BattleSimulator):
                 if info[2] == 'none':
                     self.state.weather = None
                 else:
-                    if self.state.weather is not None and info[2] == self.state.weather.name and len(info) > 3 and info[3] == '[upkeep]':
+                    if self.state.weather is not None and info[2] == self.state.weather.name and len(info) > 3 and\
+                       info[3] == '[upkeep]':
                         self.state.weather.turn += 1
                     else:
                         self.state.weather = BattleEffect(info[2])
