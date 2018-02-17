@@ -5,7 +5,7 @@ from requests import post
 from websocket import WebSocket
 
 from pokebattle_rl_env.battle_simulator import BattleSimulator
-from pokebattle_rl_env.game_state import GameState, Move
+from pokebattle_rl_env.game_state import BattleEffect, GameState, Move
 from pokebattle_rl_env.poke_data_queries import get_move_by_name, ability_name_to_id, item_name_to_id
 
 from pokebattle_rl_env.util import generate_username, generate_token
@@ -90,8 +90,8 @@ def parse_damage_heal(info, state, opponent_short):
         name = ident_to_name(info[2])
         damaged = next(p for p in state.opponent.pokemon if p.name == name)
         health, max_health, status = parse_health_status(info[3])
-        if status is not None and status not in damaged.statuses:
-            damaged.statuses.append(status)
+        if status is not None and not any(s.name == status for s in damaged.statuses):
+            damaged.statuses.append(BattleEffect(status))
         if max_health is not None:
             damaged.max_health = max_health
         damaged.health = health
@@ -109,9 +109,10 @@ def parse_field(info, state, start=True):
     else:
         return
     if start:
-        state.field_effects.append(effect)
+        state.field_effects.append(BattleEffect(effect))
     else:
-        if effect in state.field_effects:
+        effect = next((f for f in state.field_effects if f.name == effect), None)
+        if effect is not None:
             state.field_effects.remove(effect)
 
 
@@ -157,15 +158,15 @@ def parse_sideeffect(info, state, opponent_short, start=True):
     if 'sideCondition' in move:
         condition = move['sideCondition']
         if opponent_short in info[2]:
-            if start:
-                state.opponent_conditions.append(condition)
-            else:
-                state.opponent_conditions.remove(condition)
+            conditions = state.opponent_conditions
         else:
-            if start:
-                state.player_conditions.append(condition)
-            else:
-                state.player_conditions.remove(condition)
+            conditions = state.player_conditions
+        if start:
+            conditions.append(BattleEffect(condition))
+        else:
+            condition = next((c for c in conditions if c.name == condition), None)
+            if condition is not None:
+                conditions.remove(condition)
 
 
 def parse_specieschange(info, state, opponent_short, details=True):
@@ -181,8 +182,8 @@ def parse_specieschange(info, state, opponent_short, details=True):
         health, max_health, status = parse_health_status(info[4])
         pokemon.health = health
         pokemon.max_health = max_health if max_health is not None else 100
-        if status not in pokemon.statuses:
-            pokemon.statuses.append(status)
+        if status is not None and not any(s.name == status for s in pokemon.statuses):
+            pokemon.statuses.append(BattleEffect(status))
 
 
 def parse_start_end(info, state, opponent_short, start=True):
@@ -190,20 +191,20 @@ def parse_start_end(info, state, opponent_short, start=True):
         pokemon = ident_to_pokemon(info[2], state)
         if info[3] == 'confusion':
             if start:
-                pokemon.statuses.append('confusion')
+                pokemon.statuses.append(BattleEffect('confusion'))
             else:
-                pokemon.statuses.remove('confusion')
+                pokemon.statuses = [s for s in pokemon.statuses if s.name != 'confusion']
 
 
 def parse_status(info, state, opponent_short, cure=False):
     if opponent_short in info[2]:
         affected = ident_to_pokemon(info[2], state)
         status = info[3]
-        if status not in affected.statuses:
-            if cure:
-                affected.statuses.remove(status)
-            else:
-                affected.statuses.append(status)
+        if cure:
+            affected.statuses = [s for s in affected.statuses if s.name != status]
+        else:
+            if not any(s.name == status for s in affected.statuses):
+                affected.statuses.append(BattleEffect(status))
 
 
 def parse_move(info, state, opponent_short):
@@ -232,8 +233,8 @@ def parse_switch(info, state, opponent_short):
         switched_in.gender = gender
         switched_in.health = health
         switched_in.max_health = max_health if max_health is not None else 100
-        if status not in switched_in.statuses:
-            switched_in.statuses.append(status)
+        if status is not None and not any(s.name == state for s in switched_in.statuses):
+            switched_in.statuses.append(BattleEffect(status))
         switched_in.update()
     else:
         pokemon = state.player.pokemon
@@ -300,7 +301,11 @@ def read_state_json(json, state):
         if max_health is not None:
             st_pokemon.max_health = max_health
         st_pokemon.health = health
-        st_pokemon.statuses = [status]
+        confused_status = next((s for s in st_pokemon.statuses if s.name == 'confused'), None)
+        if status is not None:
+            st_pokemon.statuses = [BattleEffect(status)]
+        if confused_status is not None:
+            st_pokemon.statuses.append(confused_status)
         st_pokemon.stats = pokemon['stats']
         if not pokemon['active'] and not all(
                 move_id in [move.name for move in st_pokemon.moves] for move_id in pokemon['moves']):
@@ -407,6 +412,11 @@ class ShowdownSimulator(BattleSimulator):
             elif info[1] == 'move':
                 parse_move(info, self.state, self.opponent_short)
             elif info[1] == 'upkeep':
+                for effect in self.state.field_effects + self.state.player_conditions + self.state.opponent_conditions:
+                    effect.turn += 1
+                for pokemon in self.state.player.pokemon + self.state.opponent.pokemon:
+                    for status in pokemon.statuses:
+                        status.turn += 1
                 pass  # ToDo: update weather, status turns
             elif info[1] == 'switch' or info[1] == 'drag':
                 parse_switch(info, self.state, self.opponent_short)
@@ -434,13 +444,12 @@ class ShowdownSimulator(BattleSimulator):
             elif info[1] == '-weather':
                 if info[2] == 'none':
                     self.state.weather = None
-                    self.state.weather_turn = 0
                 else:
-                    if info[3] == '[upkeep]' and info[2] == self.state.weather:
-                        self.state.weather_turn += 1
-                    else:
-                        self.state.weather = info[2]
-                        self.state.weather = 1
+                    if info[2] == self.state.weather.name:
+                        if len(info) > 3 and info[3] == '[upkeep]':
+                            self.state.weather.turn += 1
+                        else:
+                            self.state.weather = BattleEffect(info[2])
             elif info[1] == '-fieldstart':
                 parse_field(info, self.state)
             elif info[1] == '-fieldend':

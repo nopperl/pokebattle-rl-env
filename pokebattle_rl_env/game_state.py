@@ -116,6 +116,12 @@ class Trainer:
         self.z_used = z_used
 
 
+class BattleEffect:
+    def __init__(self, name, turn=1):
+        self.name = name
+        self.turn = turn
+
+
 def calc_stat(stat, boost):
     if boost >= 0:
         return stat * (3 + boost) / 3
@@ -130,8 +136,15 @@ def pokemon_list_to_array(pokemon_list):
         state.append(health)
         for gender in genders:
             state.append(1 if gender == pokemon.gender else 0)
+        status_turns = []
         for status in status_conditions:
-            state.append(1 if status in pokemon.statuses else 0)
+            status = next((s for s in pokemon.statuses if s.name == status), None)
+            if status is not None:
+                state.append(1)
+                status_turns.append(status.turn)
+            else:
+                state.append(1)
+                state.append(0)
         for stat in ['atk', 'def', 'spa', 'spd', 'spe']:
             stat_value = pokemon.stats[stat] if stat in pokemon.stats else DEFAULT_STAT_VALUE
             boost = pokemon.stat_boosts[stat]
@@ -168,7 +181,6 @@ class GameState:
         self.player = Trainer()
         self.opponent = Trainer()
         self.weather = None
-        self.weather_turn = 0
         self.field_effects = []
         self.player_conditions = []  # Stealth Rocks, Tailwind, etc
         self.opponent_conditions = []
@@ -188,11 +200,19 @@ class GameState:
         state += pokemon_list_to_array(self.opponent.pokemon)
         for condition in side_conditions:
             state.append(1 if condition in self.opponent_conditions else 0)
+        field_effect_turns = []
         for effect in field_effects:
-            state.append(1 if effect in self.field_effects else 0)
+            field_effect = next((f for f in self.field_effects if f.name == effect), None)
+            if field_effect is not None:
+                state.append(1)
+                field_effect_turns.append(field_effect.turn)
+            else:
+                state.append(0)
+                field_effect_turns.append(0)
+        state += field_effect_turns
         for weather in weathers:
-            state.append(1 if weather == self.weather else 0)
-        state.append(self.weather_turn)
+            state.append(1 if self.weather is not None and weather == self.weather.name else 0)
+        state.append(self.weather.turn if self.weather is not None else 0)
         state = np.array(state)
         state[state is None] = 0
         return state
