@@ -277,8 +277,8 @@ def read_state_json(json, state):
     st_active_pokemon.locked_move_first_index = False
     active_pokemon = json['active'][0]
     moves = active_pokemon['moves']
-    if 'trapped' in active_pokemon and len(moves) <= 1:
-        st_active_pokemon.trapped = active_pokemon['trapped']
+    if len(moves) <= 1:
+        st_active_pokemon.trapped = active_pokemon['trapped'] if 'trapped' in active_pokemon else False
         enabled_move_id = moves[0]['id']
         for move in st_active_pokemon.moves:
             move.disabled = not move.id == enabled_move_id

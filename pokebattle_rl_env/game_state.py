@@ -147,7 +147,8 @@ def pokemon_list_to_array(pokemon_list):
                 status_turns.append(status.turn)
             else:
                 state.append(1)
-                state.append(0)
+                status_turns.append(0)
+        state += status_turns
         for stat in ['atk', 'def', 'spa', 'spd', 'spe']:
             stat_value = pokemon.stats[stat] if stat in pokemon.stats else DEFAULT_STAT_VALUE
             boost = pokemon.stat_boosts[stat]
