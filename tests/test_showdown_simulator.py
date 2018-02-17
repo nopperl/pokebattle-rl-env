@@ -21,7 +21,7 @@ class TestAuthentication(TestCase):
         self.ws.send(login_cmd)
 
     def test_login(self):
-        with open('auth.txt', 'r') as file:
+        with open('ts_auth.txt', 'r') as file:
             username, password = file.read().splitlines()
         assertion = login(self.challstr, username, password)
         login_cmd = f'|/trn {username},0,{assertion}'
