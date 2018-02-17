@@ -1,3 +1,4 @@
+gym
 websocket-client
 numpy
 PyExecJS
