@@ -168,6 +168,7 @@ class GameState:
         self.player = Trainer()
         self.opponent = Trainer()
         self.weather = None
+        self.weather_turn = 0
         self.field_effects = []
         self.player_conditions = []  # Stealth Rocks, Tailwind, etc
         self.opponent_conditions = []
@@ -191,6 +192,7 @@ class GameState:
             state.append(1 if effect in self.field_effects else 0)
         for weather in weathers:
             state.append(1 if weather == self.weather else 0)
+        state.append(self.weather_turn)
         state = np.array(state)
         state[state is None] = 0
         return state

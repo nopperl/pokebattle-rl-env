@@ -434,8 +434,13 @@ class ShowdownSimulator(BattleSimulator):
             elif info[1] == '-weather':
                 if info[2] == 'none':
                     self.state.weather = None
+                    self.state.weather_turn = 0
                 else:
-                    self.state.weather = info[2]
+                    if info[3] == '[upkeep]' and info[2] == self.state.weather:
+                        self.state.weather_turn += 1
+                    else:
+                        self.state.weather = info[2]
+                        self.state.weather = 1
             elif info[1] == '-fieldstart':
                 parse_field(info, self.state)
             elif info[1] == '-fieldend':
