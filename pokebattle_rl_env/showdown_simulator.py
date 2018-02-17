@@ -1,5 +1,6 @@
 from json import loads
 from os.path import isfile
+from sys import stderr
 
 from requests import post
 from websocket import WebSocket
@@ -274,6 +275,7 @@ def sanitize_hidden_power(move_id):
 def read_state_json(json, state):
     json = loads(json)
     st_active_pokemon = state.player.pokemon[0]
+    st_active_pokemon.locked_move_first_index = False
     active_pokemon = json['active'][0]
     moves = active_pokemon['moves']
     if 'trapped' in active_pokemon and len(moves) <= 1:
@@ -281,10 +283,9 @@ def read_state_json(json, state):
         enabled_move_id = moves[0]['id']
         for move in st_active_pokemon.moves:
             move.disabled = not move.id == enabled_move_id
-    elif 'maybeTrapped' in active_pokemon:
-        st_active_pokemon.trapped = active_pokemon['maybeTrapped']
+        st_active_pokemon.locked_move_first_index = True
     else:
-        st_active_pokemon.trapped = False
+        st_active_pokemon.trapped = active_pokemon['maybeTrapped'] if 'maybeTrapped' in active_pokemon else False
         st_active_pokemon.moves = []
         for move in moves:
             move_id = move['id']
@@ -417,7 +418,9 @@ class ShowdownSimulator(BattleSimulator):
                 for pokemon in self.state.player.pokemon + self.state.opponent.pokemon:
                     for status in pokemon.statuses:
                         status.turn += 1
-                pass  # ToDo: update weather, status turns
+                pass
+            elif info[1] == 'error':
+                print(msg, file=stderr)
             elif info[1] == 'switch' or info[1] == 'drag':
                 parse_switch(info, self.state, self.opponent_short)
             elif info[1] == '-boost':
@@ -445,11 +448,10 @@ class ShowdownSimulator(BattleSimulator):
                 if info[2] == 'none':
                     self.state.weather = None
                 else:
-                    if info[2] == self.state.weather.name:
-                        if len(info) > 3 and info[3] == '[upkeep]':
-                            self.state.weather.turn += 1
-                        else:
-                            self.state.weather = BattleEffect(info[2])
+                    if self.state.weather is not None and info[2] == self.state.weather.name and len(info) > 3 and info[3] == '[upkeep]':
+                        self.state.weather.turn += 1
+                    else:
+                        self.state.weather = BattleEffect(info[2])
             elif info[1] == '-fieldstart':
                 parse_field(info, self.state)
             elif info[1] == '-fieldend':

@@ -33,8 +33,8 @@ class BattleSimulator:
             enabled_moves_ix = 1
             for i in range(len(active.moves)):
                 if not active.moves[i].disabled:
-                    actions.append(Action('attack', enabled_moves_ix))
-                    enabled_moves_ix += 1
+                    ix = enabled_moves_ix if active.locked_move_first_index else i + 1
+                    actions.append(Action('attack', ix))
         if not active.trapped:
             for i in range(1, len(self.state.player.pokemon)):
                 pokemon = self.state.player.pokemon[i]

@@ -73,6 +73,9 @@ class Pokemon:
             name = species
         self.name = name
         self.types = []
+
+        # Showdown-related
+        self.locked_move_first_index = False
         self.update()
 
     def update(self):
