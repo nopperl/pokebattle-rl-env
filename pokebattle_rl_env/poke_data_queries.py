@@ -26,7 +26,13 @@ def move_id_to_name(id):
 
 
 def move_name_to_id(name):
-    return next(m['id'] for m in moves.values() if m['name'] == name)
+    move_id = next((m['id'] for m in moves.values() if m['name'] == name), None)
+    if move_id is not None:
+        return move_id
+    elif name.startswith('Z-'):
+        name = name[2:]
+        return move_name_to_id(name)
+    raise StopIteration
 
 
 def item_name_to_id(name):
@@ -34,7 +40,13 @@ def item_name_to_id(name):
 
 
 def get_move_by_name(name):
-    return next(m for m in moves.values() if m['name'] == name)
+    move = next((m for m in moves.values() if m['name'] == name), None)
+    if move is not None:
+        return move
+    elif name.startswith('Z-'):
+        name = name[2:]
+        return get_move_by_name(name)
+    raise StopIteration
 
 
 def get_pokemon_by_species(species):
