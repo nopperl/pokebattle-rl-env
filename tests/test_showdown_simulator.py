@@ -48,8 +48,8 @@ class TestMsgParsing(TestCase):
     def test_ident_to_pokemon(self):
         state = GameState()
         name_to_find = 'Metagross'
-        player_short = 'p1a'
-        opponent_short = 'p2a'
+        player_short = 'p1'
+        opponent_short = 'p2'
         for pokemon in state.player.pokemon:
             pokemon.name = generate_token(5)
         state.player.pokemon[4].name = name_to_find
@@ -82,7 +82,7 @@ class TestMsgParsing(TestCase):
         pokemon.name = 'Metagross'
         pokemon.max_health = 100
         pokemon.health = 100
-        parse_damage_heal('|-damage|p1a: Metagross|39/100 tox'.split('|'), state, 'p1a')
+        parse_damage_heal('|-damage|p1a: Metagross|39/100 tox'.split('|'), state, 'p1')
         self.assertEqual(pokemon.health, 39)
         self.assertEqual(pokemon.max_health, 100)
         self.assertEqual(pokemon.statuses[0].name, 'tox')
@@ -106,6 +106,18 @@ class TestMsgParsing(TestCase):
         self.assertEqual(len(state.field_effects), 1)
         parse_field('|-fieldend|move: Trick Room'.split('|'), state, start=False)
         self.assertEqual(state.field_effects, [])
+
+    def test_parse_replace(self):
+        state = GameState()
+        pokemon = state.opponent.pokemon[0]
+        state.opponent.pokemon[0].change_species('Metagross')
+        state.opponent.pokemon[1].change_species('Metang')
+        info = '|replace|p1a: Zoroark|Zoroark, L78, M'.split('|')
+        parse_replace(info, state, 'p1')
+        self.assertEqual(pokemon.species, 'Zoroark')
+        self.assertEqual(pokemon.ability, 'illusion')
+        self.assertEqual(pokemon.gender, 'm')
+        self.assertEqual(state.opponent.pokemon[1].species, 'Metang')
 
 
 if __name__ == '__main__':

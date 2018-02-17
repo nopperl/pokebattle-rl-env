@@ -186,6 +186,16 @@ def parse_specieschange(info, state, opponent_short, details=True):
             pokemon.statuses.append(BattleEffect(status))
 
 
+def parse_replace(info, state, opponent_short):
+    if opponent_short in info[2]:
+        pokemon = state.opponent.pokemon[0]
+        name = ident_to_name(info[2])
+        species, gender = parse_pokemon_details(info[3])
+        pokemon.name = name
+        pokemon.gender = gender
+        pokemon.change_species(species)
+
+
 def parse_start_end(info, state, opponent_short, start=True):
     if opponent_short in info[2]:
         pokemon = ident_to_pokemon(info[2], state)
@@ -273,24 +283,25 @@ def sanitize_hidden_power(move_id):
 
 def read_state_json(json, state):
     json = loads(json)
-    st_active_pokemon = state.player.pokemon[0]
-    st_active_pokemon.locked_move_first_index = False
-    active_pokemon = json['active'][0]
-    moves = active_pokemon['moves']
-    if len(moves) <= 1:
-        st_active_pokemon.trapped = active_pokemon['trapped'] if 'trapped' in active_pokemon else False
-        enabled_move_id = moves[0]['id']
-        for move in st_active_pokemon.moves:
-            move.disabled = not move.id == enabled_move_id
-        st_active_pokemon.locked_move_first_index = True
-    else:
-        st_active_pokemon.trapped = active_pokemon['maybeTrapped'] if 'maybeTrapped' in active_pokemon else False
-        st_active_pokemon.moves = []
-        for move in moves:
-            move_id = move['id']
-            move_id = sanitize_hidden_power(move_id)
-            move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
-            st_active_pokemon.moves.append(move)
+    if 'forceSwitch' not in json:
+        st_active_pokemon = state.player.pokemon[0]
+        st_active_pokemon.locked_move_first_index = False
+        active_pokemon = json['active'][0]
+        moves = active_pokemon['moves']
+        if len(moves) <= 1:
+            st_active_pokemon.trapped = active_pokemon['trapped'] if 'trapped' in active_pokemon else False
+            enabled_move_id = moves[0]['id']
+            for move in st_active_pokemon.moves:
+                move.disabled = not move.id == enabled_move_id
+            st_active_pokemon.locked_move_first_index = True
+        else:
+            st_active_pokemon.trapped = active_pokemon['maybeTrapped'] if 'maybeTrapped' in active_pokemon else False
+            st_active_pokemon.moves = []
+            for move in moves:
+                move_id = move['id']
+                move_id = sanitize_hidden_power(move_id)
+                move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
+                st_active_pokemon.moves.append(move)
     pokemon_list = json['side']['pokemon']
     for i in range(len(pokemon_list)):
         st_pokemon = state.player.pokemon[i]
@@ -406,9 +417,10 @@ class ShowdownSimulator(BattleSimulator):
                 if info[2].startswith('{"forceSwitch":[true]'):
                     self.force_switch = True
                     end = True
-                    continue
                 if info[2] != '' and not info[2].startswith('{"wait":true'):
                     read_state_json(info[2], self.state)
+            elif info[1] == 'replace':
+                parse_replace(info, self.state, self.opponent_short)
             elif info[1] == 'move':
                 parse_move(info, self.state, self.opponent_short)
             elif info[1] == 'upkeep':

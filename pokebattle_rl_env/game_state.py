@@ -1,7 +1,8 @@
 import numpy as np
 
-from pokebattle_rl_env.poke_data_queries import abilities, field_effects, genders, get_move_by_name, get_pokemon_by_species, items, \
-    moves, targets, typechart, side_conditions, status_conditions, weathers
+from pokebattle_rl_env.poke_data_queries import abilities, ability_name_to_id, field_effects, genders,\
+    get_move_by_name, get_pokemon_by_species, items, moves, targets, typechart, side_conditions, status_conditions,\
+    weathers
 
 DEFAULT_STAT_VALUE = 60
 
@@ -91,7 +92,7 @@ class Pokemon:
                             self.gender = gender_r
             if self.ability is None:
                 pokemon = get_pokemon_by_species(self.species)
-                self.ability = pokemon['abilities']['0']
+                self.ability = ability_name_to_id(pokemon['abilities']['0'])
             if self.stats is None:
                 pokemon = get_pokemon_by_species(self.species)
                 self.stats = pokemon['baseStats']  # ToDo: Calculate better stat estimates
