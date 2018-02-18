@@ -69,12 +69,12 @@ class TestMsgParsing(TestCase):
         self.assertEqual(parse_health_status('70/288 brn'), (70.0, 288.0, 'brn'))
 
     def test_parse_pokemon_details(self):
-        self.assertEqual(parse_pokemon_details('Metagross'), ('Metagross', 'n'))
-        self.assertEqual(parse_pokemon_details('Metagross, shiny, L82'), ('Metagross', 'n'))
-        self.assertEqual(parse_pokemon_details('Metagross, M'), ('Metagross', 'm'))
-        self.assertEqual(parse_pokemon_details('Metagross, F'), ('Metagross', 'f'))
-        self.assertEqual(parse_pokemon_details('Metagross, shiny, M, L82'), ('Metagross', 'm'))
-        self.assertEqual(parse_pokemon_details('Metagross, shiny, F, L82'), ('Metagross', 'f'))
+        self.assertEqual(parse_pokemon_details('Metagross'), ('Metagross', 'n', 100))
+        self.assertEqual(parse_pokemon_details('Metagross, shiny, L82'), ('Metagross', 'n', 82))
+        self.assertEqual(parse_pokemon_details('Metagross, F'), ('Metagross', 'f', 100))
+        self.assertEqual(parse_pokemon_details('Metagross, M'), ('Metagross', 'm', 100))
+        self.assertEqual(parse_pokemon_details('Metagross, shiny, F'), ('Metagross', 'f', 100))
+        self.assertEqual(parse_pokemon_details('Metagross, shiny, M, L82'), ('Metagross', 'm', 82))
 
     def test_parse_damage_heal(self):
         state = GameState()

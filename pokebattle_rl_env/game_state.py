@@ -1,3 +1,4 @@
+from math import floor
 import numpy as np
 
 from pokebattle_rl_env.poke_data_queries import abilities, ability_name_to_id, field_effects, genders,\
@@ -44,8 +45,8 @@ class Stats:
 
 class Pokemon:
     def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None,
-                 stat_boosts=None, battle_stats=None, moves=None, item=None, name=None, statuses=None, mega=False,
-                 trapped=False, unknown=False):
+                 stat_boosts=None, battle_stats=None, moves=None, item=None, name=None, statuses=None, level=100,
+                 mega=False, trapped=False, unknown=False):
         self.species = species
         self.health = health
         self.max_health = max_health
@@ -67,6 +68,7 @@ class Pokemon:
         self.moves = moves
         self.ability = ability
         self.item = item
+        self.level = level
         self.mega = mega
         self.trapped = trapped
         self.unknown = unknown
@@ -85,19 +87,28 @@ class Pokemon:
                 pokemon = get_pokemon_by_species(self.species)
                 if 'gender' in pokemon:
                     self.gender = pokemon['gender']
-                elif 'genderRatio' in pokemon:  # ToDo: Use weighted coin toss
-                    max_ratio = 0
+                elif 'genderRatio' in pokemon:
+                    gender_prob = [.0] * 3
                     for gender_r, ratio in pokemon['genderRatio'].items():
-                        if ratio > max_ratio:
-                            self.gender = gender_r
+                        if gender_r == 'F':
+                            gender_prob[0] = ratio
+                        elif gender_r == 'M':
+                            gender_prob[1] = ratio
+                        elif gender_r == 'N':
+                            gender_prob[2] = ratio
+                    self.gender = np.random.choice(genders, p=gender_prob)
             if self.ability is None:
                 pokemon = get_pokemon_by_species(self.species)
                 self.ability = ability_name_to_id(pokemon['abilities']['0'])
             if self.stats is None:
                 pokemon = get_pokemon_by_species(self.species)
-                self.stats = pokemon['baseStats']  # ToDo: Calculate better stat estimates
-                if 'hp' in self.stats:
-                    del self.stats['hp']
+                base_stats = pokemon['baseStats']
+                if 'hp' in base_stats:
+                    del base_stats['hp']
+                stats = {}
+                for stat, base in base_stats.items():
+                    stats[stat] = calc_stat(base, self.level)
+                self.stats = stats
             if self.types is None:
                 pokemon = get_pokemon_by_species(self.species)
                 self.types = pokemon['types']
@@ -126,7 +137,14 @@ class BattleEffect:
         self.turn = turn
 
 
-def calc_stat(stat, boost):
+def calc_stat(base, level, hp=False):
+    if hp:
+        return floor((2 * base + 31 + 9.2) * level / 100 + level + 10)
+    else:
+        return floor((2 * base + 31 + 9.2) * level / 100 + 5)
+
+
+def calc_boosted_stat(stat, boost):
     if boost >= 0:
         return stat * (3 + boost) / 3
     else:
@@ -153,7 +171,7 @@ def pokemon_list_to_array(pokemon_list):
         for stat in ['atk', 'def', 'spa', 'spd', 'spe']:
             stat_value = pokemon.stats[stat] if stat in pokemon.stats else DEFAULT_STAT_VALUE
             boost = pokemon.stat_boosts[stat]
-            state.append(calc_stat(stat_value, boost))
+            state.append(calc_boosted_stat(stat_value, boost))
         for stat in ['accuracy', 'evasion']:
             state.append(pokemon.battle_stats[stat])
         for ability in abilities:

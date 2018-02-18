@@ -44,10 +44,13 @@ class BattleEnv(Env):
         valid_modifiers = self.simulator.get_available_modifiers()
         modifiers = []
         for valid_modifier in valid_modifiers:
-            if valid_modifier == 'mega' and action_probs[len(action_probs) - 2] > 0.5:  # ToDo: Better sampling
-                modifiers.append('mega')
-            elif valid_modifier == 'z' and action_probs[len(action_probs) - 1] > 0.5:
-                modifiers.append('z')
+            prob = 0
+            if valid_modifier == 'mega':
+                prob = action_probs[len(action_probs) - 2]
+            elif valid_modifier == 'z':
+                prob = action_probs[len(action_probs) - 1]
+            if np.random.binomial(1, prob):
+                modifiers.append(valid_modifier)
         return modifiers
 
     def compute_reward(self):

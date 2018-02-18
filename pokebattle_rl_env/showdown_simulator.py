@@ -76,13 +76,17 @@ def parse_pokemon_details(details):
         species = details.split(',')[0]
     else:
         species = details
-    if ', M' in details:
-        gender = 'm'
-    elif ', F' in details:
+    if ', F' in details:
         gender = 'f'
+    elif ', M' in details:
+        gender = 'm'
     else:
         gender = 'n'
-    return species, gender
+    level = 100
+    if ', L' in details:
+        pos = details.find(', L') + len(', L')
+        level = int(details[pos:pos + 2])
+    return species, gender, level
 
 
 def parse_damage_heal(info, state, opponent_short):
@@ -172,7 +176,8 @@ def parse_sideeffect(info, state, opponent_short, start=True):
 def parse_specieschange(info, state, opponent_short, details=True):
     pokemon = ident_to_pokemon(info[2], state, opponent_short)
     if details:
-        species, gender = parse_pokemon_details(info[3])
+        species, gender, level = parse_pokemon_details(info[3])
+        pokemon.level = level
     else:
         species = info[3]
         gender = pokemon.gender
@@ -190,9 +195,10 @@ def parse_replace(info, state, opponent_short):
     if opponent_short in info[2]:
         pokemon = state.opponent.pokemon[0]
         name = ident_to_name(info[2])
-        species, gender = parse_pokemon_details(info[3])
+        species, gender, level = parse_pokemon_details(info[3])
         pokemon.name = name
         pokemon.gender = gender
+        pokemon.level = level
         pokemon.change_species(species)
 
 
@@ -229,7 +235,7 @@ def parse_move(info, state, opponent_short):
 
 def parse_switch(info, state, opponent_short):
     name = ident_to_name(info[2])
-    species, gender = parse_pokemon_details(info[3])
+    species, gender, level = parse_pokemon_details(info[3])
     if opponent_short in info[2]:
         pokemon = state.opponent.pokemon
         health, max_health, status = parse_health_status(info[4])
@@ -241,6 +247,7 @@ def parse_switch(info, state, opponent_short):
         switched_in.name = name
         switched_in.species = species
         switched_in.gender = gender
+        switched_in.level = level
         switched_in.health = health
         switched_in.max_health = max_health if max_health is not None else 100
         if status is not None and not any(s.name == state for s in switched_in.statuses):
@@ -283,8 +290,8 @@ def sanitize_hidden_power(move_id):
 
 def read_state_json(json, state):
     json = loads(json)
+    st_active_pokemon = state.player.pokemon[0]
     if 'forceSwitch' not in json:
-        st_active_pokemon = state.player.pokemon[0]
         st_active_pokemon.locked_move_first_index = False
         active_pokemon = json['active'][0]
         moves = active_pokemon['moves']
@@ -302,12 +309,14 @@ def read_state_json(json, state):
                 move_id = sanitize_hidden_power(move_id)
                 move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
                 st_active_pokemon.moves.append(move)
+    else:
+        st_active_pokemon.trapped = False
     pokemon_list = json['side']['pokemon']
     for i in range(len(pokemon_list)):
         st_pokemon = state.player.pokemon[i]
         pokemon = pokemon_list[i]
         st_pokemon.name = ident_to_name(pokemon['ident'])
-        st_pokemon.species, st_pokemon.gender = parse_pokemon_details(pokemon['details'])
+        st_pokemon.species, st_pokemon.gender, st_pokemon.level = parse_pokemon_details(pokemon['details'])
         health, max_health, status = parse_health_status(pokemon['condition'])
         if max_health is not None:
             st_pokemon.max_health = max_health
