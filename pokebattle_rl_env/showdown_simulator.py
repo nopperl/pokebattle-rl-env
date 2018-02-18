@@ -327,8 +327,7 @@ def read_state_json(json, state):
         if confused_status is not None:
             st_pokemon.statuses.append(confused_status)
         st_pokemon.stats = pokemon['stats']
-        if not pokemon['active'] and not all(
-                move_id in [move.name for move in st_pokemon.moves] for move_id in pokemon['moves']):
+        if not all(move_id in [move.id for move in st_pokemon.moves] for move_id in pokemon['moves']):
             st_pokemon.moves = [Move(id=sanitize_hidden_power(move_id)) for move_id in pokemon['moves']]
         st_pokemon.item = pokemon['item']
         st_pokemon.ability = pokemon['ability']

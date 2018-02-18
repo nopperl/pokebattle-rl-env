@@ -200,3 +200,49 @@
 
 |replace|p1a: Zoroark|Zoroark, L78, M
 |-end|p1a: Zoroark|Illusion
+
+battle-gen7randombattle-705940049|/move 4
+>battle-gen7randombattle-705940049
+|inactive|Time left: 150 sec this turn | 510 sec total
+>battle-gen7randombattle-705940049
+|request|{"active":[{"moves":[{"move":"Wish","id":"wish","pp":14,"maxpp":16,"target":"self","disabled":false},{"move":"Seismic Toss","id":"seismictoss","pp":31,"maxpp":32,"target":"normal","disabled":false},{"move":"Toxic","id":"toxic","pp":12,"maxpp":16,"target":"normal","disabled":false},{"move":"Protect","id":"protect","pp":12,"maxpp":16,"target":"self","disabled":false}]}],"side":{"name":"RA7XBHT3","id":"p2","pokemon":[{"ident":"p2: Blissey","details":"Blissey, L77, F","condition":"519/519 frz","active":true,"stats":{"atk":20,"def":60,"spa":160,"spd":252,"spe":129},"moves":["wish","seismictoss","toxic","protect"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball","ability":"naturalcure"},{"ident":"p2: Mightyena","details":"Mightyena, L83, M","condition":"0 fnt","active":false,"stats":{"atk":197,"def":164,"spa":147,"spd":147,"spe":164},"moves":["suckerpunch","firefang","crunch","irontail"],"baseAbility":"intimidate","item":"expertbelt","pokeball":"pokeball","ability":"intimidate"},{"ident":"p2: Infernape","details":"Infernape, L77, M","condition":"0 fnt","active":false,"stats":{"atk":205,"def":154,"spa":205,"spd":154,"spe":211},"moves":["machpunch","closecombat","stoneedge","fireblast"],"baseAbility":"ironfist","item":"expertbelt","pokeball":"pokeball","ability":"ironfist"},{"ident":"p2: Staraptor","details":"Staraptor, L76, M","condition":"0 fnt","active":false,"stats":{"atk":226,"def":150,"spa":120,"spd":135,"spe":196},"moves":["closecombat","bravebird","doubleedge","uturn"],"baseAbility":"intimidate","item":"choiceband","pokeball":"pokeball","ability":"intimidate"},{"ident":"p2: Unown","details":"Unown","condition":"33/258","active":false,"stats":{"atk":149,"def":153,"spa":201,"spd":153,"spe":153},"moves":["hiddenpowerpsychic60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p2: Togekiss","details":"Togekiss, L77, M","condition":"0 fnt","active":false,"stats":{"atk":82,"def":191,"spa":229,"spd":222,"spe":168},"moves":["thunderwave","defog","airslash","healbell"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball","ability":"serenegrace"}]},"rqid":63}
+>battle-gen7randombattle-705940049
+
+|
+|switch|p1a: Primeape|Primeape, L83, F|100/100
+|cant|p2a: Blissey|frz
+|
+|-heal|p2a: Blissey|519/519 frz|[from] move: Wish|[wisher] Blissey
+|upkeep
+|turn|27
+
+0
+battle-gen7randombattle-705940049|/move 1
+>battle-gen7randombattle-705940049
+|inactive|Time left: 150 sec this turn | 520 sec total
+>battle-gen7randombattle-705940049
+|request|{"forceSwitch":[true],"side":{"name":"RA7XBHT3","id":"p2","pokemon":[{"ident":"p2: Blissey","details":"Blissey, L77, F","condition":"0 fnt","active":true,"stats":{"atk":20,"def":60,"spa":160,"spd":252,"spe":129},"moves":["wish","seismictoss","toxic","protect"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball","ability":"naturalcure"},{"ident":"p2: Mightyena","details":"Mightyena, L83, M","condition":"0 fnt","active":false,"stats":{"atk":197,"def":164,"spa":147,"spd":147,"spe":164},"moves":["suckerpunch","firefang","crunch","irontail"],"baseAbility":"intimidate","item":"expertbelt","pokeball":"pokeball","ability":"intimidate"},{"ident":"p2: Infernape","details":"Infernape, L77, M","condition":"0 fnt","active":false,"stats":{"atk":205,"def":154,"spa":205,"spd":154,"spe":211},"moves":["machpunch","closecombat","stoneedge","fireblast"],"baseAbility":"ironfist","item":"expertbelt","pokeball":"pokeball","ability":"ironfist"},{"ident":"p2: Staraptor","details":"Staraptor, L76, M","condition":"0 fnt","active":false,"stats":{"atk":226,"def":150,"spa":120,"spd":135,"spe":196},"moves":["closecombat","bravebird","doubleedge","uturn"],"baseAbility":"intimidate","item":"choiceband","pokeball":"pokeball","ability":"intimidate"},{"ident":"p2: Unown","details":"Unown","condition":"33/258","active":false,"stats":{"atk":149,"def":153,"spa":201,"spd":153,"spe":153},"moves":["hiddenpowerpsychic60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p2: Togekiss","details":"Togekiss, L77, M","condition":"0 fnt","active":false,"stats":{"atk":82,"def":191,"spa":229,"spd":222,"spe":168},"moves":["thunderwave","defog","airslash","healbell"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball","ability":"serenegrace"}]},"noCancel":true,"rqid":65}
+0
+battle-gen7randombattle-705940049|/switch 5
+>battle-gen7randombattle-705940049
+
+|
+|move|p1a: Primeape|Close Combat|p2a: Blissey
+|-supereffective|p2a: Blissey
+|-damage|p2a: Blissey|0 fnt
+|-unboost|p1a: Primeape|def|1
+|-unboost|p1a: Primeape|spd|1
+|-damage|p1a: Primeape|91/100|[from] item: Life Orb
+|faint|p2a: Blissey
+|
+|upkeep
+
+>battle-gen7randombattle-705940049
+|inactive|Time left: 150 sec this turn | 530 sec total
+>battle-gen7randombattle-705940049
+|request|{"active":[{"moves":[{"move":"Hidden Power Psychic","id":"hiddenpower","pp":24,"maxpp":24,"target":"normal","disabled":false}]}],"side":{"name":"RA7XBHT3","id":"p2","pokemon":[{"ident":"p2: Unown","details":"Unown","condition":"33/258","active":true,"stats":{"atk":149,"def":153,"spa":201,"spd":153,"spe":153},"moves":["hiddenpowerpsychic60"],"baseAbility":"levitate","item":"choicespecs","pokeball":"pokeball","ability":"levitate"},{"ident":"p2: Mightyena","details":"Mightyena, L83, M","condition":"0 fnt","active":false,"stats":{"atk":197,"def":164,"spa":147,"spd":147,"spe":164},"moves":["suckerpunch","firefang","crunch","irontail"],"baseAbility":"intimidate","item":"expertbelt","pokeball":"pokeball","ability":"intimidate"},{"ident":"p2: Infernape","details":"Infernape, L77, M","condition":"0 fnt","active":false,"stats":{"atk":205,"def":154,"spa":205,"spd":154,"spe":211},"moves":["machpunch","closecombat","stoneedge","fireblast"],"baseAbility":"ironfist","item":"expertbelt","pokeball":"pokeball","ability":"ironfist"},{"ident":"p2: Staraptor","details":"Staraptor, L76, M","condition":"0 fnt","active":false,"stats":{"atk":226,"def":150,"spa":120,"spd":135,"spe":196},"moves":["closecombat","bravebird","doubleedge","uturn"],"baseAbility":"intimidate","item":"choiceband","pokeball":"pokeball","ability":"intimidate"},{"ident":"p2: Blissey","details":"Blissey, L77, F","condition":"0 fnt","active":false,"stats":{"atk":20,"def":60,"spa":160,"spd":252,"spe":129},"moves":["wish","seismictoss","toxic","protect"],"baseAbility":"naturalcure","item":"leftovers","pokeball":"pokeball","ability":"naturalcure"},{"ident":"p2: Togekiss","details":"Togekiss, L77, M","condition":"0 fnt","active":false,"stats":{"atk":82,"def":191,"spa":229,"spd":222,"spe":168},"moves":["thunderwave","defog","airslash","healbell"],"baseAbility":"serenegrace","item":"leftovers","pokeball":"pokeball","ability":"serenegrace"}]},"rqid":67}
+>battle-gen7randombattle-705940049
+
+|
+|switch|p2a: Unown|Unown|33/258
+|turn|28
