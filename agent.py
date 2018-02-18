@@ -1,6 +1,7 @@
 import ray
-from ray.tune.registry import register_env, get_registry
 from ray.rllib import ppo
+from ray.tune.registry import register_env, get_registry
+
 from pokebattle_rl_env import BattleEnv
 
 env_creator_name = "PokeBattleEnv-v0"
@@ -12,6 +13,8 @@ config['num_workers'] = 1
 agent = ppo.PPOAgent(config=config, env=env_creator_name, registry=get_registry())
 
 
-for i in range(10):
+for i in range(1000):
     result = agent.train()
-    print("result: {}".format(result))
+    print(f"result: {result}")
+    if i % 10 == 0:
+        agent.save()

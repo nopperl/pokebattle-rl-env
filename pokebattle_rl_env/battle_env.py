@@ -1,11 +1,11 @@
-import numpy as np
 from math import exp
+
+import numpy as np
 from gym import Env
 from gym.envs.registration import EnvSpec
 from gym.spaces import Box
 
 from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
-
 
 TURN_THRESHOLD = 10
 

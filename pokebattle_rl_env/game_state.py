@@ -1,8 +1,9 @@
 from math import floor
+
 import numpy as np
 
-from pokebattle_rl_env.poke_data_queries import abilities, ability_name_to_id, field_effects, genders,\
-    get_move_by_name, get_pokemon_by_species, items, moves, targets, typechart, side_conditions, status_conditions,\
+from pokebattle_rl_env.poke_data_queries import abilities, ability_name_to_id, field_effects, genders, \
+    get_move_by_name, get_pokemon_by_species, items, moves, targets, typechart, side_conditions, status_conditions, \
     weathers
 
 DEFAULT_STAT_VALUE = 60
