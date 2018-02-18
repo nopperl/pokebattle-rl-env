@@ -1,4 +1,5 @@
 import numpy as np
+from math import exp
 from gym import Env
 from gym.envs.registration import EnvSpec
 from gym.spaces import Box
@@ -11,6 +12,10 @@ TURN_THRESHOLD = 10
 
 def softmax(x):
     return np.exp(x) / np.sum(np.exp(x), axis=0)
+
+
+def sigmoid(x):
+    return 1 / (1 + exp(-x))
 
 
 class BattleEnv(Env):
@@ -49,6 +54,7 @@ class BattleEnv(Env):
                 prob = action_probs[len(action_probs) - 2]
             elif valid_modifier == 'z':
                 prob = action_probs[len(action_probs) - 1]
+            prob = sigmoid(prob)
             if np.random.binomial(1, prob):
                 modifiers.append(valid_modifier)
         return modifiers
