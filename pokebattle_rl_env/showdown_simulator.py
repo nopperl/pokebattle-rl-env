@@ -336,10 +336,11 @@ def read_state_json(json, state):
 
 
 class ShowdownSimulator(BattleSimulator):
-    def __init__(self, auth=''):
+    def __init__(self, auth='', debug_output=False):
         print('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
+        self.debug_output = debug_output
         self.room_id = None
         self.ws = None
         super().__init__()
@@ -347,7 +348,8 @@ class ShowdownSimulator(BattleSimulator):
     def _connect(self, auth):
         self.ws = WebSocket(sslopt={'check_hostname': False})
         self.ws.connect(url=WEB_SOCKET_URL)
-        print('Connected')
+        if self.debug_output:
+            print('Connected')
         msg = ''
         while not msg.startswith('|challstr|'):
             msg = self.ws.recv()
@@ -370,17 +372,20 @@ class ShowdownSimulator(BattleSimulator):
         msg = ''
         while not msg.startswith('|updateuser|') and self.username not in msg:
             msg = self.ws.recv()
-            print(msg)
+            if self.debug_output:
+                print(msg)
 
     def _attack(self, move, mega=False, z=False):
         cmd = f'{self.room_id}|/move {move}'
         cmd += ' mega' if mega else ''
         cmd += ' zmove' if z else ''
-        print(cmd)
+        if self.debug_output:
+            print(cmd)
         self.ws.send(cmd)
 
     def _switch(self, pokemon):
-        print(f'{self.room_id}|/switch {pokemon}')
+        if self.debug_output:
+            print(f'{self.room_id}|/switch {pokemon}')
         self.ws.send(f'{self.room_id}|/switch {pokemon}')
 
     def _update_state(self):
@@ -395,7 +400,8 @@ class ShowdownSimulator(BattleSimulator):
         end = False
         if not msg.startswith(f'>{self.room_id}'):
             return False
-        print(msg)
+        if self.debug_output:
+            print(msg)
         msgs = msg.split('\n')
         for msg in msgs:
             info = msg.split('|')
@@ -521,16 +527,20 @@ class ShowdownSimulator(BattleSimulator):
             msg = ''
             while 'deinit' not in msg:
                 msg = self.ws.recv()
-                print(msg)
+                if self.debug_output:
+                    print(msg)
         if self.ws is None:
             self._connect(self.auth)
-            print(f'Using username {self.username} with password {self.password}')
+            if self.debug_output:
+                print(f'Using username {self.username} with password {self.password}')
         self.ws.send('|/utm null')  # Team
         self.ws.send('|/search gen7randombattle')  # Tier
         self._update_state()
-        print(f'Playing against {self.opponent}')
+        if self.debug_output:
+            print(f'Playing against {self.opponent}')
         self.ws.send(f'{self.room_id}|/timer on')
 
     def close(self):
         self.ws.close()
-        print('Connection closed')
+        if self.debug_output:
+            print('Connection closed')

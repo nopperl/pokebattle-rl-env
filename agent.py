@@ -9,7 +9,7 @@ register_env(env_creator_name, lambda config: BattleEnv())
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()
-config['num_workers'] = 1
+config['num_workers'] = 5
 agent = ppo.PPOAgent(config=config, env=env_creator_name, registry=get_registry())
 
 
