@@ -1,6 +1,9 @@
 from json import loads
-from os.path import isfile
+from os.path import getsize, isfile
+from queue import Queue
+from random import random
 from sys import stderr
+from time import sleep
 
 from requests import post
 from websocket import WebSocket
@@ -12,6 +15,7 @@ from pokebattle_rl_env.util import generate_username, generate_token
 
 WEB_SOCKET_URL = 'wss://sim.smogon.com/showdown/websocket'
 SHOWDOWN_ACTION_URL = 'https://play.pokemonshowdown.com/action.php'
+#WEB_SOCKET_URL = 'ws://localhost:8000/showdown/websocket'
 
 
 def register(challstr, username, password):
@@ -283,8 +287,8 @@ def parse_auxiliary_info(info, state, opponent_short):
 
 
 def sanitize_hidden_power(move_id):
-    if move_id.startswith('hiddenpower') and move_id.endswith('60'):
-        move_id = move_id[:-2]
+    if move_id.startswith('hiddenpower'):
+        return 'hiddenpower'
     return move_id
 
 
@@ -335,11 +339,15 @@ def read_state_json(json, state):
         st_pokemon.update()
 
 
+usernames = Queue()
+
+
 class ShowdownSimulator(BattleSimulator):
-    def __init__(self, auth='', debug_output=False):
+    def __init__(self, auth='', self_play=False, debug_output=False):
         print('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
+        self.self_play = self_play
         self.debug_output = debug_output
         self.room_id = None
         self.ws = None
@@ -534,7 +542,46 @@ class ShowdownSimulator(BattleSimulator):
             if self.debug_output:
                 print(f'Using username {self.username} with password {self.password}')
         self.ws.send('|/utm null')  # Team
-        self.ws.send('|/search gen7randombattle')  # Tier
+
+        if self.self_play:
+            # Self play
+            sleep(random() * 3)
+            if not isfile('usernames'):
+                open('usernames', 'a').close()
+            if getsize('usernames') == 0:
+                with open('usernames', 'w') as file:
+                    file.write(self.username + '\n')
+                print('empty')
+                while True:
+                    msg = self.ws.recv()
+                    print(msg)
+                    if msg.startswith('|updatechallenges|'):
+                        json = loads(msg.split('|')[2])
+                        if 'challengesFrom' in json and json['challengesFrom']:
+                            opponent = next(iter(json['challengesFrom']))
+                            self.ws.send(f'|/accept {opponent}')
+                            print(f'|/accept {opponent}')
+                            break
+            else:
+                with open('usernames', 'r') as file:
+                    lines = file.read().splitlines()
+                opponent = lines.pop(0)
+                with open('usernames', 'w') as file:
+                    file.writelines(lines)
+                self.ws.send(f'|/challenge {opponent}, gen7randombattle')
+                print(f'|/challenge {opponent}, gen7randombattle')
+
+            # p >> |/challenge [OPPONENT], gen7randombattle
+            # p << |updatechallenges|{"challengesFrom":{},"challengeTo":{"to":"[OPPONENT]","format":"gen7randombattle"}}
+            # o << |updatechallenges|{"challengesFrom":{"[PLAYER]":"gen7randombattle"},"challengeTo":null}
+            # o >> |/accept [PLAYER]
+            # - << |updatechallenges|{"challengesFrom":{},"challengeTo":null}
+            # - << |updatesearch|{"searching":[],"games":null}
+            # - << |updatesearch|{"searching":[],"games":{"battle-gen7randombattle-706502869":"[Gen 7] Random Battle"}}
+        else:
+            # Against human players
+            self.ws.send('|/search gen7randombattle')  # Tier
+
         self._update_state()
         if self.debug_output:
             print(f'Playing against {self.opponent}')

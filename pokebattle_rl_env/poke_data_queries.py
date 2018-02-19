@@ -13,7 +13,7 @@ targets = ['all', 'normal', 'self']
 weathers = [move['weather'] for move in moves.values() if 'weather' in move]
 side_conditions = [move['sideCondition'] for move in moves.values() if 'sideCondition' in move]
 terrains = [move['terrain'] for move in moves.values() if 'terrain' in move]
-pseudoWeathers = [move['pseuoWeather'] for move in moves.values() if 'pseuoWeather' in move]
+pseudoWeathers = [move['pseudoWeather'] for move in moves.values() if 'pseudoWeather' in move]
 field_effects = terrains + pseudoWeathers
 
 
