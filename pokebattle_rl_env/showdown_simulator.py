@@ -15,7 +15,7 @@ from pokebattle_rl_env.util import generate_username, generate_token
 
 WEB_SOCKET_URL = 'wss://sim.smogon.com/showdown/websocket'
 SHOWDOWN_ACTION_URL = 'https://play.pokemonshowdown.com/action.php'
-#WEB_SOCKET_URL = 'ws://localhost:8000/showdown/websocket'
+WEB_SOCKET_URL = 'ws://localhost:8000/showdown/websocket'
 
 
 def register(challstr, username, password):
@@ -306,7 +306,9 @@ def read_state_json(json, state):
                 move.disabled = not move.id == enabled_move_id
             st_active_pokemon.locked_move_first_index = True
         else:
-            st_active_pokemon.trapped = active_pokemon['maybeTrapped'] if 'maybeTrapped' in active_pokemon else False
+            st_active_pokemon.trapped =\
+                active_pokemon['trapped'] if 'trapped' in active_pokemon else\
+                active_pokemon['maybeTrapped'] if 'maybeTrapped' in active_pokemon else False
             st_active_pokemon.moves = []
             for move in moves:
                 move_id = move['id']
@@ -337,9 +339,6 @@ def read_state_json(json, state):
         st_pokemon.ability = pokemon['ability']
         st_pokemon.unknown = False
         st_pokemon.update()
-
-
-usernames = Queue()
 
 
 class ShowdownSimulator(BattleSimulator):

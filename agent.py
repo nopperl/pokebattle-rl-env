@@ -1,3 +1,5 @@
+from signal import signal, SIGTERM, SIGINT
+from os import remove
 import ray
 from ray.rllib import ppo
 from ray.tune.registry import register_env, get_registry
@@ -10,9 +12,17 @@ register_env(env_creator_name, lambda config: BattleEnv(ShowdownSimulator(self_p
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()
-config['num_workers'] = 10
+config['num_workers'] = 4
 agent = ppo.PPOAgent(config=config, env=env_creator_name, registry=get_registry())
 
+
+def handle_exit(*_):
+    remove('usernames')
+    exit(0)
+
+
+for sig in [SIGTERM, SIGINT]:
+    signal(sig, handle_exit)
 
 for i in range(1000):
     result = agent.train()
