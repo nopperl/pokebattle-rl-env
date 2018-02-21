@@ -32,6 +32,11 @@ class BattleEnv(Env):
 
     def get_action(self, action_probs):
         valid_actions = self.simulator.get_available_actions()
+        if len(valid_actions) == 0:
+            from pickle import dump
+            from pokebattle_rl_env.util import generate_token
+            with open(generate_token(5), 'wb') as file:
+                dump(self.simulator.state, file)
         estimates = []
         for valid_action in valid_actions:
             if valid_action.mode == 'attack':
