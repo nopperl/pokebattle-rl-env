@@ -1,0 +1,151 @@
+{
+  "forceSwitch": [
+    true
+  ],
+  "side": {
+    "name": "AHHZMdGb",
+    "id": "p2",
+    "pokemon": [
+      {
+        "ident": "p2: Heracross",
+        "details": "Heracross, L77, M",
+        "condition": "0 fnt",
+        "active": true,
+        "stats": {
+          "atk": 237,
+          "def": 160,
+          "spa": 106,
+          "spd": 191,
+          "spe": 175
+        },
+        "moves": [
+          "megahorn",
+          "swordsdance",
+          "stoneedge",
+          "closecombat"
+        ],
+        "baseAbility": "guts",
+        "item": "flameorb",
+        "pokeball": "pokeball",
+        "ability": "guts"
+      },
+      {
+        "ident": "p2: Mewtwo",
+        "details": "Mewtwo, L73",
+        "condition": "275/275",
+        "active": false,
+        "stats": {
+          "atk": 165,
+          "def": 174,
+          "spa": 267,
+          "spd": 174,
+          "spe": 232
+        },
+        "moves": [
+          "taunt",
+          "icebeam",
+          "psystrike",
+          "willowisp"
+        ],
+        "baseAbility": "unnerve",
+        "item": "mewtwonitey",
+        "pokeball": "pokeball",
+        "ability": "unnerve"
+      },
+      {
+        "ident": "p2: Whimsicott",
+        "details": "Whimsicott, L81, M",
+        "condition": "230/230",
+        "active": false,
+        "stats": {
+          "atk": 113,
+          "def": 184,
+          "spa": 171,
+          "spd": 168,
+          "spe": 235
+        },
+        "moves": [
+          "toxic",
+          "leechseed",
+          "tailwind",
+          "moonblast"
+        ],
+        "baseAbility": "prankster",
+        "item": "leftovers",
+        "pokeball": "pokeball",
+        "ability": "prankster"
+      },
+      {
+        "ident": "p2: Cradily",
+        "details": "Cradily, L83, M",
+        "condition": "278/278",
+        "active": false,
+        "stats": {
+          "atk": 182,
+          "def": 209,
+          "spa": 182,
+          "spd": 225,
+          "spe": 119
+        },
+        "moves": [
+          "toxic",
+          "seedbomb",
+          "stealthrock",
+          "recover"
+        ],
+        "baseAbility": "stormdrain",
+        "item": "leftovers",
+        "pokeball": "pokeball",
+        "ability": "stormdrain"
+      },
+      {
+        "ident": "p2: Throh",
+        "details": "Throh, L83, M",
+        "condition": "335/335",
+        "active": false,
+        "stats": {
+          "atk": 214,
+          "def": 189,
+          "spa": 97,
+          "spd": 189,
+          "spe": 122
+        },
+        "moves": [
+          "sleeptalk",
+          "icepunch",
+          "rest",
+          "circlethrow"
+        ],
+        "baseAbility": "guts",
+        "item": "leftovers",
+        "pokeball": "pokeball",
+        "ability": "guts"
+      },
+      {
+        "ident": "p2: Giratina",
+        "details": "Giratina-Origin, L73",
+        "condition": "0 fnt",
+        "active": false,
+        "stats": {
+          "atk": 218,
+          "def": 188,
+          "spa": 218,
+          "spd": 188,
+          "spe": 174
+        },
+        "moves": [
+          "defog",
+          "shadowsneak",
+          "dragontail",
+          "shadowball"
+        ],
+        "baseAbility": "levitate",
+        "item": "griseousorb",
+        "pokeball": "pokeball",
+        "ability": "levitate"
+      }
+    ]
+  },
+  "noCancel": true,
+  "rqid": 29
+}

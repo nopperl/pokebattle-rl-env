@@ -320,6 +320,7 @@ def read_state_json(json, state):
                 st_active_pokemon.moves.append(move)
     else:
         st_active_pokemon.trapped = False
+        state.player.force_switch = json['forceSwitch'][0]
     pokemon_list = json['side']['pokemon']
     for i in range(len(pokemon_list)):
         st_pokemon = state.player.pokemon[i]
@@ -405,7 +406,7 @@ class ShowdownSimulator(BattleSimulator):
             end = self._parse_message(msg)
 
     def _parse_message(self, msg):
-        if self.room_id is None and '|init|battle' in msg:
+        if self.room_id is None:  # and '|init|battle' in msg:
             self.room_id = msg.split('\n')[0][1:]
         end = False
         if not msg.startswith(f'>{self.room_id}'):
@@ -438,11 +439,9 @@ class ShowdownSimulator(BattleSimulator):
                     self.state.state = 'ongoing'
                 end = True
             elif info[1] == 'request':
-                if info[2].startswith('{"forceSwitch":[true]'):
-                    self.state.player.force_switch = True
-                    end = True
                 if info[2] != '' and not info[2].startswith('{"wait":true'):
                     read_state_json(info[2], self.state)
+                    end = self.state.player.force_switch
             elif info[1] == 'replace':
                 parse_replace(info, self.state, self.opponent_short)
             elif info[1] == 'move':

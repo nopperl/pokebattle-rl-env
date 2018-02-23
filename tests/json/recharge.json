@@ -1,0 +1,42 @@
+{
+   "active": [
+      {
+         "moves": [
+            {
+               "move": "Recharge",
+               "id": "recharge"
+            }
+         ],
+         "trapped": true
+      }
+   ],
+   "side": {
+      "name": "test",
+      "id": "p2",
+      "pokemon": [
+         {
+            "ident": "p2: Slaking",
+            "details": "Slaking, L83, F",
+            "condition": "240/385",
+            "active": true,
+            "stats": {
+               "atk": 313,
+               "def": 214,
+               "spa": 205,
+               "spd": 156,
+               "spe": 214
+            },
+            "moves": [
+               "earthquake",
+               "pursuit",
+               "doubleedge",
+               "gigaimpact"
+            ],
+            "baseAbility": "truant",
+            "item": "choiceband",
+            "pokeball": "pokeball",
+            "ability": "truant"
+         }
+      ]
+   }
+}

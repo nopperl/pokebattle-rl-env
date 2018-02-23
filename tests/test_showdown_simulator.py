@@ -3,6 +3,8 @@ from websocket import WebSocket
 from pokebattle_rl_env.game_state import BattleEffect
 from pokebattle_rl_env.showdown_simulator import *
 from pokebattle_rl_env.util import generate_username, generate_token
+from os.path import dirname, join
+from json import dumps
 
 
 class TestAuthentication(TestCase):
@@ -120,9 +122,30 @@ class TestMsgParsing(TestCase):
         self.assertEqual(state.opponent.pokemon[1].species, 'Metang')
 
 
+class TestUpdateState(TestCase):
+    def test_force_switch(self):
+        simulator = ShowdownSimulator()
+        with open(join(dirname(__file__), 'json', 'force_switch.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        end = simulator._parse_message(f'>battle-1|request|{json}')
+        self.assertTrue(end)
+        self.assertTrue(simulator.state.player.force_switch)
+
+
 class TestRequestJson(TestCase):
+    def test_force_switch(self):
+        with open(join(dirname(__file__), 'json', 'force_switch.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        state = GameState()
+        read_state_json(json, state)
+        self.assertFalse(state.player.pokemon[0].trapped)
+
     def test_recharge(self):
-        json = '{"active":[{"moves":[{"move":"Recharge","id":"recharge"}],"trapped":true}],"side":{"name":"test","id":"p2","pokemon":[{"ident":"p2: Slaking","details":"Slaking, L83, F","condition":"240/385","active":true,"stats":{"atk":313,"def":214,"spa":205,"spd":156,"spe":214},"moves":["earthquake","pursuit","doubleedge","gigaimpact"],"baseAbility":"truant","item":"choiceband","pokeball":"pokeball","ability":"truant"}]}}'
+        with open(join(dirname(__file__), 'json', 'recharge.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
         state = GameState()
         read_state_json(json, state)
         self.assertTrue(state.player.pokemon[0].recharge)
