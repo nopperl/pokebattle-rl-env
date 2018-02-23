@@ -8,7 +8,7 @@ from pokebattle_rl_env import BattleEnv
 from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
 
 env_creator_name = "PokeBattleEnv-v0"
-register_env(env_creator_name, lambda config: BattleEnv(ShowdownSimulator(self_play=True, debug_output=False)))
+register_env(env_creator_name, lambda config: BattleEnv(ShowdownSimulator(self_play=True, debug_output=True)))
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()

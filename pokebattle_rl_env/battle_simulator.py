@@ -16,7 +16,6 @@ default_action_modifiers = ['mega', 'z']
 class BattleSimulator:
     def __init__(self):
         self.state = GameState()
-        self.force_switch = False
 
     def _attack(self, move, mega=False, z=False):
         raise NotImplementedError
@@ -29,12 +28,15 @@ class BattleSimulator:
         if all([p.unknown for p in self.state.player.pokemon]):
             return default_actions
         active = self.state.player.pokemon[0]
-        if not self.force_switch:
-            enabled_moves_ix = 1
-            for i in range(len(active.moves)):
-                if not active.moves[i].disabled:
-                    ix = enabled_moves_ix if active.locked_move_first_index else i + 1
-                    actions.append(Action('attack', ix))
+        if not self.state.player.force_switch:
+            if active.recharge:
+                actions.append(Action('attack', 1))
+            else:
+                enabled_moves_ix = 1
+                for i in range(len(active.moves)):
+                    if not active.moves[i].disabled:
+                        ix = enabled_moves_ix if active.locked_move_first_index else i + 1
+                        actions.append(Action('attack', ix))
         if not active.trapped:
             for i in range(1, len(self.state.player.pokemon)):
                 pokemon = self.state.player.pokemon[i]
@@ -60,7 +62,7 @@ class BattleSimulator:
         return modifiers
 
     def act(self, action, modifiers):
-        self.force_switch = False
+        self.state.player.force_switch = False
         if action.mode == 'attack':
             self._attack(action.number, 'mega' in modifiers, 'z' in modifiers)
         elif action.mode == 'switch':

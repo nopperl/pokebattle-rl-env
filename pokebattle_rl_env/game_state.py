@@ -47,7 +47,7 @@ class Stats:
 class Pokemon:
     def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None,
                  stat_boosts=None, battle_stats=None, moves=None, item=None, name=None, statuses=None, level=100,
-                 mega=False, trapped=False, unknown=False):
+                 mega=False, trapped=False, recharge=False, unknown=False):
         self.species = species
         self.health = health
         self.max_health = max_health
@@ -72,6 +72,7 @@ class Pokemon:
         self.level = level
         self.mega = mega
         self.trapped = trapped
+        self.recharge = recharge
         self.unknown = unknown
         if name is None:
             name = species
@@ -128,6 +129,7 @@ class Trainer:
         if pokemon is None:
             pokemon = [Pokemon(unknown=True) for i in range(6)]
         self.pokemon = pokemon
+        self.force_switch = False
         self.mega_used = mega_used
         self.z_used = z_used
 

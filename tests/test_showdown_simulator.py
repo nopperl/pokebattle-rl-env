@@ -120,5 +120,13 @@ class TestMsgParsing(TestCase):
         self.assertEqual(state.opponent.pokemon[1].species, 'Metang')
 
 
+class TestRequestJson(TestCase):
+    def test_recharge(self):
+        json = '{"active":[{"moves":[{"move":"Recharge","id":"recharge"}],"trapped":true}],"side":{"name":"test","id":"p2","pokemon":[{"ident":"p2: Slaking","details":"Slaking, L83, F","condition":"240/385","active":true,"stats":{"atk":313,"def":214,"spa":205,"spd":156,"spe":214},"moves":["earthquake","pursuit","doubleedge","gigaimpact"],"baseAbility":"truant","item":"choiceband","pokeball":"pokeball","ability":"truant"}]}}'
+        state = GameState()
+        read_state_json(json, state)
+        self.assertTrue(state.player.pokemon[0].recharge)
+
+
 if __name__ == '__main__':
     main()

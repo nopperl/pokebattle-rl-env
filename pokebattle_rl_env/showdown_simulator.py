@@ -295,6 +295,7 @@ def sanitize_hidden_power(move_id):
 def read_state_json(json, state):
     json = loads(json)
     st_active_pokemon = state.player.pokemon[0]
+    st_active_pokemon.recharge = False
     if 'forceSwitch' not in json:
         st_active_pokemon.locked_move_first_index = False
         active_pokemon = json['active'][0]
@@ -302,6 +303,8 @@ def read_state_json(json, state):
         if len(moves) <= 1:
             st_active_pokemon.trapped = active_pokemon['trapped'] if 'trapped' in active_pokemon else False
             enabled_move_id = moves[0]['id']
+            if enabled_move_id == 'recharge':
+                st_active_pokemon.recharge = True
             for move in st_active_pokemon.moves:
                 move.disabled = not move.id == enabled_move_id
             st_active_pokemon.locked_move_first_index = True
@@ -436,7 +439,7 @@ class ShowdownSimulator(BattleSimulator):
                 end = True
             elif info[1] == 'request':
                 if info[2].startswith('{"forceSwitch":[true]'):
-                    self.force_switch = True
+                    self.state.player.force_switch = True
                     end = True
                 if info[2] != '' and not info[2].startswith('{"wait":true'):
                     read_state_json(info[2], self.state)
