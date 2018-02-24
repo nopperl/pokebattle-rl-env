@@ -54,7 +54,8 @@ class BattleSimulator:
         item = items[active.item]
         if 'megaEvolves' in item and item['megaEvolves'] == active.species:
             modifiers.append('mega')
-        if 'zMove' in item:
+        return modifiers
+        if 'zMove' in item or False:  # ToDo: Better z move integration. Not all the active pokemons move can be used as z move
             if 'zMoveUser' in item and item['zMoveUser'] == active.species:
                 modifiers.append('z')
             elif 'zMoveType' in item and item['zMoveType'] in active.types:

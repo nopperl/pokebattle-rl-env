@@ -46,8 +46,8 @@ class Stats:
 
 class Pokemon:
     def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None,
-                 stat_boosts=None, battle_stats=None, moves=None, item=None, name=None, statuses=None, level=100,
-                 mega=False, trapped=False, recharge=False, unknown=False):
+                 stat_boosts=None, battle_stats=None, moves=None, special_zmove_ix=None, item=None, name=None,
+                 statuses=None, level=100, mega=False, trapped=False, recharge=False, unknown=False):
         self.species = species
         self.health = health
         self.max_health = max_health
@@ -67,6 +67,7 @@ class Pokemon:
         if moves is None:
             moves = []
         self.moves = moves
+        self.special_zmove_ix = special_zmove_ix
         self.ability = ability
         self.item = item
         self.level = level
@@ -184,6 +185,7 @@ def pokemon_list_to_array(pokemon_list):
         for item in items:
             state.append(1 if item == pokemon.item else 0)
         state.append(1 if pokemon.mega else 0)
+        state.append(1 if pokemon.recharge else 0)
         for i in range(4):
             if i >= len(pokemon.moves):
                 move_length = len(moves) + len(typechart) + len(targets) + 2

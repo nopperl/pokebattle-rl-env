@@ -1,0 +1,42 @@
+{
+  "active": [
+    {
+      "moves": [
+        {
+          "move": "Struggle",
+          "id": "struggle"
+        }
+      ]
+    }
+  ],
+  "side": {
+    "name": "F12KPdyj",
+    "id": "p2",
+    "pokemon": [
+      {
+        "ident": "p2: Lunala",
+        "details": "Lunala, L73",
+        "condition": "320/320 par",
+        "active": true,
+        "stats": {
+          "atk": 169,
+          "def": 172,
+          "spa": 242,
+          "spd": 199,
+          "spe": 184
+        },
+        "moves": [
+          "psyshock",
+          "focusblast",
+          "moongeistbeam",
+          "roost"
+        ],
+        "baseAbility": "shadowshield",
+        "item": "leftovers",
+        "pokeball": "pokeball",
+        "ability": "shadowshield"
+      }
+    ]
+  },
+  "rqid": 375
+}

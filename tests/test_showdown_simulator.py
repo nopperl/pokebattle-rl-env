@@ -128,7 +128,7 @@ class TestUpdateState(TestCase):
         with open(join(dirname(__file__), 'json', 'force_switch.json'), 'r') as file:
             json = file.read()
             json = dumps(loads(json))
-        end = simulator._parse_message(f'>battle-1|request|{json}')
+        end = simulator._parse_message(f'>battle-1|init|battle\n|request|{json}')
         self.assertTrue(end)
         self.assertTrue(simulator.state.player.force_switch)
 
@@ -149,6 +149,24 @@ class TestRequestJson(TestCase):
         state = GameState()
         read_state_json(json, state)
         self.assertTrue(state.player.pokemon[0].recharge)
+
+    def test_struggle(self):
+        with open(join(dirname(__file__), 'json', 'struggle.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        state = GameState()
+        read_state_json(json, state)
+        self.assertEqual(len(state.player.pokemon[0].moves), 1)
+        self.assertEqual(state.player.pokemon[0].moves[0].id, 'struggle')
+
+    def test_can_z_move(self):
+        with open(join(dirname(__file__), 'json', 'can_z_move.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        state = GameState()
+        read_state_json(json, state)
+        self.assertTrue(state.player.pokemon[0].special_zmove_ix, 1)
+        self.assertEqual(state.player.pokemon[0].moves[state.player.pokemon[0].special_zmove_ix].id, 'clangingscales')
 
 
 if __name__ == '__main__':

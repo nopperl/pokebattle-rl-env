@@ -56,8 +56,6 @@ class BattleEnv(Env):
         for valid_modifier in valid_modifiers:
             prob = 0
             if valid_modifier == 'mega':
-                prob = action_probs[len(action_probs) - 2]
-            elif valid_modifier == 'z':
                 prob = action_probs[len(action_probs) - 1]
             prob = sigmoid(prob)
             if np.random.binomial(1, prob):

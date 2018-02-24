@@ -15,7 +15,7 @@ from pokebattle_rl_env.util import generate_username, generate_token
 
 WEB_SOCKET_URL = 'wss://sim.smogon.com/showdown/websocket'
 SHOWDOWN_ACTION_URL = 'https://play.pokemonshowdown.com/action.php'
-WEB_SOCKET_URL = 'ws://localhost:8000/showdown/websocket'
+LOCAL_WEB_SOCKET_URL = 'ws://localhost:8000/showdown/websocket'
 
 
 def register(challstr, username, password):
@@ -296,6 +296,7 @@ def read_state_json(json, state):
     json = loads(json)
     st_active_pokemon = state.player.pokemon[0]
     st_active_pokemon.recharge = False
+    st_active_pokemon.special_zmove_ix = None
     if 'forceSwitch' not in json:
         st_active_pokemon.locked_move_first_index = False
         active_pokemon = json['active'][0]
@@ -303,6 +304,8 @@ def read_state_json(json, state):
         if len(moves) <= 1:
             st_active_pokemon.trapped = active_pokemon['trapped'] if 'trapped' in active_pokemon else False
             enabled_move_id = moves[0]['id']
+            if enabled_move_id == 'struggle':
+                st_active_pokemon.moves = [Move(id='struggle')]
             if enabled_move_id == 'recharge':
                 st_active_pokemon.recharge = True
             for move in st_active_pokemon.moves:
@@ -318,6 +321,9 @@ def read_state_json(json, state):
                 move_id = sanitize_hidden_power(move_id)
                 move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
                 st_active_pokemon.moves.append(move)
+            if 'canZMove' in active_pokemon:
+                zmoves = active_pokemon['canZMove']
+                st_active_pokemon.special_zmove_ix = next(i for i in range(len(zmoves)) if zmoves[i] is not None)
     else:
         st_active_pokemon.trapped = False
         state.player.force_switch = json['forceSwitch'][0]
@@ -337,7 +343,8 @@ def read_state_json(json, state):
         if confused_status is not None:
             st_pokemon.statuses.append(confused_status)
         st_pokemon.stats = pokemon['stats']
-        if not all(sanitize_hidden_power(move_id) in [move.id for move in st_pokemon.moves] for move_id in pokemon['moves']):
+        if not (len(st_pokemon.moves) == 1 and st_pokemon.moves[0].id == 'struggle') and\
+                not all(sanitize_hidden_power(move_id) in [move.id for move in st_pokemon.moves] for move_id in pokemon['moves']):
             st_pokemon.moves = [Move(id=sanitize_hidden_power(move_id)) for move_id in pokemon['moves']]
         st_pokemon.item = pokemon['item']
         st_pokemon.ability = pokemon['ability']
@@ -346,11 +353,12 @@ def read_state_json(json, state):
 
 
 class ShowdownSimulator(BattleSimulator):
-    def __init__(self, auth='', self_play=False, debug_output=False):
+    def __init__(self, auth='', self_play=False, local=True, debug_output=False):
         print('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
         self.self_play = self_play
+        self.local = local
         self.debug_output = debug_output
         self.room_id = None
         self.ws = None
@@ -358,7 +366,7 @@ class ShowdownSimulator(BattleSimulator):
 
     def _connect(self, auth):
         self.ws = WebSocket(sslopt={'check_hostname': False})
-        self.ws.connect(url=WEB_SOCKET_URL)
+        self.ws.connect(url=LOCAL_WEB_SOCKET_URL if self.local else WEB_SOCKET_URL)
         if self.debug_output:
             print('Connected')
         msg = ''
@@ -406,7 +414,7 @@ class ShowdownSimulator(BattleSimulator):
             end = self._parse_message(msg)
 
     def _parse_message(self, msg):
-        if self.room_id is None:  # and '|init|battle' in msg:
+        if self.room_id is None and '|init|battle' in msg:
             self.room_id = msg.split('\n')[0][1:]
         end = False
         if not msg.startswith(f'>{self.room_id}'):

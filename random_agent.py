@@ -2,7 +2,7 @@ from pokebattle_rl_env.battle_env import BattleEnv
 from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
 import numpy as np
 
-env = BattleEnv(ShowdownSimulator(debug_output=True))
+env = BattleEnv(ShowdownSimulator(local=False, debug_output=True))
 for i in range(100):
     env.reset()
     _, reward, done, _ = env.step(np.random.random(11))

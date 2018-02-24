@@ -2,6 +2,8 @@
 - how to implement mega evolution and z moves?
     - have specific preconditions and can only be triggered once
     - separate action dimension, which is ignored when invalid?
+        - works for mega, not for z
+    - for z: available moves * 4
 - use new user for each training run?
 - count forfeit wins?
     - if prematurely forfeited (eg connection loss) -> noise

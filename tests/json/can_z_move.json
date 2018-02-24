@@ -1,0 +1,79 @@
+{
+  "active": [
+    {
+      "moves": [
+        {
+          "move": "Aqua Tail",
+          "id": "aquatail",
+          "pp": 16,
+          "maxpp": 16,
+          "target": "normal",
+          "disabled": false
+        },
+        {
+          "move": "Clanging Scales",
+          "id": "clangingscales",
+          "pp": 8,
+          "maxpp": 8,
+          "target": "allAdjacentFoes",
+          "disabled": false
+        },
+        {
+          "move": "Autotomize",
+          "id": "autotomize",
+          "pp": 24,
+          "maxpp": 24,
+          "target": "self",
+          "disabled": false
+        },
+        {
+          "move": "Bulk Up",
+          "id": "bulkup",
+          "pp": 32,
+          "maxpp": 32,
+          "target": "self",
+          "disabled": false
+        }
+      ],
+      "canZMove": [
+        null,
+        {
+          "move": "Clangorous Soulblaze",
+          "target": "allAdjacentFoes"
+        },
+        null,
+        null
+      ]
+    }
+  ],
+  "side": {
+    "name": "t34ty34",
+    "id": "p1",
+    "pokemon": [
+      {
+        "ident": "p1: Kommo-o",
+        "details": "Kommo-o, M",
+        "condition": "291/291",
+        "active": true,
+        "stats": {
+          "atk": 256,
+          "def": 286,
+          "spa": 236,
+          "spd": 246,
+          "spe": 206
+        },
+        "moves": [
+          "aquatail",
+          "clangingscales",
+          "autotomize",
+          "bulkup"
+        ],
+        "baseAbility": "bulletproof",
+        "item": "kommoniumz",
+        "pokeball": "pokeball",
+        "ability": "bulletproof"
+      }
+    ]
+  },
+  "rqid": 4
+}
