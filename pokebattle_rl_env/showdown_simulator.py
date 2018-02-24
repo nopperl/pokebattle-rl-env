@@ -1,6 +1,5 @@
 from json import loads
 from os.path import getsize, isfile
-from queue import Queue
 from random import random
 from sys import stderr
 from time import sleep
@@ -257,9 +256,6 @@ def parse_switch(info, state, opponent_short):
         if status is not None and not any(s.name == state for s in switched_in.statuses):
             switched_in.statuses.append(BattleEffect(status))
         switched_in.update()
-    else:
-        pokemon = state.player.pokemon
-        switched_in = next((p for p in pokemon if p.species == species or p.name == name), None)
         switched_index = pokemon.index(switched_in)
         pokemon[0], pokemon[switched_index] = pokemon[switched_index], pokemon[0]
 
@@ -294,39 +290,6 @@ def sanitize_hidden_power(move_id):
 
 def read_state_json(json, state):
     json = loads(json)
-    st_active_pokemon = state.player.pokemon[0]
-    st_active_pokemon.recharge = False
-    st_active_pokemon.special_zmove_ix = None
-    if 'forceSwitch' not in json:
-        st_active_pokemon.locked_move_first_index = False
-        active_pokemon = json['active'][0]
-        moves = active_pokemon['moves']
-        if len(moves) <= 1:
-            st_active_pokemon.trapped = active_pokemon['trapped'] if 'trapped' in active_pokemon else False
-            enabled_move_id = moves[0]['id']
-            if enabled_move_id == 'struggle':
-                st_active_pokemon.moves = [Move(id='struggle')]
-            if enabled_move_id == 'recharge':
-                st_active_pokemon.recharge = True
-            for move in st_active_pokemon.moves:
-                move.disabled = not move.id == enabled_move_id
-            st_active_pokemon.locked_move_first_index = True
-        else:
-            st_active_pokemon.trapped =\
-                active_pokemon['trapped'] if 'trapped' in active_pokemon else\
-                active_pokemon['maybeTrapped'] if 'maybeTrapped' in active_pokemon else False
-            st_active_pokemon.moves = []
-            for move in moves:
-                move_id = move['id']
-                move_id = sanitize_hidden_power(move_id)
-                move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
-                st_active_pokemon.moves.append(move)
-            if 'canZMove' in active_pokemon:
-                zmoves = active_pokemon['canZMove']
-                st_active_pokemon.special_zmove_ix = next(i for i in range(len(zmoves)) if zmoves[i] is not None)
-    else:
-        st_active_pokemon.trapped = False
-        state.player.force_switch = json['forceSwitch'][0]
     pokemon_list = json['side']['pokemon']
     for i in range(len(pokemon_list)):
         st_pokemon = state.player.pokemon[i]
@@ -343,13 +306,45 @@ def read_state_json(json, state):
         if confused_status is not None:
             st_pokemon.statuses.append(confused_status)
         st_pokemon.stats = pokemon['stats']
-        if not (len(st_pokemon.moves) == 1 and st_pokemon.moves[0].id == 'struggle') and\
-                not all(sanitize_hidden_power(move_id) in [move.id for move in st_pokemon.moves] for move_id in pokemon['moves']):
+        if not all(sanitize_hidden_power(move_id) in [move.id for move in st_pokemon.moves] for move_id in pokemon['moves']):
             st_pokemon.moves = [Move(id=sanitize_hidden_power(move_id)) for move_id in pokemon['moves']]
         st_pokemon.item = pokemon['item']
         st_pokemon.ability = pokemon['ability']
         st_pokemon.unknown = False
         st_pokemon.update()
+
+    st_active_pokemon = state.player.pokemon[0]
+    st_active_pokemon.recharge = False
+    st_active_pokemon.special_zmove_ix = None
+    if 'forceSwitch' not in json:
+        st_active_pokemon.locked_move_first_index = False
+        active_pokemon = json['active'][0]
+        moves = active_pokemon['moves']
+        st_active_pokemon.trapped = \
+            active_pokemon['trapped'] if 'trapped' in active_pokemon else \
+                active_pokemon['maybeTrapped'] if 'maybeTrapped' in active_pokemon else False
+        if len(moves) <= 1:
+            enabled_move_id = moves[0]['id']
+            if enabled_move_id == 'struggle':
+                st_active_pokemon.moves = [Move(id='struggle')]
+            if enabled_move_id == 'recharge':
+                st_active_pokemon.recharge = True
+            for move in st_active_pokemon.moves:
+                move.disabled = not move.id == enabled_move_id
+            st_active_pokemon.locked_move_first_index = True
+        else:
+            st_active_pokemon.moves = []
+            for move in moves:
+                move_id = move['id']
+                move_id = sanitize_hidden_power(move_id)
+                move = Move(id=move_id, pp=move['pp'], disabled=move['disabled'])
+                st_active_pokemon.moves.append(move)
+            if 'canZMove' in active_pokemon:
+                zmoves = active_pokemon['canZMove']
+                st_active_pokemon.special_zmove_ix = next(i for i in range(len(zmoves)) if zmoves[i] is not None)
+    else:
+        st_active_pokemon.trapped = False
+        state.player.force_switch = json['forceSwitch'][0]
 
 
 class ShowdownSimulator(BattleSimulator):
@@ -406,6 +401,8 @@ class ShowdownSimulator(BattleSimulator):
         if self.debug_output:
             print(f'{self.room_id}|/switch {pokemon}')
         self.ws.send(f'{self.room_id}|/switch {pokemon}')
+        pokemon_list = self.state.player.pokemon
+        pokemon_list[0], pokemon_list[pokemon - 1] = pokemon_list[pokemon - 1], pokemon_list[0]
 
     def _update_state(self):
         end = False
@@ -535,9 +532,13 @@ class ShowdownSimulator(BattleSimulator):
             raise NotImplementedError  # Open https://play.pokemonshowdown.com in browser
 
     def reset(self):
+        print(f'Reset {self.state.player.name}')
         if self.state.state == 'ongoing':
+            if self.debug_output:
+                print(f'{self.room_id}|/forfeit')
             self.ws.send(f'{self.room_id}|/forfeit')
         if self.room_id is not None:
+            print(f'|/leave {self.room_id}')
             self.ws.send(f'|/leave {self.room_id}')
             self.room_id = None
             self.state = GameState()
@@ -554,22 +555,25 @@ class ShowdownSimulator(BattleSimulator):
 
         if self.self_play:
             # Self play
-            sleep(random() * 3)
+            sleep(random())
             if not isfile('usernames'):
                 open('usernames', 'a').close()
             if getsize('usernames') == 0:
                 with open('usernames', 'w') as file:
                     file.write(self.username + '\n')
-                print('empty')
+                if self.debug_output:
+                    print('empty')
                 while True:
                     msg = self.ws.recv()
-                    print(msg)
+                    if self.debug_output:
+                        print(msg)
                     if msg.startswith('|updatechallenges|'):
                         json = loads(msg.split('|')[2])
                         if 'challengesFrom' in json and json['challengesFrom']:
                             opponent = next(iter(json['challengesFrom']))
                             self.ws.send(f'|/accept {opponent}')
-                            print(f'|/accept {opponent}')
+                            if self.debug_output:
+                                print(f'|/accept {opponent}')
                             break
             else:
                 with open('usernames', 'r') as file:
@@ -578,7 +582,8 @@ class ShowdownSimulator(BattleSimulator):
                 with open('usernames', 'w') as file:
                     file.writelines(lines)
                 self.ws.send(f'|/challenge {opponent}, gen7randombattle')
-                print(f'|/challenge {opponent}, gen7randombattle')
+                if self.debug_output:
+                    print(f'|/challenge {opponent}, gen7randombattle')
 
             # p >> |/challenge [OPPONENT], gen7randombattle
             # p << |updatechallenges|{"challengesFrom":{},"challengeTo":{"to":"[OPPONENT]","format":"gen7randombattle"}}
@@ -590,11 +595,11 @@ class ShowdownSimulator(BattleSimulator):
         else:
             # Against human players
             self.ws.send('|/search gen7randombattle')  # Tier
+            self.ws.send(f'{self.room_id}|/timer on')
 
         self._update_state()
         if self.debug_output:
             print(f'Playing against {self.opponent}')
-        self.ws.send(f'{self.room_id}|/timer on')
 
     def close(self):
         self.ws.close()

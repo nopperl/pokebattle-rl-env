@@ -1,0 +1,162 @@
+{
+   "active": [
+      {
+         "moves": [
+            {
+               "move": "Hidden Power Psychic",
+               "id": "hiddenpower",
+               "pp": 24,
+               "maxpp": 24,
+               "target": "normal",
+               "disabled": false
+            }
+         ],
+         "maybeTrapped": true
+      }
+   ],
+   "side": {
+      "name": "q35837m4",
+      "id": "p2",
+      "pokemon": [
+         {
+            "ident": "p2: Unown",
+            "details": "Unown",
+            "condition": "205/258",
+            "active": true,
+            "stats": {
+               "atk": 149,
+               "def": 153,
+               "spa": 201,
+               "spd": 153,
+               "spe": 153
+            },
+            "moves": [
+               "hiddenpowerpsychic60",
+               "fireblast",
+               "hiddenpowerground60",
+               "gigadrain"
+            ],
+            "baseAbility": "levitate",
+            "item": "choicespecs",
+            "pokeball": "pokeball",
+            "ability": "levitate"
+         },
+         {
+            "ident": "p2: Volcarona",
+            "details": "Volcarona, L75, M",
+            "condition": "0 fnt",
+            "active": false,
+            "stats": {
+               "atk": 95,
+               "def": 141,
+               "spa": 246,
+               "spd": 201,
+               "spe": 194
+            },
+            "moves": [
+               "quiverdance",
+               "fireblast",
+               "hiddenpowerground60",
+               "gigadrain"
+            ],
+            "baseAbility": "flamebody",
+            "item": "lifeorb",
+            "pokeball": "pokeball",
+            "ability": "flamebody"
+         },
+         {
+            "ident": "p2: Linoone",
+            "details": "Linoone, L79, M",
+            "condition": "175/252",
+            "active": false,
+            "stats": {
+               "atk": 156,
+               "def": 142,
+               "spa": 125,
+               "spd": 142,
+               "spe": 204
+            },
+            "moves": [
+               "stompingtantrum",
+               "bellydrum",
+               "extremespeed",
+               "shadowclaw"
+            ],
+            "baseAbility": "gluttony",
+            "item": "",
+            "pokeball": "pokeball",
+            "ability": "gluttony"
+         },
+         {
+            "ident": "p2: Marowak",
+            "details": "Marowak-Alola, L77, M",
+            "condition": "165/219",
+            "active": false,
+            "stats": {
+               "atk": 168,
+               "def": 214,
+               "spa": 122,
+               "spd": 168,
+               "spe": 114
+            },
+            "moves": [
+               "substitute",
+               "flamecharge",
+               "stoneedge",
+               "flareblitz"
+            ],
+            "baseAbility": "lightningrod",
+            "item": "thickclub",
+            "pokeball": "pokeball",
+            "ability": "lightningrod"
+         },
+         {
+            "ident": "p2: Klefki",
+            "details": "Klefki, L77, F",
+            "condition": "0 fnt",
+            "active": false,
+            "stats": {
+               "atk": 168,
+               "def": 185,
+               "spa": 168,
+               "spd": 179,
+               "spe": 160
+            },
+            "moves": [
+               "lightscreen",
+               "toxic",
+               "magnetrise",
+               "playrough"
+            ],
+            "baseAbility": "prankster",
+            "item": "leftovers",
+            "pokeball": "pokeball",
+            "ability": "prankster"
+         },
+         {
+            "ident": "p2: Bellossom",
+            "details": "Bellossom, L83, M",
+            "condition": "0 fnt",
+            "active": false,
+            "stats": {
+               "atk": 137,
+               "def": 205,
+               "spa": 197,
+               "spd": 214,
+               "spe": 131
+            },
+            "moves": [
+               "quiverdance",
+               "hiddenpowerrock60",
+               "gigadrain",
+               "moonblast"
+            ],
+            "baseAbility": "chlorophyll",
+            "item": "lifeorb",
+            "pokeball": "pokeball",
+            "ability": "chlorophyll"
+         }
+      ]
+   },
+   "rqid": 45
+}

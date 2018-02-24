@@ -12,7 +12,10 @@ register_env(env_creator_name, lambda config: BattleEnv(ShowdownSimulator(self_p
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()
-config['num_workers'] = 2
+config['num_workers'] = 10
+config['timesteps_per_batch'] = 50
+config['horizon'] = 1000
+config['min_steps_per_task'] = 6
 agent = ppo.PPOAgent(config=config, env=env_creator_name, registry=get_registry())
 
 

@@ -1,0 +1,71 @@
+{
+  "active": [
+    {
+      "moves": [
+        {
+          "move": "Facade",
+          "id": "facade",
+          "pp": 32,
+          "maxpp": 32,
+          "target": "normal",
+          "disabled": false
+        },
+        {
+          "move": "Hone Claws",
+          "id": "honeclaws",
+          "pp": 23,
+          "maxpp": 24,
+          "target": "self",
+          "disabled": false
+        },
+        {
+           "move": "Hidden Power Psychic",
+           "id": "hiddenpower",
+           "pp": 24,
+           "maxpp": 24,
+           "target": "normal",
+           "disabled": false
+        },
+        {
+          "move": "Aqua Tail",
+          "id": "aquatail",
+          "pp": 16,
+          "maxpp": 16,
+          "target": "normal",
+          "disabled": false
+        }
+      ],
+      "trapped": true
+    }
+  ],
+  "side": {
+    "name": "dfgswefw",
+    "id": "p1",
+    "pokemon": [
+      {
+        "ident": "p1: Bisharp",
+        "details": "Bisharp, M",
+        "condition": "271/271",
+        "active": true,
+        "stats": {
+          "atk": 286,
+          "def": 236,
+          "spa": 156,
+          "spd": 176,
+          "spe": 176
+        },
+        "moves": [
+          "facade",
+          "honeclaws",
+          "hiddenpowerpsychic60",
+          "aquatail"
+        ],
+        "baseAbility": "defiant",
+        "item": "",
+        "pokeball": "pokeball",
+        "ability": "defiant"
+      }
+    ]
+  },
+  "rqid": 6
+}

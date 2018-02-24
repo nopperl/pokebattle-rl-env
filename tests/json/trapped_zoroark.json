@@ -1,0 +1,91 @@
+{
+  "active": [
+    {
+      "moves": [
+        {
+          "move": "Calm Mind",
+          "id": "calmmind",
+          "pp": 32,
+          "maxpp": 32,
+          "target": "self",
+          "disabled": false
+        },
+        {
+          "move": "Dark Pulse",
+          "id": "darkpulse",
+          "pp": 24,
+          "maxpp": 24,
+          "target": "any",
+          "disabled": false
+        },
+        {
+          "move": "Extrasensory",
+          "id": "extrasensory",
+          "pp": 32,
+          "maxpp": 32,
+          "target": "normal",
+          "disabled": false
+        },
+        {
+          "move": "Agility",
+          "id": "agility",
+          "pp": 47,
+          "maxpp": 48,
+          "target": "self",
+          "disabled": false
+        }
+      ],
+      "trapped": true
+    }
+  ],
+  "side": {
+    "name": "dfgswefw",
+    "id": "p1",
+    "pokemon": [
+      {
+        "ident": "p1: Zoroark",
+        "details": "Zoroark, F",
+        "condition": "261/261",
+        "active": true,
+        "stats": {
+          "atk": 215,
+          "def": 156,
+          "spa": 276,
+          "spd": 156,
+          "spe": 246
+        },
+        "moves": [
+          "calmmind",
+          "darkpulse",
+          "extrasensory",
+          "agility"
+        ],
+        "baseAbility": "illusion",
+        "item": "",
+        "pokeball": "pokeball",
+        "ability": "illusion"
+      },
+      {
+        "ident": "p1: Bisharp",
+        "details": "Bisharp, F",
+        "condition": "271/271",
+        "active": false,
+        "stats": {
+          "atk": 286,
+          "def": 236,
+          "spa": 156,
+          "spd": 176,
+          "spe": 176
+        },
+        "moves": [
+          "facade"
+        ],
+        "baseAbility": "defiant",
+        "item": "",
+        "pokeball": "pokeball",
+        "ability": "defiant"
+      }
+    ]
+  },
+  "rqid": 6
+}

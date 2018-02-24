@@ -165,8 +165,50 @@ class TestRequestJson(TestCase):
             json = dumps(loads(json))
         state = GameState()
         read_state_json(json, state)
-        self.assertTrue(state.player.pokemon[0].special_zmove_ix, 1)
+        self.assertEqual(state.player.pokemon[0].special_zmove_ix, 1)
         self.assertEqual(state.player.pokemon[0].moves[state.player.pokemon[0].special_zmove_ix].id, 'clangingscales')
+
+    def test_trapped(self):
+        with open(join(dirname(__file__), 'json', 'trapped_2.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        state = GameState()
+        read_state_json(json, state)
+        self.assertTrue(state.player.pokemon[0].trapped)
+        self.assertEqual(len(state.player.pokemon[0].moves), 4)
+        self.assertTrue(not any(move.disabled for move in state.player.pokemon[0].moves))
+
+    def test_trapped_zoroark(self):
+        with open(join(dirname(__file__), 'json', 'trapped_zoroark.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        state = GameState()
+        read_state_json(json, state)
+        self.assertTrue(state.player.pokemon[0].trapped)
+        self.assertEqual(len(state.player.pokemon[0].moves), 4)
+        self.assertTrue(not any(move.disabled for move in state.player.pokemon[0].moves))
+
+    def test_trapped_move(self):
+        with open(join(dirname(__file__), 'json', 'trapped_1.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        state = GameState()
+        read_state_json(json, state)
+        self.assertTrue(state.player.pokemon[0].trapped)
+        self.assertEqual(len(state.player.pokemon[0].moves), 4)
+        self.assertTrue(all(move.disabled for move in state.player.pokemon[0].moves if move.id != 'outrage'))
+        self.assertTrue(not any(move.disabled for move in state.player.pokemon[0].moves if move.id == 'outrage'))
+
+    def test_maybe_trapped_move(self):
+        with open(join(dirname(__file__), 'json', 'maybe_trapped_1.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        state = GameState()
+        read_state_json(json, state)
+        self.assertTrue(state.player.pokemon[0].trapped)
+        self.assertEqual(len(state.player.pokemon[0].moves), 4)
+        self.assertTrue(all(move.disabled for move in state.player.pokemon[0].moves if move.id != 'hiddenpower'))
+        self.assertTrue(not any(move.disabled for move in state.player.pokemon[0].moves if move.id == 'hiddenpower'))
 
 
 if __name__ == '__main__':

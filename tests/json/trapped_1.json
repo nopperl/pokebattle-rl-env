@@ -1,0 +1,43 @@
+{
+  "active": [
+    {
+      "moves": [
+        {
+          "move": "Outrage",
+          "id": "outrage"
+        }
+      ],
+      "trapped": true
+    }
+  ],
+  "side": {
+    "name": "dfgswefw",
+    "id": "p1",
+    "pokemon": [
+      {
+        "ident": "p1: Garchomp",
+        "details": "Garchomp, M",
+        "condition": "357/357",
+        "active": true,
+        "stats": {
+          "atk": 296,
+          "def": 226,
+          "spa": 196,
+          "spd": 206,
+          "spe": 240
+        },
+        "moves": [
+          "pursuit",
+          "outrage",
+          "doubleedge",
+          "gigaimpact"
+        ],
+        "baseAbility": "sandveil",
+        "item": "garchompite",
+        "pokeball": "pokeball",
+        "ability": "sandveil"
+      }
+    ]
+  },
+  "rqid": 6
+}
