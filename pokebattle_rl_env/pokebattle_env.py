@@ -63,14 +63,11 @@ class PokeBattleEnv(Env):
         return modifiers
 
     def compute_reward(self):
-        if self.simulator.state.state == 'win':
-            if self.simulator.state.forfeited:
-                if self.simulator.state.turn > TURN_THRESHOLD:
-                    return 1
-                return 0
-            return 1
-        elif self.simulator.state.state == 'loss':
-            return -1
+        if not (self.simulator.state.forfeited and self.simulator.state.turn < TURN_THRESHOLD):
+            if self.simulator.state.state == 'win':
+                return 1
+            elif self.simulator.state.state == 'loss':
+                return -1
         return 0
 
     def step(self, action):

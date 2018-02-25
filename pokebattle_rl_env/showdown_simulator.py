@@ -540,7 +540,8 @@ class ShowdownSimulator(BattleSimulator):
                 print(f'{self.room_id}|/forfeit')
             self.ws.send(f'{self.room_id}|/forfeit')
         if self.room_id is not None:
-            print(f'|/leave {self.room_id}')
+            if self.debug_output:
+                print(f'|/leave {self.room_id}')
             self.ws.send(f'|/leave {self.room_id}')
             self.room_id = None
             self.state = GameState()
@@ -597,9 +598,10 @@ class ShowdownSimulator(BattleSimulator):
         else:
             # Against human players
             self.ws.send('|/search gen7randombattle')  # Tier
-            self.ws.send(f'{self.room_id}|/timer on')
 
         self._update_state()
+        if not self.self_play:
+            self.ws.send(f'{self.room_id}|/timer on')
         if self.debug_output:
             print(f'Playing against {self.opponent}')
 
