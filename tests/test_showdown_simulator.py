@@ -1,10 +1,10 @@
+from json import dumps
+from os.path import dirname, join
 from unittest import TestCase, main
 from websocket import WebSocket
-from pokebattle_rl_env.game_state import BattleEffect
+
 from pokebattle_rl_env.showdown_simulator import *
 from pokebattle_rl_env.util import generate_username, generate_token
-from os.path import dirname, join
-from json import dumps
 
 
 class TestAuthentication(TestCase):
@@ -141,6 +141,7 @@ class TestRequestJson(TestCase):
         state = GameState()
         read_state_json(json, state)
         self.assertFalse(state.player.pokemon[0].trapped)
+        self.assertTrue(state.player.force_switch)
 
     def test_recharge(self):
         with open(join(dirname(__file__), 'json', 'recharge.json'), 'r') as file:

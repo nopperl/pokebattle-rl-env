@@ -444,7 +444,9 @@ class ShowdownSimulator(BattleSimulator):
                     self.state.state = 'ongoing'
                 end = True
             elif info[1] == 'request':
-                if info[2] != '' and not info[2].startswith('{"wait":true'):
+                if info[2].startswith('{"wait":true') and False:  # ToDo
+                    end = True
+                elif info[2] != '' and not info[2].startswith('{"wait":true'):
                     read_state_json(info[2], self.state)
                     end = self.state.player.force_switch
             elif info[1] == 'replace':

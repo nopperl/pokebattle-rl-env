@@ -18,15 +18,15 @@ def sigmoid(x):
     return 1 / (1 + exp(-x))
 
 
-class BattleEnv(Env):
+class PokeBattleEnv(Env):
     def __init__(self, simulator=ShowdownSimulator()):
         self.__version__ = "0.1.0"
         self._spec = EnvSpec('PokeBattleEnv-v0')
         self.simulator = simulator
         num_actions = len(self.simulator.get_available_actions()) + len(self.simulator.get_available_modifiers())
-        self.action_space = Box(low=0.0, high=1.0, shape=(num_actions,))
+        self.action_space = Box(low=0.0, high=1.0, shape=(num_actions,), dtype=np.float32)
         state_dimensions = len(self.simulator.state.to_array())
-        self.observation_space = Box(low=0, high=1000, shape=(state_dimensions,))
+        self.observation_space = Box(low=0, high=1000, shape=(state_dimensions,), dtype=np.float32)
         self.reward_range = (-1, 1)
         # ToDo: Set metadata['render.modes']
 

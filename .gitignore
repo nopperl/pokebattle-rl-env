@@ -1,6 +1,9 @@
 .*
 auth*
+*.egg-info
 /**/__pycache__
 usernames
+build
+dist
 !.gitignore
 !.travis.yml

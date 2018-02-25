@@ -1,4 +1,5 @@
 from unittest import TestCase, main
+
 from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import Move
 
