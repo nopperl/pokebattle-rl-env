@@ -12,10 +12,10 @@ register_env(env_creator_name, lambda config: PokeBattleEnv(ShowdownSimulator(se
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()
-config['num_workers'] = 5
-#config['timesteps_per_batch'] = 20
+config['num_workers'] = 15
+config['timesteps_per_batch'] = 1000
 config['horizon'] = 1000
-config['min_steps_per_task'] = 6
+config['min_steps_per_task'] = 1
 agent = ppo.PPOAgent(config=config, env=env_creator_name, registry=get_registry())
 
 
