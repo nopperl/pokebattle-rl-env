@@ -19,6 +19,15 @@ def sigmoid(x):
 
 
 class PokeBattleEnv(Env):
+    """The Pokemon battle Reinforecement Learning environment.
+
+    A subclass of :class:`gym.core.Env`, which is compatible with most Reinforcement Learning frameworks.
+    :class:`PokeBattleEnv` uses a :class:`pokebattle_rl_env.battle_simulator.BattleSimulator` to simulate the battles.
+
+    Attributes:
+        simulator (:class:`pokebattle_rl_env.battle_simulator.BattleSimulator`): The simulator to run battles in. Uses
+            :class:`pokebattle_rl_env.showdown_simulator.ShowdownSimulator` by default.
+    """
     def __init__(self, simulator=ShowdownSimulator()):
         self.__version__ = "0.1.0"
         self._spec = EnvSpec('PokeBattleEnv-v0')
@@ -84,6 +93,7 @@ class PokeBattleEnv(Env):
         return self.simulator.state.to_array()
 
     def render(self, mode='human'):
+        """Rendering is not yet implemented"""
         return
         if mode == 'rgb_array':
             raise NotImplementedError('rendering rgb_arrays not yet implemented')

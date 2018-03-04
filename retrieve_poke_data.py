@@ -1,8 +1,9 @@
-from requests import get
-from os.path import join, splitext
-from os import remove
 from json import dump
+from os import remove
+from os.path import join, splitext
+
 from execjs import eval
+from requests import get
 
 data_dir = 'pokemon_battle_rl_env/data'
 filenames = ['abilities.js', 'items.js', 'moves.js', 'pokedex.js', 'typechart.js']

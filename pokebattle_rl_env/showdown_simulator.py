@@ -18,6 +18,23 @@ LOCAL_WEB_SOCKET_URL = 'ws://localhost:8000/showdown/websocket'
 
 
 def register(challstr, username, password):
+    """Registers an account on https://pokemonshowdown.com.
+
+    Args:
+        challstr (str): The challenge string sent by the Pokemon Showdown server. Obtain this string by connecting to
+            the Pokemon Showdown WebSocket.
+        username (str): The username to register. Must be unique and not yet chosen.
+        password (str): The password to register. Must be unique and not yet chosen.
+
+    Returns:
+        str: The assertion string used as authentication with the WebSocket.
+
+    Raises:
+        ValueError: If at least one of the parameters is empty or the authentication using the provided credentials
+            failed.
+    """
+    if len(username) == 0 or len(password) == 0 or len(challstr) == 0:
+        raise ValueError('Arguments must be non-empty.')
     post_data = {
         'act': 'register',
         'captcha': 'pikachu',
@@ -28,14 +45,31 @@ def register(challstr, username, password):
     }
     response = post(SHOWDOWN_ACTION_URL, data=post_data)
     if response.text[0] != ']':
-        raise AttributeError('Invalid username and/or password')
+        raise ValueError('Invalid username and/or password')
     response = loads(response.text[1:])
     if not response['actionsuccess']:
-        raise AttributeError('Invalid username and/or password')
+        raise ValueError('Invalid username and/or password')
     return response['assertion']
 
 
 def login(challstr, username, password):
+    """Logs into an existing account on https://pokemonshowdown.com.
+
+    Args:
+        challstr (str): The challenge string sent by the Pokemon Showdown server. Obtain this string by connecting to
+            the Pokemon Showdown WebSocket.
+        username (str): The username to login.
+        password (str): The password to login.
+
+    Returns:
+        str: The assertion string used as authentication with the WebSocket.
+
+    Raises:
+        ValueError: If at least one of the parameters is empty or the authentication using the provided credentials
+            failed.
+    """
+    if len(username) == 0 or len(password) == 0 or len(challstr) == 0:
+        raise ValueError('Arguments must be non-empty.')
     post_data = {'act': 'login', 'name': username, 'pass': password, 'challstr': challstr}
     response = post(SHOWDOWN_ACTION_URL, data=post_data)
     response = loads(response.text[1:])
@@ -43,16 +77,46 @@ def login(challstr, username, password):
 
 
 def auth_temp_user(challstr, username):
+    """Logs into a temporary user account on https://pokemonshowdown.com. The account is not password protected and
+    deleted after a day.
+
+    Args:
+        challstr (str): The challenge string sent by the Pokemon Showdown server. Obtain this string by connecting to
+            the Pokemon Showdown WebSocket.
+        username (str): The username to register.
+
+    Returns:
+        str: The assertion string used as authentication with the WebSocket.
+
+    Raises:
+        ValueError: If at least one of the parameters is empty.
+    """
+    if len(username) == 0 or len(challstr) == 0:
+        raise ValueError('Arguments must be non-empty.')
     post_data = {'act': 'getassertion', 'challstr': challstr, 'userid': username}
     response = post(SHOWDOWN_ACTION_URL, data=post_data)
     return response.text
 
 
 def ident_to_name(ident):
+    """Retrieves the pokemon name out of a pokemon identification string.
+
+    Args:
+        ident (str): The pokemon identification string.
+
+    Returns:
+        str: The name of the pokemon
+
+    Examples:
+        >>> ident_to_name('p1a: Metagross')
+        'Metagross'
+    """
     return ident.split(':')[1][1:]
 
 
 def ident_to_pokemon(ident, state, opponent_short=None):
+    """
+    """
     if opponent_short is None or opponent_short in ident:
         pokemon = state.opponent.pokemon
     else:
@@ -348,6 +412,35 @@ def read_state_json(json, state):
 
 
 class ShowdownSimulator(BattleSimulator):
+    """A :class:`pokebattle_rl_env.battle_simulator.BattleSimulator` using
+    `Pokemon Showdown <https://pokemonshowdown.com>`_ as backend.
+
+    View ongoing battles at https://play.pokemonshowdown.com/:attr:`room_id` if :attr:`local` is False or at
+    localhost:8000/:attr:`room_id` if otherwise.
+
+    Attributes:
+        state (:class:`pokebattle_rl_env.game_state.GameState`): The current state of the battle.
+        auth (str): The authentication method to use to log into https://pokemonshowdown.com. Options:
+
+            * empty string: Log into a temporary account.
+            * 'register': Generate a username and password to register an account. The credentials will be output on the
+              console.
+            * path to authentication file: Logs into an account specified in a text file, where the first line specifies
+              the username and the second line specifies the password.
+
+
+        self_play (bool): Whether to use self play. Note that this is a naive self play-implementation. In fact, agents
+            simply play against other agents - a temporary text file keeps track of the battles. Thus, self play only
+            works if `number of agents % 2 == 0`. If `self_play` is false, the agent will battle against random human
+            opponents.
+        local (bool): Whether to use the local instance of Pokemon Showdown. If `local` is false, the public Pokemon
+            Showdown server at https://play.pokemonshowdown.com is used. Use a local instance of Pokemon Showdown
+            whenever possible. See https://github.com/Zarel/Pokemon-Showdown for installation instructions. Obviously,
+            if `self_play` is false, setting `local` to True is only recommended if you have human players on your local
+            instance. Otherwise, set `local` to False to use the public server.
+        debug_output (bool): Whether to output verbose battle and connectivity information to the console.
+        room_id (str): The string used to identify the current battle (room).
+    """
     def __init__(self, auth='', self_play=False, local=True, debug_output=False):
         print('Using Showdown backend')
         self.state = GameState()
