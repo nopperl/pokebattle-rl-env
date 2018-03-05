@@ -1,4 +1,7 @@
 from setuptools import setup
+from pip.req import parse_requirements
+
+requirements = [str(requirement.req) for requirement in parse_requirements('requirements.txt', session='')]
 
 setup(
     name='pokebattle_rl_env',
@@ -8,5 +11,6 @@ setup(
     license='',
     author='',
     author_email='',
-    description=''
+    description='',
+    install_requires=requirements
 )
