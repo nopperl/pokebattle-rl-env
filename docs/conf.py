@@ -35,6 +35,7 @@
 from sys import path
 from os.path import abspath
 
+path.insert(0, abspath('.'))
 path.insert(1, abspath('..'))
 
 extensions = ['sphinx.ext.autodoc',
