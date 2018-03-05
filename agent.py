@@ -1,14 +1,15 @@
 from signal import signal, SIGTERM, SIGINT
 from os import remove
+from os.path import isfile
 import ray
 from ray.rllib import ppo
 from ray.tune.registry import register_env, get_registry
 
 from pokebattle_rl_env import PokeBattleEnv
-from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
+from pokebattle_rl_env.showdown_simulator import ShowdownSimulator, DEFAULT_PUBLIC_CONNECTION
 
 env_creator_name = "PokeBattleEnv-v0"
-register_env(env_creator_name, lambda config: PokeBattleEnv(ShowdownSimulator(self_play=False, local=False)))
+register_env(env_creator_name, lambda config: PokeBattleEnv(ShowdownSimulator(self_play=False, connection=DEFAULT_PUBLIC_CONNECTION)))
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()
@@ -20,7 +21,8 @@ agent = ppo.PPOAgent(config=config, env=env_creator_name, registry=get_registry(
 
 
 def handle_exit(*_):
-    remove('usernames')
+    if isfile('usernames'):
+        remove('usernames')
     exit(0)
 
 

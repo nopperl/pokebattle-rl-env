@@ -5,6 +5,7 @@ from sys import stderr
 from time import sleep
 
 from requests import post
+import webbrowser
 from websocket import WebSocket
 
 from pokebattle_rl_env.battle_simulator import BattleSimulator
@@ -411,6 +412,58 @@ def read_state_json(json, state):
         state.player.force_switch = json['forceSwitch'][0]
 
 
+class ShowdownConnection:
+    """Holds information on how to connect to various endpoints of a specific Pokemon Showdown instance.
+
+    There are two useful endpoints of each Pokemon Showdown instance:
+
+    * The WebSocket endpoint, which enables user interaction and is used to run battles
+    * The HTTP endpoint, which displays the client and is used to view battles
+
+    `pokebattle_rl_env.showdown_simulator.DEFAULT_PUBLIC_CONNECTION` uses the default connection for the public
+    instance at https://play.pokemonshowdown.com. `pokebattle_rl_env.showdown_simulator.DEFAULT_LOCAL_CONNECTION` uses
+    the default connection for the local instance at https://localhost:8000. Specify a new instance of this class to use
+    a custom Pokemon Showdown instance not hosted locally.
+
+    Attributes:
+        ws_host (str): The hostname of the WebSocket endpoint. Can be different from `web_host`.
+        ws_port (int): The port of the WebSocket endpoint.
+        ws_ssl (bool): Whether to use the WebSocket Secure protocol. Keep in mind to use the corresponding `ws_port`
+            (most likely 433).
+        web_host (str): The hostname of the HTTP endpoint. Can be different from `ws_host`.
+        web_port (int): The port of the HTTP endpoint.
+        web_ssl (bool): Whether to use HTTPS. Keep in mind to use the corresponding `web_port` (most likely 433).
+    """
+    def __init__(self, ws_host, ws_port, ws_ssl, web_host, web_port, web_ssl):
+        self.ws_host = ws_host
+        self.ws_port = ws_port
+        self.ws_ssl = ws_ssl
+        self.ws_url = ('wss' if ws_ssl else 'ws') + f'://{ws_host}:{ws_port}/showdown/websocket'
+        self.web_host = web_host
+        self.web_port = web_port
+        self.web_ssl = web_ssl
+        self.web_url = ('https' if web_ssl else 'http') + f'://{web_host}:{web_port}'
+
+
+DEFAULT_PUBLIC_CONNECTION = ShowdownConnection(
+    ws_host='sim.smogon.com',
+    ws_port=443,
+    ws_ssl=True,
+    web_host='play.pokemonshowdown.com',
+    web_port=443,
+    web_ssl=True
+)
+
+DEFAULT_LOCAL_CONNECTION = ShowdownConnection(
+    ws_host='localhost',
+    ws_port=8000,
+    ws_ssl=False,
+    web_host='localhost',
+    web_port=8000,
+    web_ssl=False
+)
+
+
 class ShowdownSimulator(BattleSimulator):
     """A :class:`pokebattle_rl_env.battle_simulator.BattleSimulator` using
     `Pokemon Showdown <https://pokemonshowdown.com>`_ as backend.
@@ -433,20 +486,22 @@ class ShowdownSimulator(BattleSimulator):
             simply play against other agents - a temporary text file keeps track of the battles. Thus, self play only
             works if `number of agents % 2 == 0`. If `self_play` is false, the agent will battle against random human
             opponents.
-        local (bool): Whether to use the local instance of Pokemon Showdown. If `local` is false, the public Pokemon
-            Showdown server at https://play.pokemonshowdown.com is used. Use a local instance of Pokemon Showdown
-            whenever possible. See https://github.com/Zarel/Pokemon-Showdown for installation instructions. Obviously,
-            if `self_play` is false, setting `local` to True is only recommended if you have human players on your local
-            instance. Otherwise, set `local` to False to use the public server.
+        connection (:class:`pokebattle_rl_env.showdown_simulator.ShowdownConnection`): Details which Pokemon Showdown
+            connection to use. The default connection is to the local instance at https://localhost:8000. Use a local
+            instance of Pokemon Showdown whenever possible. See https://github.com/Zarel/Pokemon-Showdown for
+            installation instructions. Obviously, if `self_play` is false, using a local/custom instance is only
+            recommended if there are human players on it. Otherwise, set `connection` to
+            `pokebattle_rl_env.showdown_simulator.DEFAULT_PUBLIC_CONNECTION` to use the public connection at
+            https://play.pokemonshowdown.com.
         debug_output (bool): Whether to output verbose battle and connectivity information to the console.
         room_id (str): The string used to identify the current battle (room).
     """
-    def __init__(self, auth='', self_play=False, local=True, debug_output=False):
+    def __init__(self, auth='', self_play=False, connection=DEFAULT_LOCAL_CONNECTION, debug_output=False):
         print('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
         self.self_play = self_play
-        self.local = local
+        self.connection = connection
         self.debug_output = debug_output
         self.room_id = None
         self.ws = None
@@ -454,7 +509,7 @@ class ShowdownSimulator(BattleSimulator):
 
     def _connect(self, auth):
         self.ws = WebSocket(sslopt={'check_hostname': False})
-        self.ws.connect(url=LOCAL_WEB_SOCKET_URL if self.local else WEB_SOCKET_URL)
+        self.ws.connect(url=self.connection.ws_url)
         if self.debug_output:
             print('Connected')
         msg = ''
@@ -623,10 +678,21 @@ class ShowdownSimulator(BattleSimulator):
         return end
 
     def render(self, mode='human'):
-        if mode is 'human':
-            raise NotImplementedError  # Open https://play.pokemonshowdown.com in browser
+        """Renders the ongoing battle, if there is any.
+
+        Args:
+            mode (str): Details the rendering mode. Currently, only mode `human` is supported. `human` will simply open
+                the ongoing battle in a web browser (if one exists). Therefore, it is advised to call `render` only
+                once per battle.
+        """
+        if mode == 'human' and self.room_id is not None:
+            browser_url = f'{self.connection.web_url}/{self.room_id}'
+            webbrowser.open(browser_url)
 
     def reset(self):
+        """Resets the simulator to its initial state. Call this function prior to calling `act`. It automatically sets
+        up a new battle, even if there exists an ongoing battle.
+        """
         print(f'Reset {self.state.player.name}')
         if self.state.state == 'ongoing':
             if self.debug_output:
@@ -699,6 +765,7 @@ class ShowdownSimulator(BattleSimulator):
             print(f'Playing against {self.opponent}')
 
     def close(self):
+        """Closes the connection to the WebSocket endpoint."""
         self.ws.close()
         if self.debug_output:
             print('Connection closed')

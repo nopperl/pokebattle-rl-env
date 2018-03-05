@@ -93,13 +93,10 @@ class PokeBattleEnv(Env):
         return self.simulator.state.to_array()
 
     def render(self, mode='human'):
-        """Rendering is not yet implemented"""
-        return
         if mode == 'rgb_array':
             raise NotImplementedError('rendering rgb_arrays not yet implemented')
         if mode is 'human':
-            raise NotImplementedError('rendering in human mode not yet implemented')
-
+            self.simulator.render()
         else:
             super().render(mode=mode)
 
