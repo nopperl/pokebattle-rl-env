@@ -4,4 +4,4 @@
   script:
     - pytest
     - pytest --doctest-modules pokebattle_rl_env
-
+  sudo: required
