@@ -420,19 +420,19 @@ class ShowdownConnection:
     * The WebSocket endpoint, which enables user interaction and is used to run battles
     * The HTTP endpoint, which displays the client and is used to view battles
 
-    `pokebattle_rl_env.showdown_simulator.DEFAULT_PUBLIC_CONNECTION` uses the default connection for the public
-    instance at https://play.pokemonshowdown.com. `pokebattle_rl_env.showdown_simulator.DEFAULT_LOCAL_CONNECTION` uses
+    :const:`DEFAULT_PUBLIC_CONNECTION` uses the default connection for the public
+    instance at https://play.pokemonshowdown.com. :const:`DEFAULT_LOCAL_CONNECTION` uses
     the default connection for the local instance at https://localhost:8000. Specify a new instance of this class to use
     a custom Pokemon Showdown instance not hosted locally.
 
     Attributes:
-        ws_host (str): The hostname of the WebSocket endpoint. Can be different from `web_host`.
+        ws_host (str): The hostname of the WebSocket endpoint. Can be different from :attr:`web_host`.
         ws_port (int): The port of the WebSocket endpoint.
-        ws_ssl (bool): Whether to use the WebSocket Secure protocol. Keep in mind to use the corresponding `ws_port`
-            (most likely 433).
-        web_host (str): The hostname of the HTTP endpoint. Can be different from `ws_host`.
+        ws_ssl (bool): Whether to use the WebSocket Secure protocol. Keep in mind to use the corresponding
+            :attr:`ws_port` (most likely 433).
+        web_host (str): The hostname of the HTTP endpoint. Can be different from :attr:`ws_host`.
         web_port (int): The port of the HTTP endpoint.
-        web_ssl (bool): Whether to use HTTPS. Keep in mind to use the corresponding `web_port` (most likely 433).
+        web_ssl (bool): Whether to use HTTPS. Keep in mind to use the corresponding :attr:`web_port` (most likely 433).
     """
     def __init__(self, ws_host, ws_port, ws_ssl, web_host, web_port, web_ssl):
         self.ws_host = ws_host
@@ -469,14 +469,14 @@ class ShowdownSimulator(BattleSimulator):
     `Pokemon Showdown <https://pokemonshowdown.com>`_ as backend.
 
     View ongoing battles at https://play.pokemonshowdown.com/:attr:`room_id` if :attr:`local` is False or at
-    localhost:8000/:attr:`room_id` if otherwise.
+    http://localhost:8000/:attr:`room_id` if otherwise.
 
     Attributes:
         state (:class:`pokebattle_rl_env.game_state.GameState`): The current state of the battle.
         auth (str): The authentication method to use to log into https://pokemonshowdown.com. Options:
 
             * empty string: Log into a temporary account.
-            * 'register': Generate a username and password to register an account. The credentials will be output on the
+            * `'register'`: Generate a username and password to register an account. The credentials will be output on the
               console.
             * path to authentication file: Logs into an account specified in a text file, where the first line specifies
               the username and the second line specifies the password.
@@ -484,15 +484,14 @@ class ShowdownSimulator(BattleSimulator):
 
         self_play (bool): Whether to use self play. Note that this is a naive self play-implementation. In fact, agents
             simply play against other agents - a temporary text file keeps track of the battles. Thus, self play only
-            works if `number of agents % 2 == 0`. If `self_play` is false, the agent will battle against random human
-            opponents.
+            works if `number of agents % 2 == 0`. If :attr:`self_play` is false, the agent will battle against random
+            human opponents.
         connection (:class:`pokebattle_rl_env.showdown_simulator.ShowdownConnection`): Details which Pokemon Showdown
             connection to use. The default connection is to the local instance at https://localhost:8000. Use a local
             instance of Pokemon Showdown whenever possible. See https://github.com/Zarel/Pokemon-Showdown for
-            installation instructions. Obviously, if `self_play` is false, using a local/custom instance is only
-            recommended if there are human players on it. Otherwise, set `connection` to
-            `pokebattle_rl_env.showdown_simulator.DEFAULT_PUBLIC_CONNECTION` to use the public connection at
-            https://play.pokemonshowdown.com.
+            installation instructions. Obviously, if :attr:`self_play` is false, using a local/custom instance is only
+            recommended if there are human players on it. Otherwise, set :attr:`connection` to
+            :const:`DEFAULT_PUBLIC_CONNECTION` to use the public connection at https://play.pokemonshowdown.com.
         debug_output (bool): Whether to output verbose battle and connectivity information to the console.
         room_id (str): The string used to identify the current battle (room).
     """
@@ -682,16 +681,16 @@ class ShowdownSimulator(BattleSimulator):
 
         Args:
             mode (str): Details the rendering mode. Currently, only mode `human` is supported. `human` will simply open
-                the ongoing battle in a web browser (if one exists). Therefore, it is advised to call `render` only
-                once per battle.
+                the ongoing battle in a web browser (if one exists). Therefore, it is advised to call :meth:`render`
+                only once per battle.
         """
         if mode == 'human' and self.room_id is not None:
             browser_url = f'{self.connection.web_url}/{self.room_id}'
             webbrowser.open(browser_url)
 
     def reset(self):
-        """Resets the simulator to its initial state. Call this function prior to calling `act`. It automatically sets
-        up a new battle, even if there exists an ongoing battle.
+        """Resets the simulator to its initial state. Call this function prior to calling :meth:`act`. It automatically
+        sets up a new battle, even if there exists an ongoing battle.
         """
         print(f'Reset {self.state.player.name}')
         if self.state.state == 'ongoing':

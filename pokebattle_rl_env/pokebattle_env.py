@@ -37,7 +37,7 @@ class PokeBattleEnv(Env):
         state_dimensions = len(self.simulator.state.to_array())
         self.observation_space = Box(low=0, high=1000, shape=(state_dimensions,), dtype=np.float32)
         self.reward_range = (-1, 1)
-        # ToDo: Set metadata['render.modes']
+        self.metadata['render.modes'] = ['human']
 
     def get_action(self, action_probs):
         valid_actions = self.simulator.get_available_actions()
