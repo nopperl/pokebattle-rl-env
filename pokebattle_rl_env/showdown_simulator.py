@@ -7,6 +7,7 @@ from time import sleep
 from requests import post
 import webbrowser
 from websocket import WebSocket
+from websocket._exceptions import WebSocketTimeoutException
 
 from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import BattleEffect, GameState, Move
@@ -554,7 +555,17 @@ class ShowdownSimulator(BattleSimulator):
     def _update_state(self):
         end = False
         while not end:
-            msg = self.ws.recv()
+            if self.self_play:
+                # A curios situation occurs in naive self-play, where two environments are reset and set up a battle
+                # against each other, yet only one environment actually executes actions. In this case, wait for an
+                # answer of the foe and simply break if nothing happens.
+                self.ws.settimeout(1)
+                try:
+                    msg = self.ws.recv()
+                except WebSocketTimeoutException:
+                    break
+            else:
+                msg = self.ws.recv()
             end = self._parse_message(msg)
 
     def _parse_message(self, msg):
