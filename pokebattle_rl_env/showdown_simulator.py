@@ -551,19 +551,22 @@ class ShowdownSimulator(BattleSimulator):
         self.ws.send(f'{self.room_id}|/switch {pokemon}')
         pokemon_list = self.state.player.pokemon
         pokemon_list[0], pokemon_list[pokemon - 1] = pokemon_list[pokemon - 1], pokemon_list[0]
-
+    counter = 0
     def _update_state(self):
+        self.counter += 1
+        print(self.counter)
         end = False
         while not end:
             if self.self_play:
                 # A curios situation occurs in naive self-play, where two environments are reset and set up a battle
                 # against each other, yet only one environment actually executes actions. In this case, wait for an
                 # answer of the foe and simply break if nothing happens.
-                self.ws.settimeout(1)
+                #self.ws.settimeout(1)
                 try:
                     msg = self.ws.recv()
                 except WebSocketTimeoutException:
                     break
+                #self.ws.settimeout(None)
             else:
                 msg = self.ws.recv()
             end = self._parse_message(msg)
@@ -726,6 +729,7 @@ class ShowdownSimulator(BattleSimulator):
         self.ws.send('|/utm null')  # Team
 
         if self.self_play:
+            self.ws.settimeout(None)
             # Self play
             sleep(random())
             if not isfile('usernames'):
