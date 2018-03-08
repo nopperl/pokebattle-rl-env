@@ -554,19 +554,19 @@ class ShowdownSimulator(BattleSimulator):
     counter = 0
     def _update_state(self):
         self.counter += 1
-        print(self.counter)
+        print(f'{self.state.player.name}, {self.counter}')
         end = False
         while not end:
             if self.self_play:
                 # A curios situation occurs in naive self-play, where two environments are reset and set up a battle
                 # against each other, yet only one environment actually executes actions. In this case, wait for an
                 # answer of the foe and simply break if nothing happens.
-                #self.ws.settimeout(1)
+                self.ws.settimeout(1)
                 try:
                     msg = self.ws.recv()
                 except WebSocketTimeoutException:
                     break
-                #self.ws.settimeout(None)
+                self.ws.settimeout(None)
             else:
                 msg = self.ws.recv()
             end = self._parse_message(msg)
