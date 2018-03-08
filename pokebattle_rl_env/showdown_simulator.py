@@ -552,6 +552,7 @@ class ShowdownSimulator(BattleSimulator):
         pokemon_list = self.state.player.pokemon
         pokemon_list[0], pokemon_list[pokemon - 1] = pokemon_list[pokemon - 1], pokemon_list[0]
     counter = 0
+    self_play_problem = False
     def _update_state(self):
         self.counter += 1
         print(f'{self.state.player.name}, {self.counter}')
@@ -565,6 +566,10 @@ class ShowdownSimulator(BattleSimulator):
                 try:
                     msg = self.ws.recv()
                 except WebSocketTimeoutException:
+                    self.ws.settimeout(None)
+                    self.self_play_problem = True
+                    self.state.state = 'tie'
+                    self.state.forfeited = True
                     break
                 self.ws.settimeout(None)
             else:
@@ -727,6 +732,10 @@ class ShowdownSimulator(BattleSimulator):
             if self.debug_output:
                 print(f'Using username {self.username} with password {self.password}')
         self.ws.send('|/utm null')  # Team
+
+        if self.self_play_problem:
+            self.self_play_problem = False
+            return
 
         if self.self_play:
             self.ws.settimeout(None)
