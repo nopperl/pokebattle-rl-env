@@ -1,11 +1,11 @@
+import webbrowser
 from json import loads
-from os.path import getsize, isfile
+from logging import getLogger, debug, info, warning, INFO
+from os.path import isfile
 from random import random
-from sys import stderr
 from time import sleep
 
 from requests import post
-import webbrowser
 from websocket import WebSocket
 from websocket._exceptions import WebSocketTimeoutException
 
@@ -13,6 +13,8 @@ from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import BattleEffect, GameState, Move
 from pokebattle_rl_env.poke_data_queries import get_move_by_name, ability_name_to_id, item_name_to_id
 from pokebattle_rl_env.util import generate_username, generate_token
+
+getLogger().setLevel(INFO)
 
 WEB_SOCKET_URL = 'wss://sim.smogon.com/showdown/websocket'
 SHOWDOWN_ACTION_URL = 'https://play.pokemonshowdown.com/action.php'
@@ -497,7 +499,7 @@ class ShowdownSimulator(BattleSimulator):
         room_id (str): The string used to identify the current battle (room).
     """
     def __init__(self, auth='', self_play=False, connection=DEFAULT_LOCAL_CONNECTION, debug_output=False):
-        print('Using Showdown backend')
+        info('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
         self.self_play = self_play
@@ -512,8 +514,7 @@ class ShowdownSimulator(BattleSimulator):
     def _connect(self, auth):
         self.ws = WebSocket(sslopt={'check_hostname': False})
         self.ws.connect(url=self.connection.ws_url)
-        if self.debug_output:
-            print('Connected')
+        debug('Connected to Showdown socket')
         msg = ''
         while not msg.startswith('|challstr|'):
             msg = self.ws.recv()
@@ -536,28 +537,26 @@ class ShowdownSimulator(BattleSimulator):
         msg = ''
         while not msg.startswith('|updateuser|') and self.username not in msg:
             msg = self.ws.recv()
-            if self.debug_output:
-                print(msg)
+            debug(msg)
 
     def _attack(self, move, mega=False, z=False):
         cmd = f'{self.room_id}|/move {move}'
         cmd += ' mega' if mega else ''
         cmd += ' zmove' if z else ''
-        if self.debug_output:
-            print(cmd)
+        debug(cmd)
         self.ws.send(cmd)
 
     def _switch(self, pokemon):
-        if self.debug_output:
-            print(f'{self.room_id}|/switch {pokemon}')
-        self.ws.send(f'{self.room_id}|/switch {pokemon}')
+        cmd = f'{self.room_id}|/switch {pokemon}'
+        debug(cmd)
+        self.ws.send(cmd)
         pokemon_list = self.state.player.pokemon
         pokemon_list[0], pokemon_list[pokemon - 1] = pokemon_list[pokemon - 1], pokemon_list[0]
     counter = 0
     self_play_problem = False
     def _update_state(self):
         self.counter += 1
-        print(f'{self.state.player.name}, {self.counter}')
+        debug('%s, %s, %s', self.username, self.state.player.name, self.counter)
         end = False
         while not end:
             if self.self_play:
@@ -584,8 +583,7 @@ class ShowdownSimulator(BattleSimulator):
         end = False
         if not msg.startswith(f'>{self.room_id}'):
             return False
-        if self.debug_output:
-            print(msg)
+        debug(msg)
         msgs = msg.split('\n')
         for msg in msgs:
             info = msg.split('|')
@@ -629,7 +627,7 @@ class ShowdownSimulator(BattleSimulator):
                         status.turn += 1
                 pass
             elif info[1] == 'error':
-                print(msg, file=stderr)
+                warning(msg)
             elif info[1] == 'switch' or info[1] == 'drag':
                 parse_switch(info, self.state, self.opponent_short)
             elif info[1] == '-boost':
@@ -713,26 +711,24 @@ class ShowdownSimulator(BattleSimulator):
         """Resets the simulator to its initial state. Call this function prior to calling :meth:`act`. It automatically
         sets up a new battle, even if there exists an ongoing battle.
         """
-        print(f'Reset {self.state.player.name}')
+        debug('Reset %s', self.state.player.name)
         if self.state.state == 'ongoing':
-            if self.debug_output:
-                print(f'{self.room_id}|/forfeit')
-            self.ws.send(f'{self.room_id}|/forfeit')
+            cmd = f'{self.room_id}|/forfeit'
+            self.ws.send(cmd)
+            debug(cmd)
         if self.room_id is not None:
-            if self.debug_output:
-                print(f'|/leave {self.room_id}')
-            self.ws.send(f'|/leave {self.room_id}')
+            cmd = f'|/leave {self.room_id}'
+            self.ws.send(cmd)
+            debug(cmd)
             self.room_id = None
             self.state = GameState()
             msg = ''
             while 'deinit' not in msg:
                 msg = self.ws.recv()
-                if self.debug_output:
-                    print(msg)
+                debug(msg)
         if self.ws is None:
             self._connect(self.auth)
-            if self.debug_output:
-                print(f'Using username {self.username} with password {self.password}')
+            info('Using username %s with password %s', self.username, self.password)
         self.ws.send('|/utm null')  # Team
 
         if self.self_play_problem and False:
@@ -753,21 +749,20 @@ class ShowdownSimulator(BattleSimulator):
             username_index = usernames.index(self.username)
             if username_index % 2 == 0:
                 opponent = usernames[username_index + 1]
-                self.ws.send(f'|/challenge {opponent}, gen7randombattle')
-                if self.debug_output:
-                    print(f'|/challenge {opponent}, gen7randombattle')
+                cmd = f'|/challenge {opponent}, gen7randombattle'
+                self.ws.send(cmd)
+                debug(cmd)
             else:
                 while True:
                     msg = self.ws.recv()
-                    if self.debug_output:
-                        print(msg)
+                    debug(msg)
                     if msg.startswith('|updatechallenges|'):
                         json = loads(msg.split('|')[2])
                         if 'challengesFrom' in json and json['challengesFrom']:
                             opponent = next(iter(json['challengesFrom']))
-                            self.ws.send(f'|/accept {opponent}')
-                            if self.debug_output:
-                                print(f'|/accept {opponent}')
+                            cmd = f'|/accept {opponent}'
+                            self.ws.send(cmd)
+                            debug(cmd)
                             del lines[username_index - 1]
                             del lines[username_index - 1]
                             with open('usernames', 'w') as file:
@@ -837,11 +832,9 @@ class ShowdownSimulator(BattleSimulator):
         self._update_state()
         if not self.self_play:
             self.ws.send(f'{self.room_id}|/timer on')
-        if self.debug_output:
-            print(f'Playing against {self.opponent}')
+        debug('Playing against %s', self.opponent)
 
     def close(self):
         """Closes the connection to the WebSocket endpoint."""
         self.ws.close()
-        if self.debug_output:
-            print('Connection closed')
+        info('Connection to Showdown Socket closed')

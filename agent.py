@@ -1,12 +1,17 @@
+import logging
 from argparse import ArgumentParser
+from datetime import datetime
 from os import remove
-from os.path import isfile
+from os.path import isfile, join
+
 import ray
 from ray.rllib import ppo
 from ray.tune.registry import register_env, get_registry
 
 from pokebattle_rl_env import PokeBattleEnv
-from pokebattle_rl_env.showdown_simulator import ShowdownSimulator, DEFAULT_PUBLIC_CONNECTION
+from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
+
+logging.basicConfig(level=logging.DEBUG)
 
 # works only with by placing rollout.py at rllib/ppo/rollout.py
 
@@ -15,6 +20,8 @@ parser.add_argument('-o', '--output', type=str, default='', help='Path to the ou
 parser.add_argument('-i', '--iterations', type=str, default=1000, help='Amount of iterations to train the model in')
 parser.add_argument('-s', '--save-iterations', type=str, default=10, help='Amount of iterations between each model save')
 args = parser.parse_args()
+
+output_path = join(args.output, datetime.today().strftime('%Y-%m-%d-%H-%M-%S'))
 
 if isfile('usernames'):
     remove('usernames')
@@ -34,4 +41,4 @@ for i in range(args.iterations):
     result = agent.train()
     print(f"result: {result}")
     if i % args.save_iterations == 0:
-        agent.save(checkpoint_dir=args.output)
+        agent.save(checkpoint_dir=output_path)
