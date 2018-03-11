@@ -16,9 +16,7 @@ from pokebattle_rl_env.util import generate_username, generate_token
 
 getLogger().setLevel(INFO)
 
-WEB_SOCKET_URL = 'wss://sim.smogon.com/showdown/websocket'
 SHOWDOWN_ACTION_URL = 'https://play.pokemonshowdown.com/action.php'
-LOCAL_WEB_SOCKET_URL = 'ws://localhost:8000/showdown/websocket'
 
 
 def register(challstr, username, password):
@@ -553,28 +551,12 @@ class ShowdownSimulator(BattleSimulator):
         pokemon_list = self.state.player.pokemon
         pokemon_list[0], pokemon_list[pokemon - 1] = pokemon_list[pokemon - 1], pokemon_list[0]
     counter = 0
-    self_play_problem = False
     def _update_state(self):
         self.counter += 1
         debug('%s, %s, %s', self.username, self.state.player.name, self.counter)
         end = False
         while not end:
-            if self.self_play:
-                # A curios situation occurs in naive self-play, where two environments are reset and set up a battle
-                # against each other, yet only one environment actually executes actions. In this case, wait for an
-                # answer of the foe and simply break if nothing happens.
-                self.ws.settimeout(1)
-                try:
-                    msg = self.ws.recv()
-                except WebSocketTimeoutException:
-                    self.ws.settimeout(None)
-                    self.self_play_problem = True
-                    self.state.state = 'tie'
-                    self.state.forfeited = True
-                    break
-                self.ws.settimeout(None)
-            else:
-                msg = self.ws.recv()
+            msg = self.ws.recv()
             end = self._parse_message(msg)
 
     def _parse_message(self, msg):
@@ -730,10 +712,6 @@ class ShowdownSimulator(BattleSimulator):
             self._connect(self.auth)
             info('Using username %s with password %s', self.username, self.password)
         self.ws.send('|/utm null')  # Team
-
-        if self.self_play_problem and False:
-            self.self_play_problem = False
-            return
 
         if self.self_play:
             self.ws.settimeout(None)

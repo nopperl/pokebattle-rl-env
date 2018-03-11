@@ -252,3 +252,71 @@ battle-gen7randombattle-705940049|/switch 5
 
 
 {"active":[{"moves":[{"move":"Quick Attack","id":"quickattack","pp":48,"maxpp":48,"target":"normal","disabled":false},{"move":"Swords Dance","id":"swordsdance","pp":32,"maxpp":32,"target":"self","disabled":false},{"move":"Earthquake","id":"earthquake","pp":16,"maxpp":16,"target":"allAdjacent","disabled":false},{"move":"Close Combat","id":"closecombat","pp":8,"maxpp":8,"target":"normal","disabled":false}],"canMegaEvo":true}],"side":{"name":"pkmufq6x","id":"p1","pokemon":[{"ident":"p1: Pinsir","details":"Pinsir, L75, F","condition":"221/221","active":true,"stats":{"atk":231,"def":194,"spa":126,"spd":149,"spe":171},"moves":["quickattack","swordsdance","earthquake","closecombat"],"baseAbility":"moxie","item":"pinsirite","pokeball":"pokeball","ability":"moxie"},{"ident":"p1: Unfezant","details":"Unfezant, L83, F","condition":"268/268","active":false,"stats":{"atk":239,"def":180,"spa":156,"spd":139,"spe":202},"moves":["pluck","roost","hypnosis","nightslash"],"baseAbility":"superluck","item":"scopelens","pokeball":"pokeball","ability":"superluck"},{"ident":"p1: Reshiram","details":"Reshiram, L73","condition":"266/266","active":false,"stats":{"atk":180,"def":188,"spa":261,"spd":218,"spe":174},"moves":["dracometeor","roost","dragonpulse","blueflare"],"baseAbility":"turboblaze","item":"leftovers","pokeball":"pokeball","ability":"turboblaze"},{"ident":"p1: Diancie","details":"Diancie, L79","condition":"209/209","active":false,"stats":{"atk":163,"def":283,"spa":204,"spd":283,"spe":125},"moves":["lightscreen","stealthrock","moonblast","reflect"],"baseAbility":"clearbody","item":"lightclay","pokeball":"pokeball","ability":"clearbody"},{"ident":"p1: Lycanroc","details":"Lycanroc-Dusk, L77, M","condition":"242/242","active":false,"stats":{"atk":225,"def":145,"spa":129,"spd":145,"spe":214},"moves":["accelerock","drillrun","firefang","return"],"baseAbility":"toughclaws","item":"choiceband","pokeball":"pokeball","ability":"toughclaws"},{"ident":"p1: Sharpedo","details":"Sharpedo, L78, F","condition":"237/237","active":false,"stats":{"atk":232,"def":107,"spa":193,"spd":107,"spe":193},"moves":["crunch","icebeam","earthquake","waterfall"],"baseAbility":"speedboost","item":"lifeorb","pokeball":"pokeball","ability":"speedboost"}]},"rqid":2}
+
+
+
+
+<< >battle-gen7anythinggoes-1142
+|request|{"active":[{"moves":[{"move":"Counter","id":"counter","pp":32,"maxpp":32,"target":"scripted","disabled":false}]}],"side":{"name":"gfhjfgh","id":"p1","pokemon":[{"ident":"p1: Chansey","details":"Chansey, F","condition":"641/641","active":true,"stats":{"atk":15,"def":46,"spa":106,"spd":246,"spe":136},"moves":["counter"],"baseAbility":"naturalcure","item":"assaultvest","pokeball":"pokeball","ability":"naturalcure"},{"ident":"p1: Celesteela","details":"Celesteela","condition":"335/335","active":false,"stats":{"atk":238,"def":242,"spa":250,"spd":238,"spe":158},"moves":["explosion"],"baseAbility":"beastboost","item":"assaultvest","pokeball":"pokeball","ability":"beastboost"}]},"rqid":4}
+client.js:715:6
+<< >battle-gen7anythinggoes-1142
+
+|
+|start
+|switch|p1a: Chansey|Chansey, F|641/641
+|switch|p2a: Alakazam|Alakazam, M|100/100
+|turn|1
+client.js:715:6
+<< >battle-gen7anythinggoes-1142
+|inactive|Time left: 300 sec this turn | 305 sec total
+client.js:715:6
+>> battle-gen7anythinggoes-1142|/choose move 1|4
+client.js:769:5
+<< >battle-gen7anythinggoes-1142
+|request|{"active":[{"moves":[{"move":"Counter","id":"counter","pp":31,"maxpp":32,"target":"scripted","disabled":false}]}],"side":{"name":"gfhjfgh","id":"p1","pokemon":[{"ident":"p1: Chansey","details":"Chansey, F","condition":"641/641","active":true,"stats":{"atk":15,"def":46,"spa":106,"spd":246,"spe":136},"moves":["counter"],"baseAbility":"naturalcure","item":"assaultvest","pokeball":"pokeball","ability":"naturalcure"},{"ident":"p1: Celesteela","details":"Celesteela","condition":"335/335","active":false,"stats":{"atk":238,"def":242,"spa":250,"spd":238,"spe":158},"moves":["explosion"],"baseAbility":"beastboost","item":"assaultvest","pokeball":"pokeball","ability":"beastboost"}]},"rqid":6}
+client.js:715:6
+<< >battle-gen7anythinggoes-1142
+
+|
+|switch|p2a: Arceus|Arceus-Dark|100/100
+|move|p1a: Chansey|Counter|p2a: Arceus
+|-fail|p2a: Arceus
+|
+|upkeep
+|turn|2
+client.js:715:6
+<< >battle-gen7anythinggoes-1142
+|inactive|Time left: 300 sec this turn | 310 sec total
+client.js:715:6
+>> battle-gen7anythinggoes-1142|/choose move 1|6
+client.js:769:5
+<< >battle-gen7anythinggoes-1142
+|request|{"active":[{"moves":[{"move":"Counter","id":"counter","pp":30,"maxpp":32,"target":"scripted","disabled":false}]}],"side":{"name":"gfhjfgh","id":"p1","pokemon":[{"ident":"p1: Chansey","details":"Chansey, F","condition":"641/641","active":true,"stats":{"atk":15,"def":46,"spa":106,"spd":246,"spe":136},"moves":["counter"],"baseAbility":"naturalcure","item":"assaultvest","pokeball":"pokeball","ability":"naturalcure"},{"ident":"p1: Celesteela","details":"Celesteela","condition":"335/335","active":false,"stats":{"atk":238,"def":242,"spa":250,"spd":238,"spe":158},"moves":["explosion"],"baseAbility":"beastboost","item":"assaultvest","pokeball":"pokeball","ability":"beastboost"}]},"rqid":8}
+client.js:715:6
+<< >battle-gen7anythinggoes-1142
+
+|
+|switch|p2a: Alakazam|Alakazam, M|100/100
+|move|p1a: Chansey|Counter|p2a: Alakazam
+|-fail|p2a: Alakazam
+|
+|upkeep
+|turn|3
+client.js:715:6
+<< >battle-gen7anythinggoes-1142
+|inactive|Time left: 300 sec this turn | 310 sec total
+client.js:715:6
+>> battle-gen7anythinggoes-1142|/choose move 1|8
+client.js:769:5
+<< >battle-gen7anythinggoes-1142
+|request|{"active":[{"moves":[{"move":"Counter","id":"counter","pp":29,"maxpp":32,"target":"scripted","disabled":false}]}],"side":{"name":"gfhjfgh","id":"p1","pokemon":[{"ident":"p1: Chansey","details":"Chansey, F","condition":"641/641","active":true,"stats":{"atk":15,"def":46,"spa":106,"spd":246,"spe":136},"moves":["counter"],"baseAbility":"naturalcure","item":"assaultvest","pokeball":"pokeball","ability":"naturalcure"},{"ident":"p1: Celesteela","details":"Celesteela","condition":"335/335","active":false,"stats":{"atk":238,"def":242,"spa":250,"spd":238,"spe":158},"moves":["explosion"],"baseAbility":"beastboost","item":"assaultvest","pokeball":"pokeball","ability":"beastboost"}]},"rqid":10}
+client.js:715:6
+<< >battle-gen7anythinggoes-1142
+
+|
+|switch|p2a: Arceus|Arceus-Dark|100/100
+|move|p1a: Chansey|Counter|p2a: Arceus
+|-fail|p2a: Arceus
+|
+|upkeep
+|turn|4
