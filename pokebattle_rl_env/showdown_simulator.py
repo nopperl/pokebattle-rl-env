@@ -742,13 +742,69 @@ class ShowdownSimulator(BattleSimulator):
         if self.self_play:
             self.ws.settimeout(None)
             # Self play
-            # if not isfile('usernames'):
-            #     open('usernames', 'a').close()
-            # if getsize('usernames') == 0:
+
+            with open('usernames', 'a') as file:
+                file.write(self.username + '\n')
+            sleep(1 + random())
+            with open('usernames', 'r') as file:
+                lines = file.readlines()
+                usernames = [line[:-1] for line in lines]
+            print(lines, usernames)
+            username_index = usernames.index(self.username)
+            if username_index % 2 == 0:
+                opponent = usernames[username_index + 1]
+                self.ws.send(f'|/challenge {opponent}, gen7randombattle')
+                if self.debug_output:
+                    print(f'|/challenge {opponent}, gen7randombattle')
+            else:
+                while True:
+                    msg = self.ws.recv()
+                    if self.debug_output:
+                        print(msg)
+                    if msg.startswith('|updatechallenges|'):
+                        json = loads(msg.split('|')[2])
+                        if 'challengesFrom' in json and json['challengesFrom']:
+                            opponent = next(iter(json['challengesFrom']))
+                            self.ws.send(f'|/accept {opponent}')
+                            if self.debug_output:
+                                print(f'|/accept {opponent}')
+                            del lines[username_index - 1]
+                            del lines[username_index - 1]
+                            with open('usernames', 'w') as file:
+                                file.writelines(lines)
+                            break
+
+            # if self.self_play_opponent is None:
             #     with open('usernames', 'a') as file:
             #         file.write(self.username + '\n')
-            #     if self.debug_output:
-            #         print('empty')
+            #     sleep(1 + random())
+            #     with open('usernames', 'r') as file:
+            #         lines = file.readlines()
+            #         usernames = [line[:-1] for line in lines]
+            #     username_index = usernames.index(self.username)
+            #     if username_index % 2 == 0:
+            #         self.self_play_opponent = usernames[username_index + 1]
+            #         self.ws.send(f'|/challenge {self.self_play_opponent}, gen7randombattle')
+            #         print(f'|/challenge {self.self_play_opponent}, gen7randombattle')
+            #     else:
+            #         self.self_play_opponent = self.username
+            #         while True:
+            #             msg = self.ws.recv()
+            #             if self.debug_output:
+            #                 print(msg)
+            #             if msg.startswith('|updatechallenges|'):
+            #                 json = loads(msg.split('|')[2])
+            #                 if 'challengesFrom' in json and json['challengesFrom']:
+            #                     self.self_play_opponent = next(iter(json['challengesFrom']))
+            #                     self.ws.send(f'|/accept {self.self_play_opponent}')
+            #                     if self.debug_output:
+            #                         print(f'|/accept {self.self_play_opponent}')
+            #                     del lines[username_index - 1]
+            #                     del lines[username_index - 1]
+            #                     with open('usernames', 'w') as file:
+            #                         file.writelines(lines)
+            #                     break
+            # elif self.self_play_opponent == self.username:
             #     while True:
             #         msg = self.ws.recv()
             #         if self.debug_output:
@@ -762,59 +818,8 @@ class ShowdownSimulator(BattleSimulator):
             #                     print(f'|/accept {opponent}')
             #                 break
             # else:
-            #     with open('usernames', 'r') as file:
-            #         lines = file.readlines()
-            #     opponent = lines.pop(0)[:-1]
-            #     with open('usernames', 'w') as file:
-            #         file.writelines(lines)
-            #     self.ws.send(f'|/challenge {opponent}, gen7randombattle')
-            #     if self.debug_output:
-            #         print(f'|/challenge {opponent}, gen7randombattle')
-
-            if self.self_play_opponent is None:
-                with open('usernames', 'a') as file:
-                    file.write(self.username + '\n')
-                sleep(1 + random())
-                with open('usernames', 'r') as file:
-                    lines = file.readlines()
-                    usernames = [line[:-1] for line in lines]
-                username_index = usernames.index(self.username)
-                if username_index % 2 == 0:
-                    self.self_play_opponent = usernames[username_index + 1]
-                    self.ws.send(f'|/challenge {self.self_play_opponent}, gen7randombattle')
-                    print(f'|/challenge {self.self_play_opponent}, gen7randombattle')
-                else:
-                    while True:
-                        msg = self.ws.recv()
-                        if self.debug_output:
-                            print(msg)
-                        if msg.startswith('|updatechallenges|'):
-                            json = loads(msg.split('|')[2])
-                            if 'challengesFrom' in json and json['challengesFrom']:
-                                self.self_play_opponent = next(iter(json['challengesFrom']))
-                                self.ws.send(f'|/accept {self.self_play_opponent}')
-                                if self.debug_output:
-                                    print(f'|/accept {self.self_play_opponent}')
-                                del lines[username_index]
-                                del lines[username_index - 1]
-                                with open('usernames', 'w') as file:
-                                    file.writelines(lines)
-                                break
-            else:
-                self.ws.send(f'|/challenge {self.self_play_opponent}, gen7randombattle')
-                print(f'|/challenge {self.self_play_opponent}, gen7randombattle')
-                while True:
-                    msg = self.ws.recv()
-                    if self.debug_output or True:
-                        print(msg)
-                    if msg.startswith('|updatechallenges|'):
-                        json = loads(msg.split('|')[2])
-                        if 'challengesFrom' in json and json['challengesFrom']:
-                            opponent = next(iter(json['challengesFrom']))
-                            self.ws.send(f'|/accept {opponent}')
-                            if self.debug_output or True:
-                                print(f'|/accept {opponent}')
-                            break
+            #     self.ws.send(f'|/challenge {self.self_play_opponent}, gen7randombattle')
+            #     print(f'|/challenge {self.self_play_opponent}, gen7randombattle')
 
 
 
