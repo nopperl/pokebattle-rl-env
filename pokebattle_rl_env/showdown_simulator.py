@@ -744,7 +744,7 @@ class ShowdownSimulator(BattleSimulator):
             if not isfile('usernames'):
                 open('usernames', 'a').close()
             if getsize('usernames') == 0:
-                with open('usernames', 'w') as file:
+                with open('usernames', 'a') as file:
                     file.write(self.username + '\n')
                 if self.debug_output:
                     print('empty')
@@ -769,6 +769,9 @@ class ShowdownSimulator(BattleSimulator):
                 self.ws.send(f'|/challenge {opponent}, gen7randombattle')
                 if self.debug_output:
                     print(f'|/challenge {opponent}, gen7randombattle')
+            # with open('usernames', 'a') as file:
+            #     file.write(self.username + '\n')
+
 
             # p >> |/challenge [OPPONENT], gen7randombattle
             # p << |updatechallenges|{"challengesFrom":{},"challengeTo":{"to":"[OPPONENT]","format":"gen7randombattle"}}
