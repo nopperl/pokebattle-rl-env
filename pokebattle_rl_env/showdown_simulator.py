@@ -510,7 +510,7 @@ class ShowdownSimulator(BattleSimulator):
             logger = getLogger()
             logger.removeHandler(logger.handlers[0])
             logger.setLevel(DEBUG)
-            handler = FileHandler(filename=logging_file, mode='w')
+            handler = FileHandler(filename=logging_file, mode='w', encoding='utf-8')
             logger.addHandler(handler)
         self.room_id = None
         self.ws = None
