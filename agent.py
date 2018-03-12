@@ -1,8 +1,7 @@
-import logging
 from argparse import ArgumentParser
 from datetime import datetime
-from os import remove
-from os.path import isfile, join
+from os import makedirs, remove
+from os.path import isdir, isfile, join
 
 import ray
 from ray.rllib import ppo
@@ -10,8 +9,6 @@ from ray.tune.registry import register_env, get_registry
 
 from pokebattle_rl_env import PokeBattleEnv
 from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
-
-logging.basicConfig(level=logging.DEBUG)
 
 # works only with by placing rollout.py at rllib/ppo/rollout.py
 
@@ -22,12 +19,15 @@ parser.add_argument('-s', '--save-iterations', type=str, default=10, help='Amoun
 args = parser.parse_args()
 
 output_path = join(args.output, datetime.today().strftime('%Y-%m-%d-%H-%M-%S'))
+logging_path = join(output_path, 'log.txt')
+if not isdir(output_path):
+    makedirs(output_path)
 
 if isfile('usernames'):
     remove('usernames')
 
 env_creator_name = "PokeBattleEnv-v0"
-register_env(env_creator_name, lambda config: PokeBattleEnv(ShowdownSimulator(self_play=True, debug_output=False)))
+register_env(env_creator_name, lambda config: PokeBattleEnv(ShowdownSimulator(self_play=True, logging_file=logging_path)))
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()

@@ -1,6 +1,6 @@
 import webbrowser
 from json import loads
-from logging import getLogger, debug, info, warning, INFO
+from logging import getLogger, debug, info, warning, DEBUG, FileHandler
 from os.path import isfile
 from random import random
 from time import sleep
@@ -13,8 +13,6 @@ from pokebattle_rl_env.battle_simulator import BattleSimulator
 from pokebattle_rl_env.game_state import BattleEffect, GameState, Move
 from pokebattle_rl_env.poke_data_queries import get_move_by_name, ability_name_to_id, item_name_to_id
 from pokebattle_rl_env.util import generate_username, generate_token
-
-getLogger().setLevel(INFO)
 
 SHOWDOWN_ACTION_URL = 'https://play.pokemonshowdown.com/action.php'
 
@@ -496,13 +494,18 @@ class ShowdownSimulator(BattleSimulator):
         debug_output (bool): Whether to output verbose battle and connectivity information to the console.
         room_id (str): The string used to identify the current battle (room).
     """
-    def __init__(self, auth='', self_play=False, connection=DEFAULT_LOCAL_CONNECTION, debug_output=False):
+    def __init__(self, auth='', self_play=False, connection=DEFAULT_LOCAL_CONNECTION, logging_file=None):
         info('Using Showdown backend')
         self.state = GameState()
         self.auth = auth
         self.self_play = self_play
         self.connection = connection
-        self.debug_output = debug_output
+        if logging_file is not None:
+            logger = getLogger()
+            logger.removeHandler(logger.handlers[0])
+            logger.setLevel(DEBUG)
+            handler = FileHandler(filename=logging_file, mode='w')
+            logger.addHandler(handler)
         self.room_id = None
         self.ws = None
         if self_play:
