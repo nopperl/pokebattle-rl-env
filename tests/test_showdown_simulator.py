@@ -112,7 +112,7 @@ class TestMsgParsing(TestCase):
     def test_parse_replace(self):
         state = GameState()
         pokemon = state.opponent.pokemon[0]
-        state.opponent.pokemon[0].change_species('Metagross')
+        pokemon.change_species('Metagross')
         state.opponent.pokemon[1].change_species('Metang')
         info = '|replace|p1a: Zoroark|Zoroark, L78, M'.split('|')
         parse_replace(info, state, 'p1')
@@ -120,6 +120,19 @@ class TestMsgParsing(TestCase):
         self.assertEqual(pokemon.ability, 'illusion')
         self.assertEqual(pokemon.gender, 'm')
         self.assertEqual(state.opponent.pokemon[1].species, 'Metang')
+        # If Zoroark has already been detected, change this estimation to the assumed pokemon
+        state = GameState()
+        pokemon = state.opponent.pokemon[0]
+        assumed_pokemon = state.opponent.pokemon[2]
+        pokemon.change_species('Metagross')
+        state.opponent.pokemon[1].change_species('Metang')
+        assumed_pokemon.change_species('Zoroark')
+        parse_replace(info, state, 'p1')
+        self.assertEqual(pokemon.species, 'Zoroark')
+        self.assertEqual(pokemon.ability, 'illusion')
+        self.assertEqual(pokemon.gender, 'm')
+        self.assertEqual(state.opponent.pokemon[1].species, 'Metang')
+        self.assertEqual(assumed_pokemon.species, 'Metagross')
 
 
 class TestUpdateState(TestCase):

@@ -35,15 +35,6 @@ class Move:
         self.target = move['target']
 
 
-class Stats:
-    def __init__(self, atk, def_, spa, spd, spe):
-        self.atk = atk
-        self.def_ = def_
-        self.spa = spa
-        self.spd = spd
-        self.spe = spe
-
-
 class Pokemon:
     def __init__(self, species=None, gender=None, ability=None, health=1.0, max_health=1.0, stats=None,
                  stat_boosts=None, battle_stats=None, moves=None, special_zmove_ix=None, item=None, name=None,
@@ -128,7 +119,7 @@ class Trainer:
     def __init__(self, pokemon=None, name=None, mega_used=False, z_used=False):
         self.name = name
         if pokemon is None:
-            pokemon = [Pokemon(unknown=True) for i in range(6)]
+            pokemon = [Pokemon(unknown=True) for _ in range(6)]
         self.pokemon = pokemon
         self.force_switch = False
         self.mega_used = mega_used

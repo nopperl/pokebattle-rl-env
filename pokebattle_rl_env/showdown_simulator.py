@@ -261,12 +261,18 @@ def parse_specieschange(info, state, opponent_short, details=True):
 def parse_replace(info, state, opponent_short):
     if opponent_short in info[2]:
         pokemon = state.opponent.pokemon[0]
-        name = ident_to_name(info[2])
-        species, gender, level = parse_pokemon_details(info[3])
-        pokemon.name = name
+        real_name = ident_to_name(info[2])
+        real_species, gender, level = parse_pokemon_details(info[3])
+        assumed_species = pokemon.species
+        assumed_pokemon = next((p for p in state.opponent.pokemon if p.name == real_name or p.species == real_species), None)
+        assumed_name = pokemon.name
+        pokemon.name = real_name
         pokemon.gender = gender
         pokemon.level = level
-        pokemon.change_species(species)
+        pokemon.change_species(real_species)  # Active pokemon is Illusion user (eg Zorark) - change accordingly
+        if assumed_pokemon is not None:  # If Illusion user has already been detected, assumed pokemon is old illusion user estimation (makes sense if you think about it)
+            assumed_pokemon.name = assumed_name
+            assumed_pokemon.change_species(assumed_species)
 
 
 def parse_start_end(info, state, opponent_short, start=True):
