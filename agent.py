@@ -14,8 +14,8 @@ from pokebattle_rl_env.showdown_simulator import ShowdownSimulator
 
 parser = ArgumentParser()
 parser.add_argument('-o', '--output', type=str, default='', help='Path to the output directory for the learned model')
-parser.add_argument('-i', '--iterations', type=str, default=1000, help='Amount of iterations to train the model in')
-parser.add_argument('-s', '--save-iterations', type=str, default=10, help='Amount of iterations between each model save')
+parser.add_argument('-i', '--iterations', type=int, default=1000, help='Amount of iterations to train the model in')
+parser.add_argument('-s', '--save-iterations', type=int, default=10, help='Amount of iterations between each model save')
 args = parser.parse_args()
 
 output_path = join(args.output, datetime.today().strftime('%Y-%m-%d-%H-%M-%S'))
