@@ -728,11 +728,12 @@ class ShowdownSimulator(BattleSimulator):
 
             with open('usernames', 'a') as file:
                 file.write(self.username + '\n')
-            sleep(1 + random())  # Maybe wait until other username exists instead of sleeping
-            with open('usernames', 'r') as file:
-                lines = file.readlines()
-                usernames = [line[:-1] for line in lines]
-            print(self.counter, lines, usernames)
+            lines = []
+            while len(lines) < 2:
+                with open('usernames', 'r') as file:
+                    lines = file.readlines()
+            usernames = [line[:-1] for line in lines]
+            print(self.counter, self.username, lines, usernames)
             username_index = usernames.index(self.username)
             if username_index % 2 == 0:
                 opponent = usernames[username_index + 1]
