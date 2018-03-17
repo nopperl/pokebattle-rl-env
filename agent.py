@@ -29,7 +29,7 @@ if isfile('usernames'):
     remove('usernames')
 
 env_creator_name = "PokeBattleEnv-v0"
-register_env(env_creator_name, lambda config: PokeBattleEnv(ShowdownSimulator(self_play=True, logging_file=logging_path)))
+register_env(env_creator_name, lambda config: PokeBattleEnv(ShowdownSimulator(self_play=False, logging_file=logging_path)))
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()

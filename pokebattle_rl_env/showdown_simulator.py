@@ -490,14 +490,18 @@ class ShowdownSimulator(BattleSimulator):
         self_play (bool): Whether to use self play. Note that this is a naive self play-implementation. In fact, agents
             simply play against other agents - a temporary text file keeps track of the battles. Thus, self play only
             works if `number of agents % 2 == 0`. If :attr:`self_play` is false, the agent will battle against random
-            human opponents.
+            human opponents. Keep in mind that this self-play implementation is redundant if multiple agents are
+            deployed on a local Pokemon Showdown instance (see :attr:`connection`) without human players. If
+            https://github.com/Zarel/Pokemon-Showdown/blob/master/ladders.js#L470 and
+            https://github.com/Zarel/Pokemon-Showdown/blob/master/ladders.js#L470 is removed, they will battle against
+            each other automatically.
         connection (:class:`pokebattle_rl_env.showdown_simulator.ShowdownConnection`): Details which Pokemon Showdown
             connection to use. The default connection is to the local instance at https://localhost:8000. Use a local
             instance of Pokemon Showdown whenever possible. See https://github.com/Zarel/Pokemon-Showdown for
-            installation instructions. Obviously, if :attr:`self_play` is false, using a local/custom instance is only
+            installation instructions. Obviously, if self play is not desired, using a local/custom instance is only
             recommended if there are human players on it. Otherwise, set :attr:`connection` to
             :const:`DEFAULT_PUBLIC_CONNECTION` to use the public connection at https://play.pokemonshowdown.com.
-        debug_output (bool): Whether to output verbose battle and connectivity information to the console.
+        logging_file (bool): Specify the path to a file to log debug output.
         room_id (str): The string used to identify the current battle (room).
     """
     def __init__(self, auth='', self_play=False, connection=DEFAULT_LOCAL_CONNECTION, logging_file=None):
@@ -724,8 +728,7 @@ class ShowdownSimulator(BattleSimulator):
 
         if self.self_play:
             self.ws.settimeout(None)
-            # Self play
-
+            # Naive self play
             with open('usernames', 'a') as file:
                 file.write(self.username + '\n')
             lines = []
@@ -737,7 +740,7 @@ class ShowdownSimulator(BattleSimulator):
             username_index = usernames.index(self.username)
             if username_index % 2 == 0:
                 opponent = usernames[username_index + 1]
-                cmd = f'|/challenge {opponent}, gen7randombattle'
+                cmd = f'|/challenge {opponent}, gen7unratedrandombattle'
                 self.ws.send(cmd)
                 debug(cmd)
             else:
@@ -814,8 +817,8 @@ class ShowdownSimulator(BattleSimulator):
             # - << |updatesearch|{"searching":[],"games":null}
             # - << |updatesearch|{"searching":[],"games":{"battle-gen7randombattle-706502869":"[Gen 7] Random Battle"}}
         else:
-            # Against human players
-            self.ws.send('|/search gen7randombattle')  # Tier
+            # Against human players or other agents
+            self.ws.send('|/search gen7unratedrandombattle')  # Tier
 
         self._update_state()
         if not self.self_play:
