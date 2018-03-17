@@ -286,6 +286,8 @@ def parse_start_end(info, state, opponent_short, start=True):
 
 
 def parse_status(info, state, opponent_short, cure=False):
+    if 'Zoroark' in info[2] and not any(p for p in state.opponent.pokemon if p.species == 'Zoroark'):
+        return  # see https://github.com/Zarel/Pokemon-Showdown/issues/4500
     if opponent_short in info[2]:
         affected = ident_to_pokemon(info[2], state)
         status = info[3]
