@@ -286,11 +286,19 @@ def parse_start_end(info, state, opponent_short, start=True):
 
 
 def parse_status(info, state, opponent_short, cure=False):
-    if 'Zoroark' in info[2] and not any(p for p in state.opponent.pokemon if p.species == 'Zoroark'):
-        return  # see https://github.com/Zarel/Pokemon-Showdown/issues/4500
     if opponent_short in info[2]:
-        affected = ident_to_pokemon(info[2], state)
         status = info[3]
+        if 'Zoroark' in info[2] and not any(p for p in state.opponent.pokemon if p.species == 'Zoroark'):  # see https://github.com/Zarel/Pokemon-Showdown/issues/4500
+            if cure:
+                affected_pokemon = [p for p in state.opponent.pokemon if any(s for s in p.statuses if s.name == status)]
+                if len(affected_pokemon) == 1:  # If only one Pokemon has the cured status, we can assume that this is Zoroark
+                    affected = affected_pokemon[0]
+                else:
+                    return
+            else:
+                return
+        else:
+            affected = ident_to_pokemon(info[2], state)
         if cure:
             affected.statuses = [s for s in affected.statuses if s.name != status]
         else:
