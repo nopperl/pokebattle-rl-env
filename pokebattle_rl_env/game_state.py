@@ -65,6 +65,7 @@ class Pokemon:
         self.mega = mega
         self.trapped = trapped
         self.recharge = recharge
+        self.transformed = False
         self.unknown = unknown
         if name is None:
             name = species

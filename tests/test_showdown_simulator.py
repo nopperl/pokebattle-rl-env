@@ -134,6 +134,51 @@ class TestMsgParsing(TestCase):
         self.assertEqual(state.opponent.pokemon[1].species, 'Metang')
         self.assertEqual(assumed_pokemon.species, 'Metagross')
 
+    def test_transform(self):
+        state = GameState()
+        state.player.pokemon[0].change_species('Metagross')
+        state.player.pokemon[0].name = 'Metagross'
+        state.opponent.pokemon[0].change_species('Ditto')
+        state.opponent.pokemon[0].name = 'Ditto'
+        info = '>None|-transform|p1a: Ditto|p2a: Metagross|[from] ability: Imposter'
+        sim = ShowdownSimulator()
+        sim.state = state
+        sim.opponent_short = 'p1'
+        sim._parse_message(info)
+        self.assertEqual(state.opponent.pokemon[0].species, 'Metagross')
+        self.assertTrue(state.opponent.pokemon[0].transformed)
+
+    def test_switch_transformed_ditto(self):
+        state = GameState()
+        pokemon = state.opponent.pokemon[0]
+        pokemon.change_species('Metagross')
+        pokemon.transformed = True
+        state.opponent.pokemon[1].change_species('Metagross')
+        state.opponent.pokemon[2].change_species('Metang')
+        info = '|switch|p1a: Metagross|Metagross, L81|100/100'.split('|')
+        parse_switch(info, state, 'p1')
+        self.assertEqual(state.opponent.pokemon[0].species, 'Metagross')
+        self.assertEqual(state.opponent.pokemon[1].species, 'Ditto')
+        self.assertFalse(state.opponent.pokemon[1].transformed)
+        self.assertEqual(state.opponent.pokemon[2].species, 'Metang')
+
+    def test_cure_zoroark(self):
+        state = GameState()
+        pokemon = state.opponent.pokemon[0]
+        pokemon.change_species('Metagross')
+        state.opponent.pokemon[1].change_species('Metang')
+        state.opponent.pokemon[1].statuses.append(BattleEffect('brn'))
+        state.opponent.pokemon[2].change_species('Metang')
+        info = '|-curestatus|p1: Zoroark|brn|[msg]'.split('|')
+        parse_status(info, state, 'p1', cure=True)  # If Zoroark is in message and only one pokemon is affected by the given status, cure this pokemon (assume it's Zoroark), but don't change its species (player isn't supposed to know it's Zoroark)
+        self.assertEqual(state.opponent.pokemon[1].species, 'Metang')
+        self.assertEqual(state.opponent.pokemon[1].statuses, [])
+        state.opponent.pokemon[1].statuses.append(BattleEffect('brn'))
+        state.opponent.pokemon[2].statuses.append(BattleEffect('brn'))
+        parse_status(info, state, 'p1', cure=True)  # If there are multiple Pokemon affected by the given status, change nothing
+        self.assertEqual(state.opponent.pokemon[1].statuses[0].name, 'brn')
+        self.assertEqual(state.opponent.pokemon[2].statuses[0].name, 'brn')
+
 
 class TestUpdateState(TestCase):
     def test_force_switch(self):

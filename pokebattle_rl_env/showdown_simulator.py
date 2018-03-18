@@ -317,27 +317,32 @@ def parse_move(info, state, opponent_short):
 
 
 def parse_switch(info, state, opponent_short):
+    if opponent_short not in info[2]:
+        return
     name = ident_to_name(info[2])
     species, gender, level = parse_pokemon_details(info[3])
-    if opponent_short in info[2]:
-        pokemon = state.opponent.pokemon
-        health, max_health, status = parse_health_status(info[4])
-        switched_in = next((p for p in pokemon if p.species == species or p.name == name), None)
-        if switched_in is None:
-            first_unknown = next(p for p in pokemon if p.unknown)
-            first_unknown.unknown = False
-            switched_in = first_unknown
-        switched_in.name = name
-        switched_in.species = species
-        switched_in.gender = gender
-        switched_in.level = level
-        switched_in.health = health
-        switched_in.max_health = max_health if max_health is not None else 100
-        if status is not None and not any(s.name == state for s in switched_in.statuses):
-            switched_in.statuses.append(BattleEffect(status))
-        switched_in.update()
-        switched_index = pokemon.index(switched_in)
-        pokemon[0], pokemon[switched_index] = pokemon[switched_index], pokemon[0]
+    pokemon = state.opponent.pokemon
+    if pokemon[0].transformed:
+        pokemon[0].change_species('Ditto')  # ToDo: Handle Mew
+        pokemon[0].transformed = False
+        pokemon[0].update()
+    health, max_health, status = parse_health_status(info[4])
+    switched_in = next((p for p in pokemon if p.species == species or p.name == name), None)
+    if switched_in is None:
+        first_unknown = next(p for p in pokemon if p.unknown)
+        first_unknown.unknown = False
+        switched_in = first_unknown
+    switched_in.name = name
+    switched_in.species = species
+    switched_in.gender = gender
+    switched_in.level = level
+    switched_in.health = health
+    switched_in.max_health = max_health if max_health is not None else 100
+    if status is not None and not any(s.name == state for s in switched_in.statuses):
+        switched_in.statuses.append(BattleEffect(status))
+    switched_in.update()
+    switched_index = pokemon.index(switched_in)
+    pokemon[0], pokemon[switched_index] = pokemon[switched_index], pokemon[0]
 
 
 def parse_auxiliary_info(info, state, opponent_short):
@@ -684,6 +689,7 @@ class ShowdownSimulator(BattleSimulator):
                 pokemon = ident_to_pokemon(info[2], self.state, self.opponent_short)
                 to_pokemon = ident_to_pokemon(info[3], self.state, self.opponent_short)
                 pokemon.change_species(to_pokemon.species)
+                pokemon.transformed = True
             elif info[1] == '-mega':
                 parse_mega(info, self.state, self.opponent_short)
             elif info[1] == '-item':
