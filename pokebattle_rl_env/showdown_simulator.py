@@ -619,6 +619,10 @@ class ShowdownSimulator(BattleSimulator):
                 if self.state.turn == 1:
                     self.state.state = 'ongoing'
                 end = True
+            elif info[1] == 'html':
+                if info[2] == "<div class=\"broadcast-red\"><b>The battle crashed</b><br />Don't worry, we're working on fixing it.</div>":
+                    self.state.state = 'tie'
+                    end = True
             elif info[1] == 'request':
                 if info[2].startswith('{"wait":true') and False:  # ToDo: Start battle on first action?
                     end = True
