@@ -269,6 +269,17 @@ class TestRequestJson(TestCase):
         self.assertTrue(all(move.disabled for move in state.player.pokemon[0].moves if move.id != 'hiddenpower'))
         self.assertTrue(not any(move.disabled for move in state.player.pokemon[0].moves if move.id == 'hiddenpower'))
 
+    def test_copycat_outrage(self):
+        with open(join(dirname(__file__), 'json', 'copycat_outrage.json'), 'r') as file:
+            json = file.read()
+            json = dumps(loads(json))
+        state = GameState()
+        read_state_json(json, state)
+        self.assertTrue(state.player.pokemon[0].trapped)
+        self.assertEqual(len(state.player.pokemon[0].moves), 1)
+        self.assertEqual(state.player.pokemon[0].moves[0].id, 'outrage')
+        self.assertEqual(state.player.pokemon[0].moves[0].disabled, False)
+
 
 if __name__ == '__main__':
     main()

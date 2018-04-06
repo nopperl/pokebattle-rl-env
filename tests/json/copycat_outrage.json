@@ -1,0 +1,158 @@
+{
+  "active": [
+    {
+      "moves": [
+        {
+          "move": "Outrage",
+          "id": "outrage"
+        }
+      ],
+      "trapped": true
+    }
+  ],
+  "side": {
+    "name": "xt8yz5hl",
+    "id": "p2",
+    "pokemon": [
+      {
+        "ident": "p2: Liepard",
+        "details": "Liepard, L83, M",
+        "condition": "122/242",
+        "active": true,
+        "stats": {
+          "atk": 194,
+          "def": 131,
+          "spa": 194,
+          "spd": 131,
+          "spe": 224
+        },
+        "moves": [
+          "encore",
+          "substitute",
+          "copycat",
+          "darkpulse"
+        ],
+        "baseAbility": "prankster",
+        "item": "leftovers",
+        "pokeball": "pokeball",
+        "ability": "prankster"
+      },
+      {
+        "ident": "p2: Escavalier",
+        "details": "Escavalier, L79, F",
+        "condition": "240/240",
+        "active": false,
+        "stats": {
+          "atk": 259,
+          "def": 211,
+          "spa": 140,
+          "spd": 211,
+          "spe": 77
+        },
+        "moves": [
+          "ironhead",
+          "swordsdance",
+          "knockoff",
+          "megahorn"
+        ],
+        "baseAbility": "swarm",
+        "item": "lifeorb",
+        "pokeball": "pokeball",
+        "ability": "swarm"
+      },
+      {
+        "ident": "p2: Skuntank",
+        "details": "Skuntank, L83, F",
+        "condition": "307/307",
+        "active": false,
+        "stats": {
+          "atk": 202,
+          "def": 159,
+          "spa": 166,
+          "spd": 149,
+          "spe": 187
+        },
+        "moves": [
+          "suckerpunch",
+          "defog",
+          "fireblast",
+          "crunch"
+        ],
+        "baseAbility": "aftermath",
+        "item": "lifeorb",
+        "pokeball": "pokeball",
+        "ability": "aftermath"
+      },
+      {
+        "ident": "p2: Ambipom",
+        "details": "Ambipom, L77, M",
+        "condition": "242/242",
+        "active": false,
+        "stats": {
+          "atk": 199,
+          "def": 146,
+          "spa": 137,
+          "spd": 146,
+          "spe": 222
+        },
+        "moves": [
+          "seedbomb",
+          "lowkick",
+          "switcheroo",
+          "tailslap"
+        ],
+        "baseAbility": "skilllink",
+        "item": "choiceband",
+        "pokeball": "pokeball",
+        "ability": "skilllink"
+      },
+      {
+        "ident": "p2: Xurkitree",
+        "details": "Xurkitree, L76",
+        "condition": "110/251",
+        "active": false,
+        "stats": {
+          "atk": 140,
+          "def": 152,
+          "spa": 307,
+          "spd": 152,
+          "spe": 170
+        },
+        "moves": [
+          "thunderbolt",
+          "energyball",
+          "voltswitch",
+          "hiddenpowerice60"
+        ],
+        "baseAbility": "beastboost",
+        "item": "choicescarf",
+        "pokeball": "pokeball",
+        "ability": "beastboost"
+      },
+      {
+        "ident": "p2: Keldeo",
+        "details": "Keldeo, L75",
+        "condition": "260/260",
+        "active": false,
+        "stats": {
+          "atk": 113,
+          "def": 179,
+          "spa": 237,
+          "spd": 179,
+          "spe": 206
+        },
+        "moves": [
+          "scald",
+          "calmmind",
+          "hiddenpowerflying60",
+          "secretsword"
+        ],
+        "baseAbility": "justified",
+        "item": "lifeorb",
+        "pokeball": "pokeball",
+        "ability": "justified"
+      }
+    ]
+  },
+  "rqid": 11
+}

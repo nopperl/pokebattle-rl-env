@@ -410,8 +410,10 @@ def read_state_json(json, state):
                 active_pokemon['maybeTrapped'] if 'maybeTrapped' in active_pokemon else False
         if len(moves) <= 1:
             enabled_move_id = moves[0]['id']
-            if enabled_move_id == 'struggle':
-                st_active_pokemon.moves = [Move(id='struggle')]
+            if enabled_move_id == 'struggle' or\
+                    (not any(move.id == enabled_move_id for move in st_active_pokemon.moves) and\
+                     any(move.id == 'copycat'for move in st_active_pokemon.moves)):
+                st_active_pokemon.moves = [Move(id=enabled_move_id)]
             if enabled_move_id == 'recharge':
                 st_active_pokemon.recharge = True
             for move in st_active_pokemon.moves:
