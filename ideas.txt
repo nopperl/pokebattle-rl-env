@@ -4,12 +4,10 @@
     - separate action dimension, which is ignored when invalid?
         - works for mega, not for z
     - for z: available moves * 4
-- use new user for each training run?
 - count forfeit wins?
     - if prematurely forfeited (eg connection loss) -> noise
     - opponents often forfeit game when in unfavorable state -> signal loss if not counted
     - turn threshold for count?
-- multiple pokemon of same species in teams?
 - smogon rules
 - infinite battle
     - eg switch-in loop
@@ -17,12 +15,14 @@
     - smogon endless battle clause
     - possible solution: tie after 500 turns
 - asynchronous rl/multiple agents (ppo, a3c, ...)
+    - ape-x?
 - self-play rl?
     - AI agent probably faster than humans on average
-    - compatible with gym?
-    - implementations exist?
 - play against humans? is there an opponent simulator?
 - random teams
     - separate team building agent?
 - elo rating as performance measure?
     - starts with 1000
+- ppo
+    - nn architecture
+         - IN: 40,000 -> H1: 4000 -> H2: 1000 -> H3: 200 -> OUT: 10
