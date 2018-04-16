@@ -17,6 +17,7 @@ parser.add_argument('-o', '--output', type=str, default='', help='Path to the ou
 parser.add_argument('-i', '--iterations', type=int, default=1000, help='Amount of iterations to train the model in')
 parser.add_argument('-s', '--save-iterations', type=int, default=10, help='Amount of iterations between each model save')
 parser.add_argument('-b', '--batch-steps', type=int, default=200, help='The amount of steps to collect for each training batch')
+parser.add_argument('-w', '--workers', type=int, default=2, help='The number of actors to use.')
 parser.add_argument('-r', '--restore', type=str, default=None, help='The directory to restore a saved model from')
 args = parser.parse_args()
 
@@ -33,10 +34,11 @@ register_env(env_creator_name, lambda config: PokeBattleEnv(ShowdownSimulator(se
 
 ray.init()
 config = ppo.DEFAULT_CONFIG.copy()
-config['num_workers'] = 2
+config['num_workers'] = args.workers
 config['timesteps_per_batch'] = args.batch_steps
 config['horizon'] = 500
 config['min_steps_per_task'] = 1
+config['model']['fcnet_hiddens'] = [2000, 500, 100]
 agent = ppo.PPOAgent(config=config, env=env_creator_name, registry=get_registry())
 
 if args.restore is not None:
