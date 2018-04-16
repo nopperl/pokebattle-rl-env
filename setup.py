@@ -1,7 +1,4 @@
 from setuptools import setup
-from pip.req import parse_requirements
-
-requirements = [str(requirement.req) for requirement in parse_requirements('requirements.txt', session='')]
 
 setup(
     name='pokebattle_rl_env',
@@ -12,5 +9,11 @@ setup(
     author='',
     author_email='',
     description='',
-    install_requires=requirements
+    install_requires=[
+        'numpy',
+        'gym',
+        'websocket-client',
+        'PyExecJS',
+        'requests'
+    ]
 )
