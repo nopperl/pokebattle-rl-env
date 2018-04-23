@@ -38,6 +38,7 @@ config['num_workers'] = args.workers
 config['timesteps_per_batch'] = args.batch_steps
 config['horizon'] = 500
 config['min_steps_per_task'] = 1
+config['gamma'] = 1
 config['model']['fcnet_hiddens'] = [2000, 500, 100]
 agent = ppo.PPOAgent(config=config, env=env_creator_name, registry=get_registry())
 
