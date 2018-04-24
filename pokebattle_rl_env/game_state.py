@@ -159,17 +159,17 @@ def pokemon_list_to_array(pokemon_list):
             status = next((s for s in pokemon.statuses if s.name == status), None)
             if status is not None:
                 state.append(1)
-                status_turns.append(status.turn)
+                status_turns.append(status.turn / 100)
             else:
-                state.append(1)
+                state.append(0)
                 status_turns.append(0)
         state += status_turns
         for stat in ['atk', 'def', 'spa', 'spd', 'spe']:
             stat_value = pokemon.stats[stat] if stat in pokemon.stats else DEFAULT_STAT_VALUE
             boost = pokemon.stat_boosts[stat]
-            state.append(calc_boosted_stat(stat_value, boost))
+            state.append(calc_boosted_stat(stat_value, boost) / 10000)  # max stat: Floatzel speed 8664 (https://pokemondb.net/pokebase/175092/what-the-lowest-and-highest-value-in-stat-any-pokemon-can-have)
         for stat in ['accuracy', 'evasion']:
-            state.append(pokemon.battle_stats[stat])
+            state.append(pokemon.battle_stats[stat] / 10)
         for ability in abilities:
             state.append(1 if ability == pokemon.ability else 0)
         for type in typechart:
@@ -186,7 +186,7 @@ def pokemon_list_to_array(pokemon_list):
                 move = pokemon.moves[i]
                 for move_id in moves:
                     state.append(1 if move_id == move.id else 0)
-                state.append(move.pp)
+                state.append(move.pp / 64)
                 state.append(1 if move.disabled else 0)
                 for type in typechart:
                     state.append(1 if type == move.type else 0)
@@ -209,15 +209,13 @@ class GameState:
 
     def to_array(self):
         state = []
-        state.append(self.turn)
+        state.append(self.turn / 100)
         state.append(1 if self.player.mega_used else 0)
         state.append(1 if self.player.z_used else 0)
-        state += pokemon_list_to_array(self.player.pokemon)
         for condition in side_conditions:
             state.append(1 if condition in self.player_conditions else 0)
         state.append(1 if self.opponent.mega_used else 0)
         state.append(1 if self.opponent.z_used else 0)
-        state += pokemon_list_to_array(self.opponent.pokemon)
         for condition in side_conditions:
             state.append(1 if condition in self.opponent_conditions else 0)
         field_effect_turns = []
@@ -225,7 +223,7 @@ class GameState:
             field_effect = next((f for f in self.field_effects if f.name == effect), None)
             if field_effect is not None:
                 state.append(1)
-                field_effect_turns.append(field_effect.turn)
+                field_effect_turns.append(field_effect.turn / 5)
             else:
                 state.append(0)
                 field_effect_turns.append(0)
@@ -233,6 +231,8 @@ class GameState:
         for weather in weathers:
             state.append(1 if self.weather is not None and weather == self.weather.name else 0)
         state.append(self.weather.turn if self.weather is not None else 0)
+        state += pokemon_list_to_array(self.player.pokemon)
+        state += pokemon_list_to_array(self.opponent.pokemon)
         state = np.array(state)
         state[state is None] = 0
         return state
