@@ -2,6 +2,7 @@ Pokémon battle RL environment
 ===
 
 [![Documentation Status](https://readthedocs.org/projects/pokebattle-rl-env/vbadge/?version=latest)](https://pokebattle-rl-env.readthedocs.io/en/latest/)
+[![Build Status](https://travis-ci.com/nikuya3/pokebattle-rl-env.svg?branch=master)](https://travis-ci.com/nikuya3/pokebattle-rl-env)
 
 This repository contains a Reinforcement Learning environment for Pokémon battles.
 
